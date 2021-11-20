@@ -1,6 +1,8 @@
 from .models import User
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .forms import LogInForm, SignUpForm
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
 
 def log_in(request):
     if request.method == 'POST':
@@ -8,7 +10,7 @@ def log_in(request):
         if form.is_valid():
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
-            user = authenticate(username = username, password = password)
+            user = authenticate(email = email, password = password)
             if user is not None:
                 login(request, user)
                 return redirect('feed')
