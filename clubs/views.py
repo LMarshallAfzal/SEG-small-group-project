@@ -1,6 +1,6 @@
 from .models import User
 from django.shortcuts import render
-from .forms import LogInForm, SignUpForm
+from .forms import LogInForm, PostForm, UserForm, SignUpForm
 
 def log_in(request):
     if request.method == 'POST':
@@ -34,3 +34,17 @@ def sign_up(request):
     else:
         form = SignUpForm()
     return render(request, 'sign_up.html', {'form': form})
+
+@login_required
+def profile(request):
+    current_user = request.user
+    if request.method == 'POST':
+        form = UserForm(instance=current_user, data=request.POST)
+        if form.is_valid():
+            messages.add_message(request, messages.SUCCESS, "Profile updated!")
+            form.save()
+            return redirect('feed')
+    else:
+        form = UserForm(instance=current_user)
+    return render(request, 'profile.html', {'form': form})
+
