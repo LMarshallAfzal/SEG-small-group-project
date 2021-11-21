@@ -12,14 +12,6 @@ class Command(BaseCommand):
         self.faker = Faker('en_GB')
 
     def handle(self, *args, **options):
-        # user_count = 0
-        # while user_count < Command.USER_COUNT:
-        #     print(f'Seeding user {user_count}',  end='\r')
-        #     try:
-        #         self._create_user()
-        #     except (django.db.utils.IntegrityError):
-        #         continue
-        #     user_count += 1
         for _ in range(100):
             firstName = self.faker.unique.first_name()
             lastName = self.faker.unique.last_name()
@@ -32,7 +24,7 @@ class Command(BaseCommand):
             User.objects.create_user(
                 username = userName,
                 first_name = firstName,
-                last_name = lastName, 
+                last_name = lastName,
                 email = email1,
                 password = pass1,
                 bio = bio1,
