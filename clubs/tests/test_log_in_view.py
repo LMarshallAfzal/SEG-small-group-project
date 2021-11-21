@@ -16,7 +16,7 @@ class LogInViewTestCase(TestCase, LogInTester):
             last_name = 'Doe',
             email = 'johndoe@example.org',
             bio = 'Hello, I am John Doe.',
-            personal_statement = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            personal_statement = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
             password = 'Password123',
         )
 
