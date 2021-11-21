@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.urls import reverse
 from clubs.forms import LogInForm
 from clubs.models import User
-#from .helpers import LogInTester
+from .helpers import LogInTester
 
 class LogInViewTestCase(TestCase, LogInTester):
     """Tests of the log in view."""
@@ -12,6 +12,7 @@ class LogInViewTestCase(TestCase, LogInTester):
     def setUp(self):
         self.url = reverse('log_in')
         self.user = User.objects.create_user(
+            username = 'John',
             first_name = 'John',
             last_name = 'Doe',
             email = 'johndoe@example.org',

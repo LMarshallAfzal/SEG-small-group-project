@@ -1,6 +1,13 @@
 from .models import User
 from django.shortcuts import render
 from .forms import LogInForm, SignUpForm
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import check_password
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponseForbidden
+from django.shortcuts import redirect, render
 
 def log_in(request):
     # if request.method == 'POST':
