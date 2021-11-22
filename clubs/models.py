@@ -21,6 +21,7 @@ class User(AbstractUser):
     #Defines custom permissions for users to be added to the database.
     #This assumes that Users include applicants, members, officers and the owner,
     #permissions will be granted based on which type of user they are
+    #Admin = superuser = all permissions granted
     class Meta:
         permissions = [
             ('can_access_member_list', 'Can access a basic list of members and some details'),
