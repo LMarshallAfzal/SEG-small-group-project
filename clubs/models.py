@@ -32,5 +32,3 @@ class User(AbstractUser):
             ('can_transfer_ownership', 'Can transfer owner status to an officer'),
             ('can_become_owner', 'Can receive ownership of club'),
         ]
-
-# Create your models here.
