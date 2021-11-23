@@ -1,11 +1,12 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseForbidden
 from .models import User
 from django.shortcuts import redirect, render
-from .forms import LogInForm, SignUpForm
+from .forms import LogInForm, SignUpForm, UserForm
 from .helpers import login_prohibited
 
 
@@ -19,7 +20,7 @@ def log_in(request):
             user = authenticate(email = email, password = password)
             if user is not None:
                 login(request, user)
-                return redirect('member_list')
+                return redirect('member_list')#depends on the user type
         #Add error message here
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     form = LogInForm()
@@ -56,7 +57,7 @@ def sign_up(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('member_list')
+            return redirect('member_list')#should be an applicant page
     else:
         form = SignUpForm()
     return render(request, 'sign_up.html', {'form': form})
@@ -69,7 +70,7 @@ def profile(request):
         if form.is_valid():
             messages.add_message(request, messages.SUCCESS, "Profile updated!")
             form.save()
-            return redirect('member_list')
+            return redirect('member_list')#depends on the user type
     else:
         form = UserForm(instance=current_user)
     return render(request, 'profile.html', {'form': form})
@@ -81,5 +82,6 @@ def member_list(request):
 
 @login_required
 def show_user(request, user_id):
+    User = get_user_model()
     user = User.objects.get(id = user_id)
     return render(request, 'show_user.html', {'user' : user})
