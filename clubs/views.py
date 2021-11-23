@@ -81,6 +81,5 @@ def member_list(request):
 
 @login_required
 def show_user(request, user_id):
-    User = get_user_model()
     user = User.objects.get(id = user_id)
     return render(request, 'show_user.html', {'user' : user})
