@@ -11,19 +11,35 @@ from .helpers import login_prohibited
 
 @login_prohibited
 def log_in(request):
+    # if request.method == 'POST':
+    #     form = LogInForm(request.POST)
+    #     if form.is_valid():
+    #         email = form.cleaned_data.get('email')
+    #         password = form.cleaned_data.get('password')
+    #         user = authenticate(username = username, password = password)
+    #         if user is not None:
+    #             login(request, user)
+    #             return redirect('feed')
+    #     #Add error message here
+    #     messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
+    # form = LogInForm()
+    # return render(request, 'log_in.html', {'form': form})
     if request.method == 'POST':
         form = LogInForm(request.POST)
+        next = request.POST.get('next') or ''
         if form.is_valid():
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
-            user = authenticate(username = username, password = password)
+            user = authenticate(email=email, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('chess')
-        #Add error message here
+                redirect_url = next or 'feed'
+                return redirect(redirect_url)
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
+    else:
+        next = request.GET.get('next') or ''
     form = LogInForm()
-    return render(request, 'log_in.html', {'form': form})
+    return render(request, 'log_in.html', {'form': form, 'next': next})
 
 def log_out(request):
     logout(request)
@@ -40,7 +56,7 @@ def sign_up(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('chess')
+            return redirect('feed')
     else:
         form = SignUpForm()
     return render(request, 'sign_up.html', {'form': form})
@@ -64,7 +80,7 @@ def profile(request):
         if form.is_valid():
             messages.add_message(request, messages.SUCCESS, "Profile updated!")
             form.save()
-            return redirect('chess')
+            return redirect('feed')
     else:
         form = UserForm(instance=current_user)
     return render(request, 'profile.html', {'form': form})
@@ -79,3 +95,8 @@ def show_user(request, user_id):
         return render(request, 'show_user.html',
             {'user': user}
         )
+
+@login_required
+def user_list(request):
+    users = User.objects.all()
+    return render(request, 'user_list.html', {'users': users})
