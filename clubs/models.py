@@ -1,8 +1,13 @@
 from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from libgravatar import Gravatar
 
 class User(AbstractUser):
+    # is_applicant = models.BooleanField(default = False)
+    # is_member = models.BooleanField(default = False)
+    # is_officer = models.BooleanField(default = False)
+    # is_owner = models.BooleanField(default = False)
     BEGINNER = 'beginner'
     INTERMEDIATE = 'intermediate'
     ADVANCED = 'advanced'
