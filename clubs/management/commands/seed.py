@@ -15,8 +15,8 @@ class Command(BaseCommand):
         for _ in range(100):
             firstName = self.faker.unique.first_name()
             lastName = self.faker.unique.last_name()
-            userName = firstName
             email1 = self._email(firstName, lastName)
+            userName = email1
             pass1 = self.faker.unique.password()
             bio1 = self.faker.unique.text(max_nb_chars = 520)
             personalStatement = self.faker.text(max_nb_chars=1250)
@@ -29,7 +29,7 @@ class Command(BaseCommand):
                 password = pass1,
                 bio = bio1,
                 personal_statement = personalStatement,
-                )
+            )
         print('User seeding complete')
 
     # def _create_user(self):

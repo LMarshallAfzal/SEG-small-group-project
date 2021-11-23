@@ -4,13 +4,9 @@ from django.db import models
 from libgravatar import Gravatar
 
 class User(AbstractUser):
-    # is_applicant = models.BooleanField(default = False)
-    # is_member = models.BooleanField(default = False)
-    # is_officer = models.BooleanField(default = False)
-    # is_owner = models.BooleanField(default = False)
-    BEGINNER = 'beginner'
-    INTERMEDIATE = 'intermediate'
-    ADVANCED = 'advanced'
+    BEGINNER = 'Beginner'
+    INTERMEDIATE = 'Intermediate'
+    ADVANCED = 'Advanced'
     first_name = models.CharField(max_length = 50, blank = False)
     last_name = models.CharField(max_length = 50, blank = False)
     email = models.EmailField(unique = True, blank = False)
@@ -39,7 +35,7 @@ class User(AbstractUser):
             ('can_become_owner', 'Can receive ownership of club'),
         ]
 
-    def gravatar(self, size=120):
+    def gravatar(self, size=800):
         """Return a URL to the user's gravatar."""
         gravatar_object = Gravatar(self.email)
         gravatar_url = gravatar_object.get_image(size=size, default='mp')
@@ -52,4 +48,3 @@ class User(AbstractUser):
 
 
 # Create your models here.
-

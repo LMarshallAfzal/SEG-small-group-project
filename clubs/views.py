@@ -68,4 +68,5 @@ def show_user(request, user_id):
     return render(request, 'show_user.html', {'user' : user})
 
 def officer_main(request):
-    pass
+    users = User.objects.all();
+    return render(request, 'officer_main.html', {'users': users})
