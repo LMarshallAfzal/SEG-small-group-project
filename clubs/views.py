@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
+from django.contrib.auth.models import Group
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render
@@ -13,32 +14,31 @@ def log_in(request):
     if request.method == 'POST':
         form = LogInForm(request.POST)
         if form.is_valid():
-            email = form.cleaned_data.get('email')
+            username = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
-            user = authenticate(email = email, password = password)
+            user = authenticate(username = username, password = password)
             if user is not None:
-                login(request, user)
-                return redirect('member_list')
+                if user.groups.filter(name = 'Officer'):
+                    # users = User.objects.all();
+                    # return render(request, 'officer_main.html', {'users': users})
+                    login(request, user)
+                    redirect_url = request.POST.get('next') or 'officer_main'
+                    return redirect(redirect_url)
+                    """View for member"""
+                elif user.groups.filter(name = 'Member'):
+                    pass
+                    """View for owner"""
+                elif user.groups.filter(name = 'Owner'):
+                    pass
+                    """View for applicant"""
+                elif user.groups.filter(name = 'Applicant'):
+                    pass
+
         #Add error message here
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     form = LogInForm()
-    return render(request, 'log_in.html', {'form': form})
-    # if request.method == 'POST':
-    #     form = LogInForm(request.POST)
-    #     next = request.POST.get('next') or ''
-    #     if form.is_valid():
-    #         email = form.cleaned_data.get('email')
-    #         password = form.cleaned_data.get('password')
-    #         user = authenticate(email=email, password=password)
-    #         if user is not None:
-    #             login(request, user)
-    #             redirect_url = next or 'feed'
-    #             return redirect(redirect_url)
-    #     messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
-    # else:
-    #     next = request.GET.get('next') or ''
-    # form = LogInForm()
-    # return render(request, 'log_in.html', {'form': form, 'next': next})
+    next =  request.GET.get('next') or ''
+    return render(request, 'log_in.html', {'form': form, 'next' : next})
 
 def log_out(request):
     logout(request)
