@@ -16,11 +16,9 @@ def log_in(request):
         if form.is_valid():
             username = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
-            user = authenticate(username = username, password = password)
+            user = authenticate(email = email, password = password)
             if user is not None:
                 if user.groups.filter(name = 'Officer'):
-                    # users = User.objects.all();
-                    # return render(request, 'officer_main.html', {'users': users})
                     login(request, user)
                     redirect_url = request.POST.get('next') or 'officer_main'
                     return redirect(redirect_url)

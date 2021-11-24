@@ -25,5 +25,4 @@ urlpatterns = [
     path('user/<int:user_id>', views.show_user, name='show_user'),
     path('member_list/', views.member_list, name = 'member_list'),
     path('officer_main/', views.officer_main, name = 'officer_main'),
-    #path('user_list/', views.user_list, name = 'officer_main'),
 ]

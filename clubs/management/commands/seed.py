@@ -79,25 +79,6 @@ class Command(BaseCommand):
 
         print('User seeding complete')
 
-    # def _create_user(self):
-    #     first_name = self.faker.first_name()
-    #     last_name = self.faker.last_name()
-    #     email = self._email(first_name, last_name)
-    #     password = self.faker.unique.password()
-    #     bio = self.faker.text(max_nb_chars=520)
-    #     personal_statement = self.faker.text(max_nb_chars=1250)
-    #     User.objects.create_user(
-    #         username = first_name,
-    #         first_name=first_name,
-    #         last_name=last_name,
-    #         email=email,
-    #         password=password,
-    #         bio=bio,
-    #         personal_statement=personal_statement,
-    #
-    #
-    #     )
-
     def _email(self, first_name, last_name):
         email = f'{first_name}.{last_name}@example.org'
         return email
