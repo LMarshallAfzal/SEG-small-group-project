@@ -1,4 +1,5 @@
 from .models import User
+from django import template
 from django.shortcuts import render
 from .forms import LogInForm, SignUpForm
 from django.contrib import messages
@@ -19,8 +20,9 @@ def log_in(request):
             user = authenticate(username = username, password = password)
             if user is not None:
                 if user.groups.filter(name = 'Officer'):
-                    #user = user.groups.filter(name = '')
+                    #user.groups.filter(name ='Member').exists()
                     login(request, user)
+
                     redirect_url = request.POST.get('next') or 'officer_main'
                     return redirect(redirect_url)
                     """View for member"""
@@ -58,7 +60,7 @@ def sign_up(request):
     return render(request, 'sign_up.html', {'form': form})
 
 def member_list(request):
-    users = User.objects.all();
+    users = User.objects.filter(groups__name = 'Member'); # This ensures only members on shown
     return render(request, 'member_list.html', {'users': users})
 
 # def show_user(request, user_id):
@@ -77,5 +79,11 @@ def accept(request, user_id):
     member.user_set.add(user)
     applicant = Group.objects.get(name = 'Applicant')
     applicant.user_set.remove(user)
-    #approve_applicant(user)
     return redirect('officer_main')
+
+
+register = template.Library()
+
+@register.filter(name='has_group')
+def has_group(user, group_name):
+    return user.groups.filter(name='Member').exists()
