@@ -44,3 +44,8 @@ class User(AbstractUser):
     def mini_gravatar(self):
         """Return a URL to a miniature version of the user's gravatar."""
         return self.gravatar(size=60)
+
+    def approve_applicant(self, user):
+        """Change the group from applicant to member"""
+        member = Group.objects.get(name = 'Member')
+        member.user_set.add(user)

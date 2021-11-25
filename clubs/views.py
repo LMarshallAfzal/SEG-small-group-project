@@ -16,9 +16,10 @@ def log_in(request):
         if form.is_valid():
             username = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
-            user = authenticate(email = email, password = password)
+            user = authenticate(username = username, password = password)
             if user is not None:
                 if user.groups.filter(name = 'Officer'):
+                    #user = user.groups.filter(name = '')
                     login(request, user)
                     redirect_url = request.POST.get('next') or 'officer_main'
                     return redirect(redirect_url)
@@ -35,7 +36,7 @@ def log_in(request):
         #Add error message here
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     form = LogInForm()
-    next =  request.GET.get('next') or ''
+    next = request.GET.get('next') or 'officer_main'
     return render(request, 'log_in.html', {'form': form, 'next' : next})
 
 def log_out(request):
@@ -60,11 +61,21 @@ def member_list(request):
     users = User.objects.all();
     return render(request, 'member_list.html', {'users': users})
 
-def show_user(request, user_id):
-    User = get_user_model()
-    user = User.objects.get(id = user_id)
-    return render(request, 'show_user.html', {'user' : user})
+# def show_user(request, user_id):
+#     User = get_user_model()
+#     user = User.objects.get(id = user_id)
+#     return render(request, 'show_user.html', {'user' : user})
 
 def officer_main(request):
     users = User.objects.all();
     return render(request, 'officer_main.html', {'users': users})
+
+def accept(request, user_id):
+    User = get_user_model()
+    user = User.objects.get(id = user_id)
+    member = Group.objects.get(name = 'Member')
+    member.user_set.add(user)
+    applicant = Group.objects.get(name = 'Applicant')
+    applicant.user_set.remove(user)
+    #approve_applicant(user)
+    return redirect('officer_main')

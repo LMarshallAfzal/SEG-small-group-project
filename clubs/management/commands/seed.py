@@ -73,6 +73,7 @@ class Command(BaseCommand):
                 bio = bio1,
                 personal_statement = personalStatement,
             )
+            
             #TODO: Make the group assignments for users realistic percentage
             group = Group.objects.get(name = random.choice(['Applicant', 'Member','Officer']))
             user.groups.add(group)
