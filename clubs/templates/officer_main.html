@@ -20,7 +20,11 @@
                 {% include 'partials/bootstrap_form.html' with form=form %}
                 <td> <input type = "submit" value = "Accept" class = "btn btn-success" name="accept"></td>
               </form>
-              <td> <input type = "submit" value = "Reject" class = "btn btn-danger" name="reject"></td>
+              <form action="{% url 'officer_main' user.id %}" method="post">
+                {% csrf_token %}
+                {% include 'partials/bootstrap_form.html' with form=form %}
+                <td> <input type = "submit" value = "Reject" class = "btn btn-danger" name="reject"></td>
+              </form>
             </tr>
         {% endfor %}
       </table>

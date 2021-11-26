@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from clubs import views
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name = 'home'),
@@ -25,5 +26,5 @@ urlpatterns = [
     #path('user/<int:user_id>', views.show_user, name='show_user'),
     path('member_list/', views.member_list, name = 'member_list'),
     path('officer_main/', views.officer_main, name = 'officer_main'),
-    path('user/<int:user_id>', views.accept, name = 'officer_main'),
+    path('user/<int:user_id>', views.reject_accept_handler, name = 'officer_main'),
 ]

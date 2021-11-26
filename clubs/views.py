@@ -70,7 +70,20 @@ def member_list(request):
 
 def officer_main(request):
     users = User.objects.all();
+    # if request.POST:
+    #     if 'accept' in request.POST:
+    #         accept(request, id[0])
+    #     elif 'reject' in request.POST:
+    #         reject(request, id)
     return render(request, 'officer_main.html', {'users': users})
+
+def reject_accept_handler(request, user_id):
+    if request.POST:
+        if 'accept' in request.POST:
+            accept(request, user_id)
+        elif 'reject' in request.POST:
+            reject(request, user_id)
+    return redirect('officer_main')
 
 def accept(request, user_id):
     User = get_user_model()
@@ -79,11 +92,10 @@ def accept(request, user_id):
     member.user_set.add(user)
     applicant = Group.objects.get(name = 'Applicant')
     applicant.user_set.remove(user)
-    return redirect('officer_main')
+    #return redirect('officer_main')
 
-
-register = template.Library()
-
-@register.filter(name='has_group')
-def has_group(user, group_name):
-    return user.groups.filter(name='Member').exists()
+def reject(request, user_id):
+    User = get_user_model()
+    user = User.objects.get(id = user_id)
+    user.delete()
+    #return redirect('officer_main')
