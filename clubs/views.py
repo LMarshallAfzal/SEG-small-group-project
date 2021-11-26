@@ -23,7 +23,7 @@ def log_in(request):
                     #user.groups.filter(name ='Member').exists()
                     login(request, user)
 
-                    redirect_url = request.POST.get('next') or 'officer_main'
+                    redirect_url = request.POST.get('next') or 'officer'
                     return redirect(redirect_url)
                     """View for member"""
                 elif user.groups.filter(name = 'Member'):
@@ -38,7 +38,7 @@ def log_in(request):
         #Add error message here
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     form = LogInForm()
-    next = request.GET.get('next') or 'officer_main'
+    next = request.GET.get('next') or 'officer'
     return render(request, 'log_in.html', {'form': form, 'next' : next})
 
 def log_out(request):
@@ -69,13 +69,17 @@ def member_list(request):
 #     return render(request, 'show_user.html', {'user' : user})
 
 def officer_main(request):
-    users = User.objects.all();
-    # if request.POST:
-    #     if 'accept' in request.POST:
-    #         accept(request, id[0])
-    #     elif 'reject' in request.POST:
-    #         reject(request, id)
+    users = User.objects.all()
+    groups = Group.objects.all()
     return render(request, 'officer_main.html', {'users': users})
+
+def officer_promote_applicants(request):
+    users = User.objects.filter(groups__name = 'Applicant');
+    return render(request, 'officer_promote_applicants.html', {'users': users})
+
+def officer(request):
+    users = User.objects.all()
+    return render(request, 'officer.html', {'users': users})
 
 def reject_accept_handler(request, user_id):
     if request.POST:
@@ -83,7 +87,7 @@ def reject_accept_handler(request, user_id):
             accept(request, user_id)
         elif 'reject' in request.POST:
             reject(request, user_id)
-    return redirect('officer_main')
+    return render('officer_promote_applicants')
 
 def accept(request, user_id):
     User = get_user_model()
