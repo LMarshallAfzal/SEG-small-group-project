@@ -14,7 +14,6 @@
               <td>{{ user.first_name }} {{ user.last_name }}</td>
               <td>{{ user.email }}</td>
               <td>{{ user.experience_level }}</td>
-              <td> <input type = "submit" value = "Promote to member" class = "btn btn-primary" name="promote"></td>
               <form action="{% url 'officer_main' user.id %}" method = "post">
                 {% csrf_token %}
                 {% include 'partials/bootstrap_form.html' with form=form %}
