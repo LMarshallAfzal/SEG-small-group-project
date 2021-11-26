@@ -10,14 +10,14 @@ class User(AbstractUser):
     first_name = models.CharField(max_length = 50, blank = False)
     last_name = models.CharField(max_length = 50, blank = False)
     email = models.EmailField(unique = True, blank = False)
-    bio = models.CharField(max_length = 520, blank = False)
+    bio = models.CharField(max_length = 520, blank = True)
     EXPERIENCE_CHOICES = [
         (BEGINNER, 'Beginner'),
         (INTERMEDIATE, 'Intermediate'),
         (ADVANCED, 'Advanced'),
     ]
     experience_level = models.CharField(max_length = 12, choices = EXPERIENCE_CHOICES, default = BEGINNER)
-    personal_statement = models.CharField(max_length = 1250, blank = False)
+    personal_statement = models.CharField(max_length = 1250, blank = True)
 
     #Defines custom permissions for users to be added to the database.
     #This assumes that Users include applicants, members, officers and the owner,

@@ -34,7 +34,6 @@ def log_in(request):
                     """View for applicant"""
                 elif user.groups.filter(name = 'Applicant'):
                     pass
-
         #Add error message here
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     form = LogInForm()
@@ -69,7 +68,7 @@ def member_list(request):
 #     return render(request, 'show_user.html', {'user' : user})
 
 def officer_main(request):
-    users = User.objects.all()
+    users = User.objects.filter(groups__name__in=['Owner', 'Member', 'Officer'])
     groups = Group.objects.all()
     return render(request, 'officer_main.html', {'users': users})
 
@@ -78,7 +77,6 @@ def officer_promote_applicants(request):
     return render(request, 'officer_promote_applicants.html', {'users': users})
 
 def officer(request):
-    users = User.objects.all()
     return render(request, 'officer.html', {'users': users})
 
 def reject_accept_handler(request, user_id):
