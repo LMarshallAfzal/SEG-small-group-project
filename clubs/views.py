@@ -77,6 +77,7 @@ def officer_promote_applicants(request):
     return render(request, 'officer_promote_applicants.html', {'users': users})
 
 def officer(request):
+    users = User.objects.all()
     return render(request, 'officer.html', {'users': users})
 
 def reject_accept_handler(request, user_id):
