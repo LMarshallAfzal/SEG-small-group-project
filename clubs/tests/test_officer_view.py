@@ -22,5 +22,4 @@ class OfficerViewTestCase(TestCase):
 
     def test_officer_url(self):
         self.assertEqual(self.url, '/officer/')
-
-    def test_officer_    
+    
