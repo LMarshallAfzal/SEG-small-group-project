@@ -32,7 +32,7 @@ class UserForm(forms.ModelForm):
         """Form options."""
 
         model = User
-        fields = ['first_name', 'last_name', 'username', 'email', 'bio']
+        fields = ['first_name', 'last_name', 'username', 'email', 'bio','experience_level','personal_statement']
         widgets = { 'bio': forms.Textarea() }
 
     def clean(self):

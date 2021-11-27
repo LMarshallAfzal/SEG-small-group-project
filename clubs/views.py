@@ -66,7 +66,7 @@ def profile(request):
         if form.is_valid():
             messages.add_message(request, messages.SUCCESS, "Profile updated!")
             form.save()
-            return redirect('feed')
+            return redirect('member_list')
     else:
         form = UserForm(instance=current_user)
     return render(request, 'profile.html', {'form': form})
