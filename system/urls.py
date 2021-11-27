@@ -23,3 +23,7 @@ urlpatterns = [
     path('log_in/', views.log_in, name = 'log_in'),
     path('sign_up/', views.sign_up, name = 'sign_up'),
 ]
+
+admin.site.index_title = "The Chess Club"
+admin.site.site_header = "Club Owner"
+admin.site.site_title = "Manage the Chess Club"

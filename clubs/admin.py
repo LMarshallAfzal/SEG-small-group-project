@@ -8,3 +8,7 @@ class UserAdmin(admin.ModelAdmin):
     list_display = [
     'id', 'first_name', 'last_name', 'email', 'bio', 'experience_level', 'personal_statement',
     ]
+    list_filter = ('group','experience_level')
+    list_search = ('id','first_name','last_name')
+
+
