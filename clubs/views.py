@@ -78,19 +78,12 @@ def profile(request):
         if form.is_valid():
             messages.add_message(request, messages.SUCCESS, "Profile updated!")
             form.save()
-<<<<<<< HEAD
-            return redirect('member_list')
-=======
             return redirect('member_list')#depends on the user type
->>>>>>> member
     else:
         form = UserForm(instance=current_user)
     return render(request, 'profile.html', {'form': form})
 
-<<<<<<< HEAD
-=======
 @login_required
->>>>>>> member
 def member_list(request):
     users = User.objects.all();
     return render(request, 'member_list.html', {'users': users})
