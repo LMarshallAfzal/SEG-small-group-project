@@ -62,10 +62,10 @@ def member_list(request):
     users = User.objects.filter(groups__name = 'Member'); # This ensures only members on shown
     return render(request, 'member_list.html', {'users': users})
 
-# def show_user(request, user_id):
-#     User = get_user_model()
-#     user = User.objects.get(id = user_id)
-#     return render(request, 'show_user.html', {'user' : user})
+def show_user(request, user_id):
+    User = get_user_model()
+    user = User.objects.get(id = user_id)
+    return render(request, 'show_user.html', {'user' : user})
 
 def officer_main(request):
     users = User.objects.filter(groups__name__in=['Owner', 'Member', 'Officer'])
