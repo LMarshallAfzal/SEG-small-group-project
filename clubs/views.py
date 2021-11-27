@@ -86,7 +86,7 @@ def reject_accept_handler(request, user_id):
             accept(request, user_id)
         elif 'reject' in request.POST:
             reject(request, user_id)
-    return render('officer_promote_applicants')
+    return redirect('officer_promote_applicants')
 
 def accept(request, user_id):
     User = get_user_model()
