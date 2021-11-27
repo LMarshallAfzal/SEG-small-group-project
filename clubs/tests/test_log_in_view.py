@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.urls import reverse
 from clubs.forms import LogInForm
 from clubs.models import User
-#from .helpers import LogInTester
+from .helpers import LogInTester
 
 class LogInViewTestCase(TestCase, LogInTester):
     """Tests of the log in view."""
@@ -12,11 +12,12 @@ class LogInViewTestCase(TestCase, LogInTester):
     def setUp(self):
         self.url = reverse('log_in')
         self.user = User.objects.create_user(
+            username = 'John',
             first_name = 'John',
             last_name = 'Doe',
             email = 'johndoe@example.org',
             bio = 'Hello, I am John Doe.',
-            personal_statement = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            personal_statement = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
             password = 'Password123',
         )
 
@@ -50,9 +51,9 @@ class LogInViewTestCase(TestCase, LogInTester):
         form_input = {'email': 'johndoe@example.com', 'password': 'Password123'}
         response = self.client.post(self.url, form_input, follow = True)
         self.assertTrue(self._is_logged_in())
-        response_url = reverse('feed')
+        response_url = reverse('member_list')
         self.assertRedirects(response, response_url, status_code = 302, target_status_code = 200)
-        self.assertTemplateUsed(response, 'feed.html')
+        self.assertTemplateUsed(response, 'member_list.html')
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
         #user = User.objects.get(username = '@janedoe')

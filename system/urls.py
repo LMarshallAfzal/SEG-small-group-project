@@ -17,9 +17,17 @@ from django.contrib import admin
 from django.urls import path
 from clubs import views
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name = 'home'),
     path('log_in/', views.log_in, name = 'log_in'),
     path('sign_up/', views.sign_up, name = 'sign_up'),
+    path('log_out/', views.log_out, name = 'log_out'),
+    #path('user/<int:user_id>', views.show_user, name='show_user'),
+    path('member_list/', views.member_list, name = 'member_list'),
+    path('officer/', views.officer, name = 'officer'),
+    path('officer_promote_applicants/', views.officer_promote_applicants, name = 'officer_promote_applicants'),
+    path('officer_main/', views.officer_main, name = 'officer_main'),
+    path('user/<int:user_id>', views.reject_accept_handler, name = 'officer_promote_applicants'),
 ]
