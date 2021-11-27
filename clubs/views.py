@@ -65,7 +65,7 @@ def sign_up(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('member_list')#should be an applicant page
+            return redirect('show_current_user_profile')#should be an applicant page
     else:
         form = SignUpForm()
     return render(request, 'sign_up.html', {'form': form})
