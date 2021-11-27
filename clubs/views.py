@@ -22,7 +22,6 @@ def log_in(request):
                 if user.groups.filter(name = 'Officer'):
                     #user.groups.filter(name ='Member').exists()
                     login(request, user)
-
                     redirect_url = request.POST.get('next') or 'officer'
                     return redirect(redirect_url)
                     """View for member"""
@@ -54,6 +53,7 @@ def sign_up(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
+            # TODO: Add if statement that filters groups
             return redirect('member_list')
     else:
         form = SignUpForm()
