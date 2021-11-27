@@ -9,9 +9,12 @@ from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import Group
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseForbidden
+from .models import User
 from django.shortcuts import redirect, render
 from .helpers import login_prohibited
 
+
+@login_prohibited
 def log_in(request):
     if request.method == 'POST':
         form = LogInForm(request.POST)
@@ -62,7 +65,7 @@ def sign_up(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('member_list')
+            return redirect('member_list')#should be an applicant page
     else:
         form = SignUpForm()
     return render(request, 'sign_up.html', {'form': form})
@@ -85,6 +88,7 @@ def member_list(request):
     users = User.objects.all();
     return render(request, 'member_list.html', {'users': users})
 
+@login_required
 def show_user(request, user_id):
     User = get_user_model()
     user = User.objects.get(id = user_id)
