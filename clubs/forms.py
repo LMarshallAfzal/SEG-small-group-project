@@ -6,6 +6,15 @@ class LogInForm(forms.Form):
     email = forms.EmailField(label = "Email")
     password = forms.CharField(label = "Password", widget = forms.PasswordInput())
 
+class UserForm(forms.ModelForm):
+    """Form to update user profiles."""
+
+    class Meta:
+        """Form options."""
+
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'bio', 'experience_level', 'personal_statement']
+        widgets = { 'bio': forms.Textarea() }
 
 class SignUpForm(forms.ModelForm):
     class Meta:
@@ -46,9 +55,9 @@ class UserForm(forms.ModelForm):
     def save(self):
         super().save(commit = False)
         user = User.objects.create_user(
+            username = self.cleaned_data.get('email'),
             first_name = self.cleaned_data.get('first_name'),
             last_name = self.cleaned_data.get('last_name'),
-            username = self.cleaned_data.get('email'),
             email = self.cleaned_data.get('email'),
             bio = self.cleaned_data.get('bio'),
             experience_level = self.cleaned_data.get('experience_level'),
