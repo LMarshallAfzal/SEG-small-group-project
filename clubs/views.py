@@ -65,8 +65,10 @@ def sign_up(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
+            group = Group.objects.get(name = 'Applicant')
+            user.groups.add(group)
             login(request, user)
-            return redirect('profile')#should be an applicant page
+            return redirect('profile')
     else:
         form = SignUpForm()
     return render(request, 'sign_up.html', {'form': form})
