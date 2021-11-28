@@ -12,6 +12,7 @@ from django.http import HttpResponseForbidden
 from .models import User
 from django.shortcuts import redirect, render
 from .helpers import login_prohibited
+from django.db.models import Count
 
 
 @login_prohibited
@@ -104,7 +105,9 @@ def show_user_officer(request, user_id):
 @login_required
 def officer(request):
     users = User.objects.all()
-    return render(request, 'officer.html', {'users': users})
+    number_of_applicants = User.objects.filter(groups__name = 'Applicant').count()
+    number_of_members = User.objects.filter(groups__name__in = ['Owner','Member','Officer']).count()
+    return render(request, 'officer.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members})
 
 @login_required
 def officer_main(request):
