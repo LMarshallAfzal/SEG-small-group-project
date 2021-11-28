@@ -32,7 +32,7 @@ class SignUpForm(forms.ModelForm):
         )]
     )
     password_confirmation = forms.CharField(label = 'Password confirmation', widget = forms.PasswordInput())
-    
+
 
 class UserForm(forms.ModelForm):
     """Form to update user profiles."""
@@ -41,8 +41,8 @@ class UserForm(forms.ModelForm):
         """Form options."""
 
         model = User
-        fields = ['first_name', 'last_name', 'username', 'email', 'bio','experience_level','personal_statement']
-        widgets = { 'bio': forms.Textarea() }
+        fields = ['first_name', 'last_name', 'email', 'bio','experience_level','personal_statement']
+        widgets = { 'bio': forms.Textarea(), 'personal_statement': forms.Textarea()}
 
     def clean(self):
         super().clean()
@@ -55,10 +55,10 @@ class UserForm(forms.ModelForm):
     def save(self):
         super().save(commit = False)
         user = User.objects.create_user(
-            username = self.cleaned_data.get('email'),
             first_name = self.cleaned_data.get('first_name'),
             last_name = self.cleaned_data.get('last_name'),
             email = self.cleaned_data.get('email'),
+            username = self.cleaned_data.get('email'),
             bio = self.cleaned_data.get('bio'),
             experience_level = self.cleaned_data.get('experience_level'),
             personal_statement = self.cleaned_data.get('personal_statement'),
