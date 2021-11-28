@@ -39,7 +39,8 @@ def log_in(request):
                     pass
                     """View for applicant"""
                 elif user.groups.filter(name = 'Applicant'):
-                    pass
+                    login(request, user)
+                    return redirect('profile')
         #Add error message here
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     form = LogInForm()
