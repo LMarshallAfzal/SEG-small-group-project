@@ -31,7 +31,9 @@ def log_in(request):
                     """View for member"""
                 elif user.groups.filter(name = 'Member'):
                     login(request, user)
-                    return redirect('show_current_user_profile')
+                    #redirect_url = request.POST.get('next') or 'member_list'
+                    return redirect('member_list')
+                    #return redirect('show_current_user_profile')
                     """View for owner"""
                 elif user.groups.filter(name = 'Owner'):
                     pass
@@ -43,7 +45,6 @@ def log_in(request):
     form = LogInForm()
     next = request.GET.get('next') or 'officer'
     return render(request, 'log_in.html', {'form': form, 'next' : next})
-
 
 def log_out(request):
     logout(request)
@@ -65,7 +66,7 @@ def sign_up(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('show_current_user_profile')#should be an applicant page
+            return redirect('profile')#should be an applicant page
     else:
         form = SignUpForm()
     return render(request, 'sign_up.html', {'form': form})
@@ -78,14 +79,14 @@ def profile(request):
         if form.is_valid():
             messages.add_message(request, messages.SUCCESS, "Profile updated!")
             form.save()
-            return redirect('member_list')#depends on the user type
+            return redirect('profile')#depends on the user type
     else:
         form = UserForm(instance=current_user)
     return render(request, 'profile.html', {'form': form})
 
 @login_required
 def member_list(request):
-    users = User.objects.all();
+    users = User.objects.filter(groups__name__in=['Owner', 'Member', 'Officer'])
     return render(request, 'member_list.html', {'users': users})
 
 @login_required
@@ -93,6 +94,17 @@ def show_user(request, user_id):
     User = get_user_model()
     user = User.objects.get(id = user_id)
     return render(request, 'show_user.html', {'user' : user})
+
+@login_required
+def show_user_officer(request, user_id):
+    User = get_user_model()
+    user = User.objects.get(id = user_id)
+    return render(request, 'show_user_officer.html', {'user' : user})
+
+@login_required
+def officer(request):
+    users = User.objects.all()
+    return render(request, 'officer.html', {'users': users})
 
 @login_required
 def officer_main(request):
@@ -104,11 +116,6 @@ def officer_main(request):
 def officer_promote_applicants(request):
     users = User.objects.filter(groups__name = 'Applicant');
     return render(request, 'officer_promote_applicants.html', {'users': users})
-
-@login_required
-def officer(request):
-    users = User.objects.all()
-    return render(request, 'officer.html', {'users': users})
 
 def reject_accept_handler(request, user_id):
     if request.POST:
