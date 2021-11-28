@@ -78,19 +78,12 @@ def profile(request):
         if form.is_valid():
             messages.add_message(request, messages.SUCCESS, "Profile updated!")
             form.save()
-<<<<<<< HEAD
-            return redirect('member_list')
-=======
             return redirect('member_list')#depends on the user type
->>>>>>> member
     else:
         form = UserForm(instance=current_user)
     return render(request, 'profile.html', {'form': form})
 
-<<<<<<< HEAD
-=======
 @login_required
->>>>>>> member
 def member_list(request):
     users = User.objects.all();
     return render(request, 'member_list.html', {'users': users})
@@ -101,15 +94,18 @@ def show_user(request, user_id):
     user = User.objects.get(id = user_id)
     return render(request, 'show_user.html', {'user' : user})
 
+@login_required
 def officer_main(request):
     users = User.objects.filter(groups__name__in=['Owner', 'Member', 'Officer'])
     groups = Group.objects.all()
     return render(request, 'officer_main.html', {'users': users})
 
+@login_required
 def officer_promote_applicants(request):
     users = User.objects.filter(groups__name = 'Applicant');
     return render(request, 'officer_promote_applicants.html', {'users': users})
 
+@login_required
 def officer(request):
     users = User.objects.all()
     return render(request, 'officer.html', {'users': users})
