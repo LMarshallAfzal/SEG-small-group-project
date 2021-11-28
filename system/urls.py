@@ -16,14 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from clubs import views
+from clubs.admin import club_owner_site
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('owner/', club_owner_site.urls),
     path('', views.home, name = 'home'),
     path('log_in/', views.log_in, name = 'log_in'),
     path('sign_up/', views.sign_up, name = 'sign_up'),
 ]
 
-admin.site.index_title = "The Chess Club"
-admin.site.site_header = "Club Owner"
-admin.site.site_title = "Manage the Chess Club"
