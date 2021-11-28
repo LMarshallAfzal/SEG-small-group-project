@@ -141,4 +141,4 @@ def reject(request, user_id):
     User = get_user_model()
     user = User.objects.get(id = user_id)
     user.delete()
-    #return redirect('officer_main')
+    #return redirect('officer_main')    

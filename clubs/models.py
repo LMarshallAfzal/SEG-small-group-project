@@ -52,3 +52,5 @@ class User(AbstractUser):
         """Change the group from applicant to member"""
         member = Group.objects.get(name = 'Member')
         member.user_set.add(user)
+
+      
