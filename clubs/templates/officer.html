@@ -1,24 +1,3 @@
-{%extends 'base_content.html'%}
 {% block content %}
-<div class="container">
-  <div class="row">
-    <div class="col-12">
-      <h1>All Users</h1>
-      <table class="table">
-        <tr>
-          <form action="{% url 'officer_promote_applicants' %}" method="post">
-            {% csrf_token %}
-            {% include 'partials/bootstrap_form.html' with form=form %}
-            <td> <input type = "submit" value = "Applicants" class = "btn btn-primary" name="applicants"></td>
-          </form>
-          <form action="{% url 'officer_main' %}" method="post">
-            {% csrf_token %}
-            {% include 'partials/bootstrap_form.html' with form=form %}
-            <td> <input type = "submit" value = "Members" class = "btn btn-primary" name="members"></td>
-          </form>
-        </tr>
-      </table>
-    </div>
-  </div>
-</div>
+  {% include 'partials/officer_owner_partial.html' with form=form %}
 {% endblock %}

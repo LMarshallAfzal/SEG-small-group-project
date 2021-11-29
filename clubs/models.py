@@ -19,6 +19,7 @@ class User(AbstractUser):
     experience_level = models.CharField(max_length = 12, choices = EXPERIENCE_CHOICES, default = BEGINNER)
     personal_statement = models.CharField(max_length = 1250, blank = True)
 
+
     #Defines custom permissions for users to be added to the database.
     #This assumes that Users include applicants, members, officers and the owner,
     #permissions will be granted based on which type of user they are
@@ -34,6 +35,8 @@ class User(AbstractUser):
             ('can_transfer_ownership', 'Can transfer owner status to an officer'),
             ('can_become_owner', 'Can receive ownership of club'),
         ]
+    def full_name(self):
+        return f'{self.first_name} {self.last_name}'
 
     def gravatar(self, size=800):
         """Return a URL to the user's gravatar."""

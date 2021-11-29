@@ -3,9 +3,18 @@ from django.core.validators import RegexValidator
 from .models import User
 
 class LogInForm(forms.Form):
-    email = forms.EmailField(label = "Email")
+    email = forms.EmailField(label = "email")
     password = forms.CharField(label = "Password", widget = forms.PasswordInput())
 
+class UserForm(forms.ModelForm):
+    """Form to update user profiles."""
+
+    class Meta:
+        """Form options."""
+
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'bio', 'experience_level', 'personal_statement']
+        widgets = { 'bio': forms.Textarea() }
 
 class SignUpForm(forms.ModelForm):
     class Meta:
@@ -23,17 +32,6 @@ class SignUpForm(forms.ModelForm):
         )]
     )
     password_confirmation = forms.CharField(label = 'Password confirmation', widget = forms.PasswordInput())
-    
-
-class UserForm(forms.ModelForm):
-    """Form to update user profiles."""
-
-    class Meta:
-        """Form options."""
-
-        model = User
-        fields = ['first_name', 'last_name', 'username', 'email', 'bio']
-        widgets = { 'bio': forms.Textarea() }
 
     def clean(self):
         super().clean()
@@ -48,8 +46,8 @@ class UserForm(forms.ModelForm):
         user = User.objects.create_user(
             first_name = self.cleaned_data.get('first_name'),
             last_name = self.cleaned_data.get('last_name'),
-            username = self.cleaned_data.get('email'),
             email = self.cleaned_data.get('email'),
+            username = self.cleaned_data.get('email'),
             bio = self.cleaned_data.get('bio'),
             experience_level = self.cleaned_data.get('experience_level'),
             personal_statement = self.cleaned_data.get('personal_statement'),
