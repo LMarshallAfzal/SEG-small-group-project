@@ -84,7 +84,7 @@ def profile(request):
             return redirect('profile')#depends on the user type
     else:
         form = UserForm(instance=current_user)
-    return render(request, 'profile.html', {'form': form})
+        return render(request, 'profile.html', {'form': form})
 
 @login_required
 def member_list(request):
@@ -118,7 +118,7 @@ def officer_main(request):
 
 @login_required
 def officer_promote_applicants(request):
-    users = User.objects.filter(groups__name = 'Applicant');
+    users = User.objects.filter(groups__name = 'Applicant')
     return render(request, 'officer_promote_applicants.html', {'users': users})
 
 def reject_accept_handler(request, user_id):
@@ -148,7 +148,7 @@ def reject(request, user_id):
 def newOwner(request,user_id):
     user = get_user_model()
     user = User.objects.get(id = user_id)
-    officer = Group.objects.get(name = "Owner")
+    owner = Group.objects.get(name = "Owner")
     if user in officer.user_set:
         owner = Group.objects.get(name = "Owner")
         owners = List(Group.objects.getAll(name = "Owner"))
@@ -177,3 +177,8 @@ def demoteOfficer(request,user_id):
     officer = Group.objects.get(name = "Officer")
     officer.user_set.remove(user)
     return redirect('show_user')
+    
+
+@login_required
+def owner(request):
+    return (request)

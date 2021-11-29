@@ -13,7 +13,7 @@ class UserFormTestCase(TestCase):
     """Unit tests of the user form."""
 
     fixtures = [
-        'clubs/tests/fixtures/default_user.json'
+        'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_user.json'
     ]
     
