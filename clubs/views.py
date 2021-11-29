@@ -1,7 +1,7 @@
 from .models import User
 from django import template
 from django.shortcuts import render
-from .forms import LogInForm, SignUpForm, UserForm
+from .forms import LogInForm, SignUpForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
@@ -58,21 +58,8 @@ def sign_up(request):
         form = SignUpForm()
     return render(request, 'sign_up.html', {'form': form})
 
-@login_required
-def profile(request):
-    current_user = request.user
-    if request.method == 'POST':
-        form = UserForm(instance=current_user, data=request.POST)
-        if form.is_valid():
-            messages.add_message(request, messages.SUCCESS, "Profile updated!")
-            form.save()
-            return redirect('feed')
-    else:
-        form = UserForm(instance=current_user)
-    return render(request, 'profile.html', {'form': form})
-
 def member_list(request):
-    users = User.objects.filter(groups__name = 'Member'); # This ensures only members on shown
+    #users = User.objects.filter(groups__name = 'Member'); # This ensures only members on shown
     return render(request, 'member_list.html', {'users': users})
 
 def show_user(request, user_id):

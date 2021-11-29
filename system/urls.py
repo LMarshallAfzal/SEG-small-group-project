@@ -25,6 +25,7 @@ urlpatterns = [
     path('sign_up/', views.sign_up, name = 'sign_up'),
     path('log_out/', views.log_out, name = 'log_out'),
     #path('user/<int:user_id>', views.show_user, name='show_user'),
+    path('profile/', views.profile, name = 'profile'),
     path('member_list/', views.member_list, name = 'member_list'),
     path('officer/', views.officer, name = 'officer'),
     path('officer_promote_applicants/', views.officer_promote_applicants, name = 'officer_promote_applicants'),
