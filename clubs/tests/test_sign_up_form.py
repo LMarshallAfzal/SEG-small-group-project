@@ -12,7 +12,7 @@ class SignUpFormTestCase(TestCase):
         "last_name": 'Henwood',
         "email": 'jackhenwood@example.org',
         "bio": 'My bio',
-        "experience_level": 'BEGINNER',
+        "experience_level": 'Beginner',
         "personal_statement": 'My personal statement!',
         "new_password": 'Password123',
         "password_confirmation": 'Password123'
@@ -77,7 +77,7 @@ class SignUpFormTestCase(TestCase):
         self.assertEqual(user.last_name, 'Henwood')
         self.assertEqual(user.email, 'jackhenwood@example.org')
         self.assertEqual(user.bio, 'My bio')
-        self.assertEqual(user.experience_level, 'BEGINNER')
-        self.assertEqual(user.personal_statement, 'My personal statemnet!')
+        self.assertEqual(user.experience_level, 'Beginner')
+        self.assertEqual(user.personal_statement, 'My personal statement!')
         is_password_correct = check_password('Password123', user.password)
         self.assertTrue(is_password_correct)

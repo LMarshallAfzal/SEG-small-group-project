@@ -16,6 +16,8 @@ class SignUpViewTestCase(TestCase, LogInTester):
             'bio': 'My bio',
             'new_password': 'Password123',
             'password_confirmation': 'Password123',
+            'personal_statment': 'chess vibes',
+            'experience_level': 'Beginner'
         }
 
     def test_sign_up_url(self):
@@ -47,9 +49,9 @@ class SignUpViewTestCase(TestCase, LogInTester):
         response = self.client.post(self.url, self.form_input, follow = True)
         after_count = User.objects.count()
         self.assertEqual(after_count, before_count + 1)
-        response_url = reverse('member_list')
+        response_url = reverse('profile')
         self.assertRedirects(response, response_url, status_code = 302, target_status_code = 200)
-        self.assertTemplateUsed(response, 'member_list.html')
+        self.assertTemplateUsed(response, 'profile.html')
         user = User.objects.get(first_name = 'Jack')
         self.assertEqual(user.first_name, 'Jack')
         self.assertEqual(user.last_name, 'Henwood')

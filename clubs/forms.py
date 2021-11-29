@@ -3,7 +3,7 @@ from django.core.validators import RegexValidator
 from .models import User
 
 class LogInForm(forms.Form):
-    email = forms.EmailField(label = "Email")
+    email = forms.EmailField(label = "email")
     password = forms.CharField(label = "Password", widget = forms.PasswordInput())
 
 class UserForm(forms.ModelForm):
@@ -32,17 +32,6 @@ class SignUpForm(forms.ModelForm):
         )]
     )
     password_confirmation = forms.CharField(label = 'Password confirmation', widget = forms.PasswordInput())
-
-
-class UserForm(forms.ModelForm):
-    """Form to update user profiles."""
-
-    class Meta:
-        """Form options."""
-
-        model = User
-        fields = ['first_name', 'last_name', 'email', 'bio','experience_level','personal_statement']
-        widgets = { 'bio': forms.Textarea(), 'personal_statement': forms.Textarea()}
 
     def clean(self):
         super().clean()
