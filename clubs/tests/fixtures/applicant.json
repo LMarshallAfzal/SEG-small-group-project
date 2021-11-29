@@ -1,0 +1,25 @@
+[
+    {
+      "model": "clubs.user",
+      "pk": 1,
+      "fields": {
+        "first_name": "Peter",
+        "last_name": "Pickles",
+        "username": "peterpickles@example.org",
+        "email": "peterpickles@example.org",
+        "bio": "Peter Pickles from example.org",
+        "experience_level": "Advanced", 
+        "personal_statement": "I want to prove I'm better than my wife",
+        "password": "pbkdf2_sha256$260000$3Y9YEK4dRSndK8dhROvjco$k6VMZMZIerEvlvomufH3IbyLd8h6/G2wRJtmZ5URnr4="
+      }
+
+      
+      
+
+
+    }
+
+    
+
+  
+  ]
