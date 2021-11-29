@@ -1,3 +1,4 @@
+"""Creates groups for the initial club - may be able to modify to make this a "template" for all clubs"""
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from clubs.models import User
