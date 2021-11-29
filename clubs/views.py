@@ -2,7 +2,7 @@ from typing import List
 from .models import User
 from django import template
 from django.shortcuts import render
-from .forms import LogInForm, SignUpForm
+from .forms import LogInForm, SignUpForm, UserForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
@@ -41,7 +41,8 @@ def log_in(request):
                     pass
                     """View for applicant"""
                 elif user.groups.filter(name = 'Applicant'):
-                    pass
+                    login(request, user)
+                    return redirect('profile')
         #Add error message here
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     form = LogInForm()
@@ -67,8 +68,10 @@ def sign_up(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
+            group = Group.objects.get(name = 'Applicant')
+            user.groups.add(group)
             login(request, user)
-            return redirect('profile')#should be an applicant page
+            return redirect('profile')
     else:
         form = SignUpForm()
     return render(request, 'sign_up.html', {'form': form})
@@ -84,7 +87,7 @@ def profile(request):
             return redirect('profile')#depends on the user type
     else:
         form = UserForm(instance=current_user)
-    return render(request, 'profile.html', {'form': form})    
+    return render(request, 'profile.html', {'form': form})
 
 def member_list(request):
     users = User.objects.filter(groups__name__in=['Owner', 'Member', 'Officer'])

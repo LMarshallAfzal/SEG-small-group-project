@@ -14,7 +14,7 @@ class UserForm(forms.ModelForm):
 
         model = User
         fields = ['first_name', 'last_name', 'email', 'bio', 'experience_level', 'personal_statement']
-        widgets = { 'bio': forms.Textarea() }
+        widgets = { 'bio': forms.Textarea(), 'personal_statement': forms.Textarea()}
 
 class SignUpForm(forms.ModelForm):
     class Meta:
