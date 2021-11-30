@@ -48,6 +48,7 @@ def log_in(request):
     next = request.GET.get('next') or 'officer'
     return render(request, 'log_in.html', {'form': form, 'next' : next})
 
+@login_required
 def log_out(request):
     logout(request)
     return redirect('home')
@@ -84,7 +85,7 @@ def profile(request):
             return redirect('profile')#depends on the user type
     else:
         form = UserForm(instance=current_user)
-        return render(request, 'profile.html', {'form': form})
+    return render(request, 'profile.html', {'form': form})
 
 @login_required
 def member_list(request):
@@ -156,7 +157,7 @@ def newOwner(request,user_id):
         owner.user_set.add(user)
         owner.user_set.remove(current_owner)
         logout(request)
-        return redirect('home')
+        return redirect('login')
        
     else:
         messages.add_message(request, messages.ERROR, "New owner has to be an officer!")
