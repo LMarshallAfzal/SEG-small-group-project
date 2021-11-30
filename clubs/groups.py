@@ -3,12 +3,12 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from clubs.models import User
 
-#Stores a list of all chess clubs: each chess club has its own groups.
+#Stores a list of all the ChessClubGroups objects: this can be used to access the groups for each club.
 club_list = []
 
 #The club name is passed in to be used as a way of separating groups and permissions for each club
 class ChessClubGroups(temp_chess_club_name):
-    #Club name needs to have no whitespaces
+    #Club name will have no whitespaces for the permission code
     chess_club_name = ""
     for character in chess_club_name:
         if character == " ":
@@ -93,5 +93,5 @@ class ChessClubGroups(temp_chess_club_name):
     #become_owner_permission = Permission.objects.get(codename = 'can_become_owner')
     officer_group.permissions.add(become_owner_permission)
 
-#Temporary name
+#Creates first ChessClubGroups object to represent the first club - this may be moved elsewhere later.
 club_list.append(new ChessClubGroups("First_Club"))
