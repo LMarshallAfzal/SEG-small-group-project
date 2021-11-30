@@ -158,7 +158,6 @@ def newOwner(request,user_id):
         owner.user_set.add(user)
         owner.user_set.remove(current_owner)
         logout(request)
-fix-user-profile-01
         return redirect('login')
     else:
         messages.add_message(request, messages.ERROR, "New owner has to be an officer!")
@@ -183,4 +182,4 @@ def demoteOfficer(request,user_id):
 
 @login_required
 def owner(request):
-
+    pass
