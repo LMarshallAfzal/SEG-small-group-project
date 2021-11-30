@@ -115,7 +115,7 @@ def officer_main(request):
 
 @login_required
 def officer_promote_applicants(request):
-    users = User.objects.filter(groups__name = 'Applicant');
+    users = User.objects.filter(groups__name = 'Applicant')
     return render(request, 'officer_promote_applicants.html', {'users': users})
 
 def reject_accept_handler(request, user_id):
@@ -125,6 +125,10 @@ def reject_accept_handler(request, user_id):
         elif 'reject' in request.POST:
             reject(request, user_id)
     return redirect('officer_promote_applicants')
+
+
+def owner(request):
+    pass
 
 def accept(request, user_id):
     User = get_user_model()
@@ -146,7 +150,7 @@ def newOwner(request,user_id):
     user = get_user_model()
     user = User.objects.get(id = user_id)
     officer = Group.objects.get(name = "Owner")
-    if user in officer.user_set:
+    if (user.groups.filter(name='Officer').exists()):
         owner = Group.objects.get(name = "Owner")
         owners = List(Group.objects.getAll(name = "Owner"))
         current_owner = owners[0]

@@ -13,7 +13,7 @@ class UserFormTestCase(TestCase):
     """Unit tests of the user form."""
 
     fixtures = [
-        'clubs/tests/fixtures/default_user.json'
+        'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_user.json'
     ]
     
@@ -21,30 +21,31 @@ class UserFormTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.get(username='johndoe@example.org')
         self.url = reverse('owner')
-
-        owner = Group.objects.get(name = "Owner")
-        owner.user_set.add(self.user)
-
-        officer = Group.objects.get(name = "Officer")
-        other_user = User.objects.get(username = 'janedoe@example.org')
-        officer.user_set.add(other_user)
+        self.other_user = User.objects.get(username = 'janedoe@example.org')
 
         member = Group.objects.get(name = "Member")
-        member_user = User.objects.get(username = "petrapickles@example.org")
-        member.user_set.add(member_user)
+        member.user_set.add(self.user)
+        member.user_set.add(self.other_user)
+
+        officer = Group.objects.get(name = "Officer")
+        member.user_set.add(self.user)
+        officer.user_set.add(self.other_user)
+
+        owner = Group.objects.get(name = "Owner")
+        member.user_set.add(self.user)
+        owner.user_set.add(self.user)
 
 
-
-        applicant = Group.objects.get(name = "Applicant")
-        applicant_user = User.objects.get(username = "peterpickles@example.org")
-        applicant.user_set.add(applicant_user)
-
-
-        other_user_officer = self.assertIn(self.officer,self.other_user)
+        
         
 
     def test_owner_url(self):
         self.assertEqual(self.url,'/owner/')
+
+    def test_get_owner(self):
+        response = self.client.url
+        self.assertEqual(response.status_code,200)
+        self.assertTemplateUsed('owner.html')
 
     
     """inherit from officer test"""
@@ -57,7 +58,11 @@ class UserFormTestCase(TestCase):
         self.officer.user_set.remove(self.other_user)
         self.assertFalse(self.other_user.groups.filter(name='Officer').exists())
         self.owner.user_set.add(self.other_user)
-        self.assertNotIn(self.owner,self.other_user)
+        self.assertFalse(self.other_user.groups.filter(name='Owner').exists())  
+        response = self.client.post(self.url,self.other_user.id)
+        response_url = reverse('member_list')
+        self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
+        self.assertTemplateUsed(response,'member_list.html')
 
     
     def test_officer_can_be_promoted(self):
@@ -67,6 +72,10 @@ class UserFormTestCase(TestCase):
 
 
     def test_owner_change(self):
+        response = self.client.post(self.url,self.other_user.id,follow=True)
+        response_url = reverse('log_in')
+        self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
+        self.assertTemplateUsed('log_in.html')
         owners = self.owner.user_set.getAll.toList
         current_owner = owners[0]
         self.owner.user_set.add(self.other_user)
