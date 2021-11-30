@@ -167,7 +167,7 @@ def owner_member_list(request):
     return render(request, 'owner_member_list.html', {'users': users})
 
 @login_required
-def newOwner(request,user_id):
+def newOwner(request, user_id):
     user = get_user_model()
     user = User.objects.get(id = user_id)
     officer = Group.objects.get(name = "Owner")
@@ -184,7 +184,7 @@ def newOwner(request,user_id):
         return redirect('show_user')
 
 @login_required
-def promote_member(request,user_id):
+def promote_member(request, user_id):
     user = get_user_model()
     user = User.objects.get(id = user_id)
     officer = Group.objects.get(name = "Officer")
@@ -194,9 +194,11 @@ def promote_member(request,user_id):
     return redirect('owner_member_list')
 
 @login_required
-def demoteOfficer(request,user_id):
+def demote_officer(request, user_id):
     user = get_user_model()
     user = User.objects.get(id = user_id)
     officer = Group.objects.get(name = "Officer")
     officer.user_set.remove(user)
+    member = Group.objects.get(name = 'Member')
+    member.user_set.add(user)
     return redirect('officer_list')

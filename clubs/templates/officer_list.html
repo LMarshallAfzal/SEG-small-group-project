@@ -20,6 +20,11 @@
                   {% include 'partials/bootstrap_form.html' with form=form %}
                   <input type = "submit" value = "Go to profile" class="btn btn-primary">
                 </form>
+                <form action="{% url 'demote_officer' user.id %}" method="post">
+                  {% csrf_token %}
+                  {% include 'partials/bootstrap_form.html' with form=form %}
+                  <td> <input type = "submit" value = "Demote to member" class = "btn btn-primary" name="demote to member"></td>
+                </form>
               </td>
             </tr>
         {% endfor %}
