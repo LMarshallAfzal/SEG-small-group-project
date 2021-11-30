@@ -13,6 +13,7 @@ from django.http import HttpResponseForbidden
 from .models import User
 from django.shortcuts import redirect, render
 from .helpers import login_prohibited
+from django.db.models import Count
 
 
 @login_prohibited
@@ -40,7 +41,8 @@ def log_in(request):
                     pass
                     """View for applicant"""
                 elif user.groups.filter(name = 'Applicant'):
-                    pass
+                    login(request, user)
+                    return redirect('show_current_user_profile')
         #Add error message here
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     form = LogInForm()
@@ -66,8 +68,10 @@ def sign_up(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
+            group = Group.objects.get(name = 'Applicant')
+            user.groups.add(group)
             login(request, user)
-            return redirect('profile')#should be an applicant page
+            return redirect('profile')
     else:
         form = SignUpForm()
     return render(request, 'sign_up.html', {'form': form})
@@ -85,12 +89,10 @@ def profile(request):
         form = UserForm(instance=current_user)
     return render(request, 'profile.html', {'form': form})
 
-@login_required
 def member_list(request):
     users = User.objects.filter(groups__name__in=['Owner', 'Member', 'Officer'])
     return render(request, 'member_list.html', {'users': users})
 
-@login_required
 def show_user(request, user_id):
     User = get_user_model()
     user = User.objects.get(id = user_id)
@@ -105,7 +107,9 @@ def show_user_officer(request, user_id):
 @login_required
 def officer(request):
     users = User.objects.all()
-    return render(request, 'officer.html', {'users': users})
+    number_of_applicants = User.objects.filter(groups__name = 'Applicant').count()
+    number_of_members = User.objects.filter(groups__name__in = ['Owner','Member','Officer']).count()
+    return render(request, 'officer.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members})
 
 @login_required
 def officer_main(request):
@@ -155,6 +159,7 @@ def newOwner(request,user_id):
         logout(request)
         return redirect('log_in')
        
+
     else:
         messages.add_message(request, messages.ERROR, "New owner has to be an officer!")
         return redirect('member_list')
