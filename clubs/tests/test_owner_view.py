@@ -47,15 +47,15 @@ class UserFormTestCase(TestCase):
         self.assertEqual(self.url,'/owner/')
 
     
-    
+    """inherit from officer test"""
     def test_promote_member(self):
-        pass
+            pass
         
 
     
     def test_can_only_promote_officer_to_owner(self):
         self.officer.user_set.remove(self.other_user)
-        self.assertFalse(self.other_user_officer)
+        self.assertFalse(self.other_user.groups.filter(name='Officer').exists())
         self.owner.user_set.add(self.other_user)
         self.assertNotIn(self.owner,self.other_user)
 
@@ -63,7 +63,7 @@ class UserFormTestCase(TestCase):
     def test_officer_can_be_promoted(self):
         self.assertTrue(self.other_user_officer)
         self.owner.user_set.add(self.other_user)
-        self.assertIn(self.owner,self.other_user)
+        self.assertTrue(self.user.groups.filter(name='Owner').exists())
 
 
     def test_owner_change(self):
@@ -71,7 +71,7 @@ class UserFormTestCase(TestCase):
         current_owner = owners[0]
         self.owner.user_set.add(self.other_user)
         self.owner.user_set.remove(current_owner)
-        owner_count = self.owner.user_set.count
+        owner_count = len((self.owner.user_set.all()).toList)
         self.assertEqual(owner_count,1)
         owners = self.owner.user_set.getAll.toList
         current_owner = owners[0]
