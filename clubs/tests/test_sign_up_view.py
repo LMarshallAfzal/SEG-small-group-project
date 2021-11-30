@@ -9,6 +9,7 @@ class SignUpViewTestCase(TestCase, LogInTester):
 
     def setUp(self):
         self.url = reverse('sign_up')
+        self.user = User.objects.get("johndoe@example.org")
         self.form_input = {
             'first_name': 'Jack',
             'last_name': 'Henwood',
