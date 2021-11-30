@@ -36,10 +36,8 @@ class LogInFormTestCase(TestCase):
 
     
     def test_get_log_in_with_redirect(self):
-        member = Group.objects.get(name = "member")
-        check_membership = self.assertIn(self.user,member)
 
-        if(check_membership):
+        if(self.user.groups.filter(name = 'Member')):
             destination_url = reverse('member_list')
         
         else:
