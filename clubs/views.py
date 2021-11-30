@@ -49,6 +49,7 @@ def log_in(request):
     next = request.GET.get('next') or 'officer'
     return render(request, 'log_in.html', {'form': form, 'next' : next})
 
+@login_required
 def log_out(request):
     logout(request)
     return redirect('home')
@@ -119,7 +120,7 @@ def officer_main(request):
 
 @login_required
 def officer_promote_applicants(request):
-    users = User.objects.filter(groups__name = 'Applicant');
+    users = User.objects.filter(groups__name = 'Applicant')
     return render(request, 'officer_promote_applicants.html', {'users': users})
 
 def reject_accept_handler(request, user_id):
@@ -149,7 +150,7 @@ def reject(request, user_id):
 def newOwner(request,user_id):
     user = get_user_model()
     user = User.objects.get(id = user_id)
-    officer = Group.objects.get(name = "Owner")
+    owner = Group.objects.get(name = "Owner")
     if user in officer.user_set:
         owner = Group.objects.get(name = "Owner")
         owners = List(Group.objects.getAll(name = "Owner"))
@@ -158,7 +159,6 @@ def newOwner(request,user_id):
         owner.user_set.remove(current_owner)
         logout(request)
         return redirect('login')
-
     else:
         messages.add_message(request, messages.ERROR, "New owner has to be an officer!")
         return redirect('show_user')
@@ -177,7 +177,8 @@ def demoteOfficer(request,user_id):
     user = User.objects.get(id = user_id)
     officer = Group.objects.get(name = "Officer")
     officer.user_set.remove(user)
-    return redirect('show_user')    
+    return redirect('show_user')
+    
 
 @login_required
 def owner(request):
