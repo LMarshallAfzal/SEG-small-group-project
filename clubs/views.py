@@ -41,7 +41,8 @@ def log_in(request):
                     pass
                     """View for applicant"""
                 elif user.groups.filter(name = 'Applicant'):
-                    pass
+                    login(request, user)
+                    return redirect('show_current_user_profile')
         #Add error message here
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     form = LogInForm()
@@ -68,8 +69,10 @@ def sign_up(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
+            group = Group.objects.get(name = 'Applicant')
+            user.groups.add(group)
             login(request, user)
-            return redirect('profile')#should be an applicant page
+            return redirect('profile')
     else:
         form = SignUpForm()
     return render(request, 'sign_up.html', {'form': form})
@@ -87,12 +90,10 @@ def profile(request):
         form = UserForm(instance=current_user)
     return render(request, 'profile.html', {'form': form})
 
-@login_required
 def member_list(request):
     users = User.objects.filter(groups__name__in=['Owner', 'Member', 'Officer'])
     return render(request, 'member_list.html', {'users': users})
 
-@login_required
 def show_user(request, user_id):
     User = get_user_model()
     user = User.objects.get(id = user_id)
@@ -157,8 +158,8 @@ def newOwner(request,user_id):
         owner.user_set.add(user)
         owner.user_set.remove(current_owner)
         logout(request)
+fix-user-profile-01
         return redirect('login')
-       
     else:
         messages.add_message(request, messages.ERROR, "New owner has to be an officer!")
         return redirect('show_user')
@@ -182,4 +183,4 @@ def demoteOfficer(request,user_id):
 
 @login_required
 def owner(request):
-    return (request)
+
