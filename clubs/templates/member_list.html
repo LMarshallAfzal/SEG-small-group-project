@@ -11,8 +11,10 @@
               <img src="{{ user.mini_gravatar }}" alt="Gravatar of {{ user.first_name }}" class="rounded-circle" >
             </td>
             <td>{{ user.full_name }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.experience_level }}</td>
+              {% if user.perms.can_access_full_member_list %}
+                <td>{{ user.email }}</td>
+                <td>{{ user.experience_level }}</td>
+              {% endif %}
             <td>
               <form action = "{% url 'show_user' user.id %}" method = "post">
                 {% csrf_token %}
