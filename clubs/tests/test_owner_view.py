@@ -37,7 +37,7 @@ class UserFormTestCase(TestCase):
 
         applicant = Group.objects.get(name = "Applicant")
         applicant_user = User.objects.get(username = "peterpickles@example.org")
-        applicant.user_set.add(member_user)
+        applicant.user_set.add(applicant_user)
 
 
         other_user_officer = self.assertIn(self.officer,self.other_user)
