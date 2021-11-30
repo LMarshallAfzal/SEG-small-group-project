@@ -38,7 +38,8 @@ def log_in(request):
                     #return redirect('show_current_user_profile')
                     """View for owner"""
                 elif user.groups.filter(name = 'Owner'):
-                    pass
+                    login(request, user)
+                    return redirect('owner')
                     """View for applicant"""
                 elif user.groups.filter(name = 'Applicant'):
                     login(request, user)
@@ -146,6 +147,26 @@ def reject(request, user_id):
     #return redirect('officer_main')
 
 @login_required
+def owner(request):
+    users = User.objects.all()
+    number_of_applicants = User.objects.filter(groups__name = 'Applicant').count()
+    number_of_members = User.objects.filter(groups__name__in = ['Owner','Member']).count()
+    number_of_officers = User.objects.filter(groups__name = 'Officer').count()
+    return render(request, 'owner.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers})
+
+@login_required
+def officer_list(request):
+    users = User.objects.filter(groups__name = 'Officer')
+    groups = Group.objects.all()
+    return render(request, 'officer_list.html', {'users': users})
+
+@login_required
+def owner_member_list(request):
+    users = User.objects.filter(groups__name = 'Member')
+    groups = Group.objects.all()
+    return render(request, 'owner_member_list.html', {'users': users})
+
+@login_required
 def newOwner(request,user_id):
     user = get_user_model()
     user = User.objects.get(id = user_id)
@@ -163,12 +184,14 @@ def newOwner(request,user_id):
         return redirect('show_user')
 
 @login_required
-def promoteOfficer(request,user_id):
+def promote_member(request,user_id):
     user = get_user_model()
     user = User.objects.get(id = user_id)
     officer = Group.objects.get(name = "Officer")
     officer.user_set.add(user)
-    return redirect('show_user')
+    member = Group.objects.get(name = 'Member')
+    member.user_set.remove(user)
+    return redirect('owner_member_list')
 
 @login_required
 def demoteOfficer(request,user_id):
@@ -176,4 +199,4 @@ def demoteOfficer(request,user_id):
     user = User.objects.get(id = user_id)
     officer = Group.objects.get(name = "Officer")
     officer.user_set.remove(user)
-    return redirect('show_user')
+    return redirect('officer_list')
