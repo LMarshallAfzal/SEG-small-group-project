@@ -157,11 +157,8 @@ def newOwner(request,user_id):
         owner.user_set.add(user)
         owner.user_set.remove(current_owner)
         logout(request)
-<<<<<<< HEAD
         return redirect('login')
-=======
-        return redirect('home')
->>>>>>> 38c45cc1021c89d4bd96212894b13318d23d0388
+
     else:
         messages.add_message(request, messages.ERROR, "New owner has to be an officer!")
         return redirect('show_user')
@@ -180,12 +177,8 @@ def demoteOfficer(request,user_id):
     user = User.objects.get(id = user_id)
     officer = Group.objects.get(name = "Officer")
     officer.user_set.remove(user)
-    return redirect('show_user')
-<<<<<<< HEAD
-    
+    return redirect('show_user')    
 
 @login_required
 def owner(request):
     pass
-=======
->>>>>>> 38c45cc1021c89d4bd96212894b13318d23d0388
