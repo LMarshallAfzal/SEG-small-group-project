@@ -58,6 +58,7 @@ class UserFormTestCase(TestCase):
         
 
     
+<<<<<<< HEAD
     def test_cannnot_promote_member_to_owner(self):
         self.assertFalse(self.member_user.groups.filter(name='Officer').exists())
         self.assertTrue(self.member_user.groups.filter(name='Member').exists())
@@ -82,12 +83,24 @@ class UserFormTestCase(TestCase):
         response_url = reverse('owner_member_list')
         self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
         self.assertTemplateUsed(response,'owner_member_list.html')
+=======
+    def test_can_only_promote_officer_to_owner(self):
+        self.officer.user_set.remove(self.other_user)
+        self.assertFalse(self.other_user.groups.filter(name='Officer').exists())
+        self.owner.user_set.add(self.other_user)
+        self.assertFalse(self.other_user.groups.filter(name='Owner').exists())  
+        response = self.client.post(self.url,self.other_user.id)
+        response_url = reverse('member_list')
+        self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
+        self.assertTemplateUsed(response,'member_list.html')
+>>>>>>> 949387b2c3012ad290f19844a145447b8eea7ce3
 
     
     def test_officer_can_be_promoted(self):
         self.assertTrue(self.other_user_officer)
         self.owner.user_set.add(self.other_user)
         self.assertTrue(self.user.groups.filter(name='Owner').exists())
+<<<<<<< HEAD
 
 
     def test_officer_can_be_demoted(self):
@@ -98,6 +111,8 @@ class UserFormTestCase(TestCase):
         response_url = reverse('officer_list')
         self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
         self.assertTemplateUsed(response,'officer_list.html')
+=======
+>>>>>>> 949387b2c3012ad290f19844a145447b8eea7ce3
 
 
     def test_owner_change(self):
