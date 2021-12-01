@@ -138,9 +138,6 @@ AUTH_USER_MODEL = 'clubs.User'
 # Login URL for redirecting users from login protected views
 LOGIN_URL = 'log_in'
 
-#Owner URL for redirecting users from owner protected views
-REDIRECT_URL_WHEN_OWNER = 'owner'
-
 # URL where @login_prohibited redirects to
 REDIRECT_URL_WHEN_LOGGED_IN = 'show_current_user_profile'
 

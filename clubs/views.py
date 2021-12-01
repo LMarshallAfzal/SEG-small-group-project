@@ -15,16 +15,6 @@ from django.shortcuts import redirect, render
 from .helpers import login_prohibited
 from django.db.models import Count
 
-
-def owner_prohibited(view_function):
-    def modified_view_function(request):
-        if request.user.groups.filter(name='Owner').exists():
-            return redirect('owner')
-        else:
-            return view_function
-    return modified_view_function
-
-
 @login_prohibited
 def log_in(request):
     if request.method == 'POST':
@@ -160,8 +150,6 @@ def reject_accept_handler(request, user_id):
     return redirect('officer_promote_applicants')
 
 
-def owner(request):
-    pass
 
 def accept(request, user_id):
     User = get_user_model()
@@ -179,7 +167,6 @@ def reject(request, user_id):
     #return redirect('officer_main')
 
 @login_required
-@owner_prohibited
 def owner(request):
     users = User.objects.all()
     number_of_applicants = User.objects.filter(groups__name = 'Applicant').count()
