@@ -75,7 +75,7 @@ class SignUpFormTestCase(TestCase):
         user = User.objects.get(first_name = 'Jack')
         self.assertEqual(user.first_name, 'Jack')
         self.assertEqual(user.last_name, 'Henwood')
-        self.assertEqual(user.email, 'jackhenwood@example.org')
+        self.assertEqual(user.username, 'jackhenwood@example.org')
         self.assertEqual(user.bio, 'My bio')
         self.assertEqual(user.experience_level, 'Beginner')
         self.assertEqual(user.personal_statement, 'My personal statement!')

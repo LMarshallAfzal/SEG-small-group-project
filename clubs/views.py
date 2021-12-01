@@ -2,7 +2,7 @@ from typing import List
 from .models import User
 from django import template
 from django.shortcuts import render
-from .forms import LogInForm, SignUpForm, UserForm
+from .forms import LogInForm, SignUpForm, UserForm, PasswordForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
@@ -59,6 +59,7 @@ def log_in(request):
     next = request.GET.get('next') or 'officer'
     return render(request, 'log_in.html', {'form': form, 'next' : next})
 
+@login_required
 def log_out(request):
     logout(request)
     return redirect('home')
@@ -92,12 +93,30 @@ def profile(request):
     if request.method == 'POST':
         form = UserForm(instance=current_user, data=request.POST)
         if form.is_valid():
+            current_user.username = form.cleaned_data.get('email')
             messages.add_message(request, messages.SUCCESS, "Profile updated!")
             form.save()
             return redirect('profile')#depends on the user type
     else:
         form = UserForm(instance=current_user)
     return render(request, 'profile.html', {'form': form})
+
+@login_required
+def password(request):
+    current_user = request.user
+    if request.method == 'POST':
+        form = PasswordForm(data=request.POST)
+        if form.is_valid():
+            password = form.cleaned_data.get('password')
+            if check_password(password, current_user.password):
+                new_password = form.cleaned_data.get('new_password')
+                current_user.set_password(new_password)
+                current_user.save()
+                login(request, current_user)
+                messages.add_message(request, messages.SUCCESS, "Password updated!")
+                return redirect('show_current_user_profile')
+    form = PasswordForm()
+    return render(request, 'password.html', {'form': form})
 
 def member_list(request):
     users = User.objects.filter(groups__name__in=['Owner', 'Member', 'Officer'])
