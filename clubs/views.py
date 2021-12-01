@@ -38,7 +38,8 @@ def log_in(request):
                     #return redirect('show_current_user_profile')
                     """View for owner"""
                 elif user.groups.filter(name = 'Owner'):
-                    pass
+                    login(request, user)
+                    return redirect('owner')
                     """View for applicant"""
                 elif user.groups.filter(name = 'Applicant'):
                     login(request, user)
@@ -49,7 +50,6 @@ def log_in(request):
     next = request.GET.get('next') or 'officer'
     return render(request, 'log_in.html', {'form': form, 'next' : next})
 
-@login_required
 def log_out(request):
     logout(request)
     return redirect('home')
@@ -120,7 +120,7 @@ def officer_main(request):
 
 @login_required
 def officer_promote_applicants(request):
-    users = User.objects.filter(groups__name = 'Applicant')
+    users = User.objects.filter(groups__name = 'Applicant');
     return render(request, 'officer_promote_applicants.html', {'users': users})
 
 def reject_accept_handler(request, user_id):
@@ -151,10 +151,32 @@ def reject(request, user_id):
     #return redirect('officer_main')
 
 @login_required
-def newOwner(request,user_id):
+def owner(request):
+    users = User.objects.all()
+    number_of_applicants = User.objects.filter(groups__name = 'Applicant').count()
+    number_of_members = User.objects.filter(groups__name__in = ['Owner','Member']).count()
+    number_of_officers = User.objects.filter(groups__name = 'Officer').count()
+    return render(request, 'owner.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers})
+
+@login_required
+def officer_list(request):
+    users = User.objects.filter(groups__name = 'Officer')
+    groups = Group.objects.all()
+    return render(request, 'officer_list.html', {'users': users})
+
+@login_required
+def owner_member_list(request):
+    users = User.objects.filter(groups__name = 'Member')
+    groups = Group.objects.all()
+    return render(request, 'owner_member_list.html', {'users': users})
+
+@login_required
+def transfer_ownership(request, user_id):
     user = get_user_model()
     user = User.objects.get(id = user_id)
+    officer = Group.objects.get(name = "Officer")
     owner = Group.objects.get(name = "Owner")
+<<<<<<< HEAD
     if user in officer.user_set:
         owner = Group.objects.get(name = "Owner")
         owners = List(Group.objects.getAll(name = "Owner"))
@@ -169,21 +191,39 @@ def newOwner(request,user_id):
 
 @login_required
 def promote_to_Officer(request,user_id):
+=======
+    current_owner = User.objects.get(username = request.user.get_username())
+    owner.user_set.add(user)
+    owner.user_set.remove(current_owner)
+    officer.user_set.add(current_owner)
+    officer.user_set.remove(user)
+    logout(request)
+    return redirect('home')
+    # else:
+    #     messages.add_message(request, messages.ERROR, "New owner has to be an officer!")
+    #     return redirect('show_user')
+
+@login_required
+def promote_member(request, user_id):
+>>>>>>> c9f06e3b9d7b712b830f46140dca76fa9e477203
     user = get_user_model()
     user = User.objects.get(id = user_id)
     officer = Group.objects.get(name = "Officer")
     officer.user_set.add(user)
-    return redirect('show_user')
+    member = Group.objects.get(name = 'Member')
+    member.user_set.remove(user)
+    return redirect('owner_member_list')
 
 @login_required
+<<<<<<< HEAD
 def demote_from_Officer(request,user_id):
+=======
+def demote_officer(request, user_id):
+>>>>>>> c9f06e3b9d7b712b830f46140dca76fa9e477203
     user = get_user_model()
     user = User.objects.get(id = user_id)
     officer = Group.objects.get(name = "Officer")
     officer.user_set.remove(user)
-    return redirect('show_user')
-    
-
-@login_required
-def owner(request):
-
+    member = Group.objects.get(name = 'Member')
+    member.user_set.add(user)
+    return redirect('officer_list')
