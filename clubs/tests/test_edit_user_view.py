@@ -28,10 +28,10 @@ class ProfileViewTest(TestCase):
         }
 
     def test_profile_url(self):
-        self.assertEqual(self.url, '/profile')
+        self.assertEqual(self.url, '/profile/')
 
     def test_get_profile(self):
-        self.client.login(username=self.user.email, password='Password123')
+        self.client.login(username=self.user.username, password='Password123')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'profile.html')
@@ -56,13 +56,12 @@ class ProfileViewTest(TestCase):
         self.assertEqual(self.user.username, 'johndoe@example.org')
         self.assertEqual(self.user.first_name, 'John')
         self.assertEqual(self.user.last_name, 'Doe')
-        self.assertEqual(self.user.email, 'johndoe@example.org')
         self.assertEqual(self.user.bio, "John Doe from example.org")
         self.assertEqual(self.user.experience_level, "Beginner")
         self.assertEqual(self.user.personal_statement, "I love chess")
 
     def test_unsuccessful_profile_update_due_to_duplicate_username(self):
-        self.client.login(username=self.user.email, password='Password123')
+        self.client.login(username=self.user.username, password='Password123')
         self.form_input['email'] = 'janedoe@example.org'
         before_count = User.objects.count()
         response = self.client.post(self.url, self.form_input)
@@ -76,7 +75,7 @@ class ProfileViewTest(TestCase):
         self.assertEqual(self.user.username, 'johndoe@example.org')
         self.assertEqual(self.user.first_name, 'John')
         self.assertEqual(self.user.last_name, 'Doe')
-        self.assertEqual(self.user.email, 'johndoe@example.org')
+        self.assertEqual(self.user.username, 'johndoe@example.org')
         self.assertEqual(self.user.bio, "John Doe from example.org")
         self.assertEqual(self.user.experience_level, "Beginner")
         self.assertEqual(self.user.personal_statement, "I love chess")
@@ -94,14 +93,13 @@ class ProfileViewTest(TestCase):
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
         self.user.refresh_from_db()
-        #self.assertEqual(self.user.username, 'johndoe2@example.org')
         self.assertEqual(self.user.first_name, 'John2')
         self.assertEqual(self.user.last_name, 'Doe2')
         self.assertEqual(self.user.email, 'johndoe2@example.org')
+        self.assertEqual(self.user.username, 'johndoe2@example.org')
         self.assertEqual(self.user.bio, "My bio")
         self.assertEqual(self.user.experience_level, "Beginner")
         self.assertEqual(self.user.personal_statement, "I enjoy chess")
-        #self.assertEqual(self.user.username,self.user.email)
 
     def test_post_profile_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)

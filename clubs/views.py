@@ -84,6 +84,7 @@ def profile(request):
     if request.method == 'POST':
         form = UserForm(instance=current_user, data=request.POST)
         if form.is_valid():
+            current_user.username = form.cleaned_data.get('email')
             messages.add_message(request, messages.SUCCESS, "Profile updated!")
             form.save()
             return redirect('profile')#depends on the user type

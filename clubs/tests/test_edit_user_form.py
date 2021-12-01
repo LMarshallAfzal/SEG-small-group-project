@@ -42,7 +42,7 @@ class UserFormTestCase(TestCase):
         self.assertFalse(form.is_valid())
 
     def test_form_must_save_correctly(self):
-        user = User.objects.get(username='johndoe@example.org')
+        user = User.objects.get(email='johndoe@example.org')
         form = UserForm(instance=user, data=self.form_input)
         before_count = User.objects.count()
         form.save()

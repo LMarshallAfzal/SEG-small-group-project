@@ -9,7 +9,6 @@ class SignUpViewTestCase(TestCase, LogInTester):
 
     def setUp(self):
         self.url = reverse('sign_up')
-        self.user = User.objects.get("johndoe@example.org")
         self.form_input = {
             'first_name': 'Jack',
             'last_name': 'Henwood',
@@ -47,7 +46,7 @@ class SignUpViewTestCase(TestCase, LogInTester):
 
     def test_successful_sign_up(self):
         before_count = User.objects.count()
-        response = self.client.post(self.url, self.form_input, follow = True)
+        response = self.client.post(self.url, self.form_input,follow=True)
         after_count = User.objects.count()
         self.assertEqual(after_count, before_count + 1)
         response_url = reverse('profile')
