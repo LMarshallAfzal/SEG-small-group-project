@@ -3,7 +3,7 @@
 <div class="container">
   <div class="row">
     <div class="col-12">
-      <h1>Applicants</h1>
+      <h1>Members</h1>
       <table class="table table-striped table-hover">
         {% for user in users %}
           <tr>
@@ -11,19 +11,24 @@
                 <img src="{{ user.mini_gravatar }}" alt="Gravatar of {{ user.first_name }}" class="rounded-circle" >
               </td>
               <td>{{ user.full_name }}</td>
-              <td>{{ user.first_name }} {{ user.last_name }}</td>
               <td>{{ user.email }}</td>
               <td>{{ user.experience_level }}</td>
               <td>
-                <form action="{% url 'officer_promote_applicants' user.id %}" method = "post">
+                <form action = "{% url 'show_user_officer' user.id %}" method = "post">
                   {% csrf_token %}
+                  <input type = "hidden" name = "next" value = "{{ next }}">
                   {% include 'partials/bootstrap_form.html' with form=form %}
-                  <td><input type = "submit" value = "Accept" class = "btn btn-success" name="accept"></td>
+                  <input type = "submit" value = "Go to profile" class="btn btn-primary">
                 </form>
-                <form action="{% url 'officer_promote_applicants' user.id %}" method = "post">
+                <form action="{% url 'demote_officer' user.id %}" method="post">
                   {% csrf_token %}
                   {% include 'partials/bootstrap_form.html' with form=form %}
-                  <td><input type = "submit" value = "Reject" class = "btn btn-danger" name="reject"></td>
+                  <td> <input type = "submit" value = "Demote to member" class = "btn btn-primary" name="demote to member"></td>
+                </form>
+                <form action="{% url 'transfer_ownership' user.id %}" method="post">
+                  {% csrf_token %}
+                  {% include 'partials/bootstrap_form.html' with form=form %}
+                  <td> <input type = "submit" value = "Make club owner" class = "btn btn-primary" name="make club owner"></td>
                 </form>
               </td>
             </tr>
