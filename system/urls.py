@@ -33,6 +33,7 @@ urlpatterns = [
     path('officer_main/', views.officer_main, name = 'officer_main'),
     path('reject_accept_handler/<int:user_id>', views.reject_accept_handler, name = 'officer_promote_applicants'),
     path('profile/',views.profile,name = 'profile'),
+    path('password/', views.password, name='password'),
     path('owner/', views.owner, name = 'owner'),
     path('officer_list/', views.officer_list, name = 'officer_list'),
     path('owner_member_list', views.owner_member_list, name = 'owner_member_list'),
