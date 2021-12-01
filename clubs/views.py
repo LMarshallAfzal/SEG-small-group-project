@@ -105,7 +105,7 @@ def password(request):
                 current_user.save()
                 login(request, current_user)
                 messages.add_message(request, messages.SUCCESS, "Password updated!")
-                return redirect('show_current_user_profile')
+                return redirect('profile')
     form = PasswordForm()
     return render(request, 'password.html', {'form': form})
 
