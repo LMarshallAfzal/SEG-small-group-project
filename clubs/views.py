@@ -167,21 +167,21 @@ def owner_member_list(request):
     return render(request, 'owner_member_list.html', {'users': users})
 
 @login_required
-def newOwner(request, user_id):
+def transfer_ownership(request, user_id):
     user = get_user_model()
     user = User.objects.get(id = user_id)
-    officer = Group.objects.get(name = "Owner")
-    if user in officer.user_set:
-        owner = Group.objects.get(name = "Owner")
-        owners = List(Group.objects.getAll(name = "Owner"))
-        current_owner = owners[0]
-        owner.user_set.add(user)
-        owner.user_set.remove(current_owner)
-        logout(request)
-        return redirect('home')
-    else:
-        messages.add_message(request, messages.ERROR, "New owner has to be an officer!")
-        return redirect('show_user')
+    officer = Group.objects.get(name = "Officer")
+    owner = Group.objects.get(name = "Owner")
+    current_owner = User.objects.get(username = request.user.get_username())
+    owner.user_set.add(user)
+    owner.user_set.remove(current_owner)
+    officer.user_set.add(current_owner)
+    officer.user_set.remove(user)
+    logout(request)
+    return redirect('home')
+    # else:
+    #     messages.add_message(request, messages.ERROR, "New owner has to be an officer!")
+    #     return redirect('show_user')
 
 @login_required
 def promote_member(request, user_id):

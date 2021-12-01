@@ -25,6 +25,11 @@
                   {% include 'partials/bootstrap_form.html' with form=form %}
                   <td> <input type = "submit" value = "Demote to member" class = "btn btn-primary" name="demote to member"></td>
                 </form>
+                <form action="{% url 'transfer_ownership' user.id %}" method="post">
+                  {% csrf_token %}
+                  {% include 'partials/bootstrap_form.html' with form=form %}
+                  <td> <input type = "submit" value = "Make club owner" class = "btn btn-primary" name="make club owner"></td>
+                </form>
               </td>
             </tr>
         {% endfor %}
