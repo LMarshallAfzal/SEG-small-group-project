@@ -15,7 +15,7 @@ class Command(BaseCommand):
         self.faker = Faker('en_GB')
 
     def handle(self, *args, **options):
-        if not User.objects.get(username="jeb@example.org").exists() or User.objects.get(username="val@example.org") or User.objects.get(username="billie@example.org":)
+        if not User.objects.get(username="jeb@example.org").exists() or User.objects.get(username="val@example.org") or User.objects.get(username="billie@example.org"):
             Jebediah = User.objects.create_user(
                 username = "jeb@example.org",
                 first_name = "Jebediah",
