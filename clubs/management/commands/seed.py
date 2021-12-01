@@ -15,44 +15,45 @@ class Command(BaseCommand):
         self.faker = Faker('en_GB')
 
     def handle(self, *args, **options):
-        Jebediah = User.objects.create_user(
-            username = "jeb@example.org",
-            first_name = "Jebediah",
-            last_name = "Kerman",
-            email = "jeb@example.org",
-            password = "Password123",
-            bio = self.faker.unique.text(max_nb_chars = 520),
-            personal_statement = self.faker.text(max_nb_chars = 1250),
-        )
+        if not User.objects.get(username="jeb@example.org").exists() or User.objects.get(username="val@example.org") or User.objects.get(username="billie@example.org":)
+            Jebediah = User.objects.create_user(
+                username = "jeb@example.org",
+                first_name = "Jebediah",
+                last_name = "Kerman",
+                email = "jeb@example.org",
+                password = "Password123",
+                bio = self.faker.unique.text(max_nb_chars = 520),
+                personal_statement = self.faker.text(max_nb_chars = 1250),
+            )
 
-        group = Group.objects.get(name = 'Member')
-        Jebediah.groups.add(group)
+            group = Group.objects.get(name = 'Member')
+            Jebediah.groups.add(group)
 
-        Valentina = User.objects.create_user(
-            username = "val@example.org",
-            first_name = "Valentina",
-            last_name = "Kerman",
-            email = "val@example.org",
-            password = "Password123",
-            bio = self.faker.unique.text(max_nb_chars = 520),
-            personal_statement = self.faker.text(max_nb_chars = 1250),
-        )
+            Valentina = User.objects.create_user(
+                username = "val@example.org",
+                first_name = "Valentina",
+                last_name = "Kerman",
+                email = "val@example.org",
+                password = "Password123",
+                bio = self.faker.unique.text(max_nb_chars = 520),
+                personal_statement = self.faker.text(max_nb_chars = 1250),
+            )
 
-        group = Group.objects.get(name = 'Officer')
-        Valentina.groups.add(group)
+            group = Group.objects.get(name = 'Officer')
+            Valentina.groups.add(group)
 
-        Billie = User.objects.create_user(
-            username = "billie@example.org",
-            first_name = "Billie",
-            last_name = "Kerman",
-            email = "billie@example.org",
-            password = "Password123",
-            bio = self.faker.unique.text(max_nb_chars = 520),
-            personal_statement = self.faker.text(max_nb_chars = 1250),
-        )
+            Billie = User.objects.create_user(
+                username = "billie@example.org",
+                first_name = "Billie",
+                last_name = "Kerman",
+                email = "billie@example.org",
+                password = "Password123",
+                bio = self.faker.unique.text(max_nb_chars = 520),
+                personal_statement = self.faker.text(max_nb_chars = 1250),
+            )
 
-        group = Group.objects.get(name = 'Owner')
-        Billie.groups.add(group)
+            group = Group.objects.get(name = 'Owner')
+            Billie.groups.add(group)
 
 
         for _ in range(100):
