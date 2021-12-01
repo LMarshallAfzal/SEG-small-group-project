@@ -1,7 +1,7 @@
 [
     {
       "model": "clubs.user",
-      "pk": 1,
+      "pk": 3,
       "fields": {
         "first_name": "Petra",
         "last_name": "Pickles",
