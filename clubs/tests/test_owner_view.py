@@ -15,7 +15,7 @@ class UserFormTestCase(TestCase):
         'clubs/tests/fixtures/applicant.json',
     ]
     
-
+#To do fix tests
     def setUp(self):
         self.user = User.objects.get(email = "johndoe@example.org")
         self.url = reverse('owner')
@@ -47,6 +47,11 @@ class UserFormTestCase(TestCase):
         response = self.client.url
         self.assertEqual(response.status_code,200)
         self.assertTemplateUsed('owner.html')
+
+    def test_redirect_when_not_owner(self):
+        response = self.client.post(self.url,self.officer_user.id,follow=True)
+        response_url = reverse('officer_list')
+
 
     def test_promote_member_to_officer(self):
         self.assertFalse(self.member_user.groups.filter(name='Officer').exists())

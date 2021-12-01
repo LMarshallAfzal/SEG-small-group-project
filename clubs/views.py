@@ -16,6 +16,15 @@ from .helpers import login_prohibited
 from django.db.models import Count
 
 
+def owner_prohibited(view_function):
+    def modified_view_function(request):
+        if request.user.groups.filter(name='Owner').exists():
+            return redirect('owner')
+        else:
+            return view_function
+    return modified_view_function
+
+
 @login_prohibited
 def log_in(request):
     if request.method == 'POST':
@@ -120,7 +129,7 @@ def officer_main(request):
 
 @login_required
 def officer_promote_applicants(request):
-    users = User.objects.filter(groups__name = 'Applicant');
+    users = User.objects.filter(groups__name = 'Applicant')
     return render(request, 'officer_promote_applicants.html', {'users': users})
 
 def reject_accept_handler(request, user_id):
@@ -151,6 +160,7 @@ def reject(request, user_id):
     #return redirect('officer_main')
 
 @login_required
+@owner_prohibited
 def owner(request):
     users = User.objects.all()
     number_of_applicants = User.objects.filter(groups__name = 'Applicant').count()
@@ -182,7 +192,7 @@ def transfer_ownership(request, user_id):
     officer.user_set.add(current_owner)
     officer.user_set.remove(user)
     logout(request)
-    return redirect('home')
+    return redirect('owner')
     # else:
     #     messages.add_message(request, messages.ERROR, "New owner has to be an officer!")
     #     return redirect('show_user')
