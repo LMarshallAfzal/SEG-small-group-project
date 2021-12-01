@@ -5,8 +5,8 @@
       "fields": {
         "first_name": "Jane",
         "last_name": "Doe",
-        "username": "janedoe@example.org",
         "email": "janedoe@example.org",
+        "username": "janedoe@example.org",
         "bio": "Jane Doe from example.org",
         "experience_level": "Beginner", 
         "personal_statement": "I hate chess",

@@ -5,13 +5,14 @@
       "fields": {
         "first_name": "John",
         "last_name": "Doe",
-        "username": "johndoe@example.org",
         "email": "johndoe@example.org",
+        "username": "johndoe@example.org",
         "bio": "John Doe from example.org",
         "experience_level": "Beginner",
         "personal_statement": "I love chess",
         "password": "pbkdf2_sha256$260000$3Y9YEK4dRSndK8dhROvjco$k6VMZMZIerEvlvomufH3IbyLd8h6/G2wRJtmZ5URnr4="
       }
+      
     }
 
   ]
