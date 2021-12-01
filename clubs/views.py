@@ -176,22 +176,6 @@ def transfer_ownership(request, user_id):
     user = User.objects.get(id = user_id)
     officer = Group.objects.get(name = "Officer")
     owner = Group.objects.get(name = "Owner")
-<<<<<<< HEAD
-    if user in officer.user_set:
-        owner = Group.objects.get(name = "Owner")
-        owners = List(Group.objects.getAll(name = "Owner"))
-        current_owner = owners[0]
-        owner.user_set.add(user)
-        owner.user_set.remove(current_owner)
-        logout(request)
-        return redirect('login')
-    else:
-        messages.add_message(request, messages.ERROR, "New owner has to be an officer!")
-        return redirect('member_list')
-
-@login_required
-def promote_to_Officer(request,user_id):
-=======
     current_owner = User.objects.get(username = request.user.get_username())
     owner.user_set.add(user)
     owner.user_set.remove(current_owner)
@@ -205,7 +189,6 @@ def promote_to_Officer(request,user_id):
 
 @login_required
 def promote_member(request, user_id):
->>>>>>> c9f06e3b9d7b712b830f46140dca76fa9e477203
     user = get_user_model()
     user = User.objects.get(id = user_id)
     officer = Group.objects.get(name = "Officer")
@@ -215,11 +198,7 @@ def promote_member(request, user_id):
     return redirect('owner_member_list')
 
 @login_required
-<<<<<<< HEAD
-def demote_from_Officer(request,user_id):
-=======
 def demote_officer(request, user_id):
->>>>>>> c9f06e3b9d7b712b830f46140dca76fa9e477203
     user = get_user_model()
     user = User.objects.get(id = user_id)
     officer = Group.objects.get(name = "Officer")

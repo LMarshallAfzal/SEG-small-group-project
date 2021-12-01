@@ -13,15 +13,19 @@ class UserFormTestCase(TestCase):
     """Unit tests of the user form."""
 
     fixtures = [
-        'clubs/tests/fixtures/default_user.json'
-        'clubs/tests/fixtures/other_user.json'
+        'clubs/tests/fixtures/default_user.json',
+        'clubs/tests/fixtures/other_user.json',
+        'clubs/tests/fixtures/member.json',
+        'clubs/tests/fixtures/applicant.json',
     ]
     
 
     def setUp(self):
-        self.user = User.objects.get(username='johndoe@example.org')
+        self.user = User.objects.get(email = "johndoe@example.org")
         self.url = reverse('owner')
-        self.other_user = User.objects.get(username = 'janedoe@example.org')
+        self.other_user = User.objects.get(email = 'janedoe@example.org')
+        self.member_user = User.objects.get(email = 'petrapickles@example.org')
+        self.applicant_user = User.objects.get(email = 'peterpickles@example.org')
 
         member = Group.objects.get(name = "Member")
         member.user_set.add(self.user)
@@ -54,21 +58,46 @@ class UserFormTestCase(TestCase):
         
 
     
-    def test_can_only_promote_officer_to_owner(self):
-        self.officer.user_set.remove(self.other_user)
-        self.assertFalse(self.other_user.groups.filter(name='Officer').exists())
+    def test_cannnot_promote_member_to_owner(self):
+        self.assertFalse(self.member_user.groups.filter(name='Officer').exists())
+        self.assertTrue(self.member_user.groups.filter(name='Member').exists())
         self.owner.user_set.add(self.other_user)
-        self.assertFalse(self.other_user.groups.filter(name='Owner').exists())  
-        response = self.client.post(self.url,self.other_user.id)
-        response_url = reverse('member_list')
+        self.assertFalse(self.member_user.groups.filter(name='Owner').exists())  
+        self.assertFalse(self.member_user.groups.filter(name='Officer').exists())  
+        response = self.client.post(self.url,self.other_user.id,follow=True)
+        response_url = reverse('owner_member_list')
         self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
-        self.assertTemplateUsed(response,'member_list.html')
+        self.assertTemplateUsed(response,'owner_member_list.html')
+
+
+    def test_cannnot_promote_applicant_to_owner(self):
+        self.assertFalse(self.applicant_user.groups.filter(name='Officer').exists())
+        self.assertFalse(self.applicant_user.groups.filter(name='Member').exists())
+        self.assertTrue(self.applicant_user.groups.filter(name='Applicant').exists())
+        self.owner.user_set.add(self.applicant_user)
+        self.assertFalse(self.applicant_user.groups.filter(name='Owner').exists()) 
+        self.assertFalse(self.applicant_user.groups.filter(name='Officer').exists())  
+        self.assertFalse(self.applicant_user.groups.filter(name='Member').exists())   
+        response = self.client.post(self.url,self.other_user.id,follow=True)
+        response_url = reverse('owner_member_list')
+        self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
+        self.assertTemplateUsed(response,'owner_member_list.html')
 
     
     def test_officer_can_be_promoted(self):
         self.assertTrue(self.other_user_officer)
         self.owner.user_set.add(self.other_user)
         self.assertTrue(self.user.groups.filter(name='Owner').exists())
+
+
+    def test_officer_can_be_demoted(self):
+        self.assertTrue(self.other_user.groups.filter(name='Officer').exists())
+        self.officer.user_set.remove(self.other_user)
+        self.assertFalse(self.other_user.groups.filter(name='Officer').exists())
+        response = self.client.post(self.url,self.other_user.id,follow=True)
+        response_url = reverse('officer_list')
+        self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
+        self.assertTemplateUsed(response,'officer_list.html')
 
 
     def test_owner_change(self):
