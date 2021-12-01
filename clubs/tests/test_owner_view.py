@@ -1,12 +1,8 @@
 """Test of the officer view"""
-from unittest.loader import defaultTestLoader
 from django.contrib import messages
 from django.test import TestCase
 from django.urls import reverse
-from clubs.forms import LogInForm
 from clubs.models import User
-from clubs.views import officer
-from .helpers import LogInTester
 from django.contrib.auth.models import Group
 
 class UserFormTestCase(TestCase):
@@ -23,21 +19,22 @@ class UserFormTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.get(email = "johndoe@example.org")
         self.url = reverse('owner')
-        self.other_user = User.objects.get(email = 'janedoe@example.org')
+        self.officer_user = User.objects.get(email = 'janedoe@example.org')
         self.member_user = User.objects.get(email = 'petrapickles@example.org')
         self.applicant_user = User.objects.get(email = 'peterpickles@example.org')
 
-        member = Group.objects.get(name = "Member")
-        member.user_set.add(self.user)
-        member.user_set.add(self.other_user)
+        owner = Group.objects.get(name = "Owner")
+        owner.user_set.add(self.user)
 
         officer = Group.objects.get(name = "Officer")
-        member.user_set.add(self.user)
-        officer.user_set.add(self.other_user)
+        officer.user_set.add(self.officer_user)
 
-        owner = Group.objects.get(name = "Owner")
-        member.user_set.add(self.user)
-        owner.user_set.add(self.user)
+        member = Group.objects.get(name = "Member")
+        member.user_set.add(self.member_user)
+
+        applicant = Group.objects.get(name = "Applicant")
+        applicant.user_set.add(self.applicant_user)
+
 
 
         
@@ -51,17 +48,34 @@ class UserFormTestCase(TestCase):
         self.assertEqual(response.status_code,200)
         self.assertTemplateUsed('owner.html')
 
-    
-    """inherit from officer test"""
-    def test_promote_member(self):
-            pass
-        
+    def test_promote_member_to_officer(self):
+        self.assertFalse(self.member_user.groups.filter(name='Officer').exists())
+        self.assertTrue(self.member_user.groups.filter(name='Member').exists())
+        self.officer.user_set.add(self.member_user)
+        self.member.user_set.remove(self.member_user)
+        self.assertTrue(self.member_user.groups.filter(name='Officer').exists())  
+        self.assertFalse(self.member_user.groups.filter(name='Member').exists())
+        response = self.client.post(self.url,self.officer_user.id,follow=True)
+        response_url = reverse('officer_list')
+        self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
+        self.assertTemplateUsed(response,'officer_list.html')
+
+    def test_officer_can_be_demoted(self):
+        self.assertTrue(self.officer_user.groups.filter(name='Officer').exists())
+        self.officer.user_set.remove(self.officer_user)
+        self.member.user_set.add(self.officer_user)
+        self.assertFalse(self.officer_user.groups.filter(name='Officer').exists())
+        self.assertTrue(self.officer_user.groups.filter(name='Member').exists())
+        response = self.client.post(self.url,self.officer_user.id,follow=True)
+        response_url = reverse('officer_list')
+        self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
+        self.assertTemplateUsed(response,'officer_list.html')
 
     
     def test_cannnot_promote_member_to_owner(self):
         self.assertFalse(self.member_user.groups.filter(name='Officer').exists())
         self.assertTrue(self.member_user.groups.filter(name='Member').exists())
-        self.owner.user_set.add(self.other_user)
+        self.owner.user_set.add(self.member_user)
         self.assertFalse(self.member_user.groups.filter(name='Owner').exists())  
         self.assertFalse(self.member_user.groups.filter(name='Officer').exists())  
         response = self.client.post(self.url,self.other_user.id,follow=True)
@@ -88,16 +102,6 @@ class UserFormTestCase(TestCase):
         self.assertTrue(self.other_user_officer)
         self.owner.user_set.add(self.other_user)
         self.assertTrue(self.user.groups.filter(name='Owner').exists())
-
-
-    def test_officer_can_be_demoted(self):
-        self.assertTrue(self.other_user.groups.filter(name='Officer').exists())
-        self.officer.user_set.remove(self.other_user)
-        self.assertFalse(self.other_user.groups.filter(name='Officer').exists())
-        response = self.client.post(self.url,self.other_user.id,follow=True)
-        response_url = reverse('officer_list')
-        self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
-        self.assertTemplateUsed(response,'officer_list.html')
 
 
     def test_owner_change(self):
