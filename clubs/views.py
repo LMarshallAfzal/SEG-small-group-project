@@ -15,8 +15,8 @@ from django.shortcuts import redirect, render
 from .helpers import login_prohibited
 from django.db.models import Count
 
-def owner_prohibited(view_function):
-    def modified_view_function(request):
+def owner_only(view_function):
+    def modified_view_function(request,*args, **kwargs):
         current_user = request.user
         if not (current_user.groups.filter(name='Owner').exists()):
             if(current_user.groups.filter(name='Member').exists()):
@@ -26,11 +26,11 @@ def owner_prohibited(view_function):
             if(current_user.groups.filter(name='Officer').exists()):
                 return redirect('officer_main')
         else:
-            return view_function(request)
+            return view_function(request,*args, **kwargs)
     return modified_view_function
 
-def officer_prohibited(view_function):
-    def modified_view_function(request):
+def officer_only(view_function):
+    def modified_view_function(request,*args, **kwargs):
         current_user = request.user
         if not (current_user.groups.filter(name='Officer').exists()):
             if(current_user.groups.filter(name='Member').exists()):
@@ -40,36 +40,21 @@ def officer_prohibited(view_function):
             if(current_user.groups.filter(name='Owner').exists()):
                 return redirect('owner')
         else:
-            return view_function(request)
+            return view_function(request,*args, **kwargs)
     return modified_view_function
 
-def member_prohibited(view_function):
-    def modified_view_function(request):
+def member_only(view_function):
+    def modified_view_function(request,*args, **kwargs):
         current_user = request.user
         if not (current_user.groups.filter(name='Member').exists()):
-            if(current_user.groups.filter(name='Applicant').exists()):
-                return redirect('profile')
             if(current_user.groups.filter(name='Officer').exists()):
                 return redirect('officer_main')
+            if(current_user.groups.filter(name='Applicant').exists()):
+                return redirect('profile')
             if(current_user.groups.filter(name='Owner').exists()):
                 return redirect('owner_member_list')
         else:
-            return view_function(request)
-    return modified_view_function
-
-
-def owner_prohibited_with_id(view_function,user_id):
-    def modified_view_function(request):
-        current_user = request.user
-        if not (current_user.groups.filter(name='Owner').exists()):
-            if(current_user.groups.filter(name='Member').exists()):
-                return redirect('member_list')
-            if(current_user.groups.filter(name='Applicant').exists()):
-                return redirect('profile')
-            if(current_user.groups.filter(name='Officer').exists()):
-                return redirect('officer_main')
-        else:
-            return view_function(request,user_id)
+            return view_function(request,*args, **kwargs)
     return modified_view_function
 
 
@@ -167,11 +152,13 @@ def password(request):
     form = PasswordForm()
     return render(request, 'password.html', {'form': form})
 
-@member_prohibited
+@login_required
+@member_only
 def member_list(request):
     users = User.objects.filter(groups__name__in=['Owner', 'Member', 'Officer'])
     return render(request, 'member_list.html', {'users': users})
 
+@login_required
 def show_user(request, user_id):
     User = get_user_model()
     user = User.objects.get(id = user_id)
@@ -184,7 +171,7 @@ def show_user_officer(request, user_id):
     return render(request, 'show_user_officer.html', {'user' : user})
 
 @login_required
-@officer_prohibited
+@officer_only
 def officer(request):
     users = User.objects.all()
     number_of_applicants = User.objects.filter(groups__name = 'Applicant').count()
@@ -192,18 +179,19 @@ def officer(request):
     return render(request, 'officer.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members})
 
 @login_required
-@officer_prohibited
+@officer_only
 def officer_main(request):
     users = User.objects.filter(groups__name__in=['Owner', 'Member', 'Officer'])
     groups = Group.objects.all()
     return render(request, 'officer_main.html', {'users': users})
 
 @login_required
-@officer_prohibited
+@officer_only
 def officer_promote_applicants(request):
     users = User.objects.filter(groups__name = 'Applicant')
     return render(request, 'officer_promote_applicants.html', {'users': users})
 
+@officer_only
 def reject_accept_handler(request, user_id):
     if request.POST:
         if 'accept' in request.POST:
@@ -212,6 +200,7 @@ def reject_accept_handler(request, user_id):
             reject(request, user_id)
     return redirect('officer_promote_applicants')
 
+@officer_only
 def accept(request, user_id):
     User = get_user_model()
     user = User.objects.get(id = user_id)
@@ -221,6 +210,7 @@ def accept(request, user_id):
     applicant.user_set.remove(user)
     #return redirect('officer_main')
 
+@officer_only
 def reject(request, user_id):
     User = get_user_model()
     user = User.objects.get(id = user_id)
@@ -228,7 +218,7 @@ def reject(request, user_id):
     #return redirect('officer_main')
 
 @login_required
-@owner_prohibited
+@owner_only
 def owner(request):
     users = User.objects.all()
     number_of_applicants = User.objects.filter(groups__name = 'Applicant').count()
@@ -237,20 +227,21 @@ def owner(request):
     return render(request, 'owner.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers})
 
 @login_required
-@owner_prohibited
+@owner_only
 def officer_list(request):
     users = User.objects.filter(groups__name = 'Officer')
     groups = Group.objects.all()
     return render(request, 'officer_list.html', {'users': users})
 
 @login_required
-@owner_prohibited
+@owner_only
 def owner_member_list(request):
     users = User.objects.filter(groups__name = 'Member')
     groups = Group.objects.all()
     return render(request, 'owner_member_list.html', {'users': users})
 
 @login_required
+@owner_only
 def transfer_ownership(request, user_id):
     user = get_user_model()
     user = User.objects.get(id = user_id)
@@ -268,6 +259,7 @@ def transfer_ownership(request, user_id):
     #     return redirect('show_user')
 
 @login_required
+@owner_only
 def promote_member(request, user_id):
     user = get_user_model()
     user = User.objects.get(id = user_id)
@@ -278,6 +270,7 @@ def promote_member(request, user_id):
     return redirect('owner_member_list')
 
 @login_required
+@owner_only
 def demote_officer(request, user_id):
     user = get_user_model()
     user = User.objects.get(id = user_id)
