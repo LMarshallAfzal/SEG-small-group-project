@@ -44,3 +44,15 @@ class Club:
 
     def getGroupsForClub(self):
         return [self.club_groups_and_permissions.applicant_group, self.club_groups_and_permissions.member_group, self.club_groups_and_permissions.officer_group, self.club_groups_and_permissions.owner_group]
+
+    def getClubApplicantGroup(self):
+        return self.club_groups_and_permissions.applicant_group
+
+    def getClubMemberGroup(self):
+        return self.club_groups_and_permissions.member_group
+
+    def getClubOfficerGroup(self):
+        return self.club_groups_and_permissions.officer_group
+
+    def getClubOwnerGroup(self):
+        return self.club_groups_and_permissions.owner_group
