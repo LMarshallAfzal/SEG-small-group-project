@@ -41,3 +41,6 @@ class Club:
             else:
                 self.club_codename += character
         self.club_groups_and_permissions = ChessClubGroups(self.club_codename)
+
+    def getGroupsForClub(self):
+        return [self.club_groups_and_permissions.applicant_group, self.club_groups_and_permissions.member_group, self.club_groups_and_permissions.officer_group, self.club_groups_and_permissions.owner_group]
