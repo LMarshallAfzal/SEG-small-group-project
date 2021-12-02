@@ -45,7 +45,7 @@ def log_in(request):
     return render(request, 'log_in.html', {'form': form, 'next' : next})
 
 
-def placeholder_function()
+def placeholder_function():
     if user.groups.filter(name = 'Officer'):
         #user.groups.filter(name ='Member').exists()
         login(request, user)
