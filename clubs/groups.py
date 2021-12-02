@@ -8,18 +8,15 @@ class ChessClubGroups:
 
     def __init__(self, chess_club_name):
         self.chess_club_name = chess_club_name
-        self.create_groups_for_club()
 
-    def create_groups_for_club(self):
+        #Creates groups for club
         self.applicant_group, created = Group.objects.get_or_create(name = self.chess_club_name + ' Applicant')
         self.member_group, created = Group.objects.get_or_create(name = self.chess_club_name + ' Member')
         self.officer_group, created = Group.objects.get_or_create(name = self.chess_club_name + ' Officer')
         self.owner_group, created = Group.objects.get_or_create(name = self.chess_club_name + ' Owner')
 
-    #Creates permissions for each club and assigns permissions to groups.
-    def create_and_assign_permissions(self):
+        #Creates permissions for each club and assigns permissions to groups.
         user_content_type = ContentType.objects.get_for_model(User)
-
         self.member_list_permission = Permission.objects.create(
             codename = 'can_access_member_list_' + self.chess_club_name,
             name = 'Can access a basic list of members and some details for club ' + self.chess_club_name,

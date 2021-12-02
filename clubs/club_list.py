@@ -18,6 +18,16 @@ class ClubList:
             #Error message
             print("A club with that name already exists!")
 
+    #TODO: What else happens when a club is deleted? (e.g: Changes to database etc)
+    def delete_club(club_name):
+        club_to_delete = find_club(club_name)
+        if club_to_delete == None:
+            #Error message
+            print("No club with that name exists!")
+        else:
+            club_list.remove(club_to_delete)
+            #Complete deletion process
+
 
 
 class Club:
@@ -31,6 +41,3 @@ class Club:
             else:
                 self.club_codename += character
         self.club_groups_and_permissions = ChessClubGroups(self.club_codename)
-
-    def get_club_groups_as_list(self):
-        pass
