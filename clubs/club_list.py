@@ -5,22 +5,22 @@ from clubs.groups import ChessClubGroups
 class ClubList:
     club_list = [] #This class variable will track all clubs.
 
-    def find_club(club_name):
+    def find_club(self, club_name):
         for club in club_list:
             if club.club_name == club_name or club.club_codename == club_name:
                 return club
         return None
 
-    def create_new_club(club_name):
-        if find_club(club_name) != None:
+    def create_new_club(self, club_name):
+        if self.find_club(club_name) != None:
             club_list.append(Club(club_name))
         else:
             #Error message
             print("A club with that name already exists!")
 
     #TODO: What else happens when a club is deleted? (e.g: Changes to database etc)
-    def delete_club(club_name):
-        club_to_delete = find_club(club_name)
+    def delete_club(self, club_name):
+        club_to_delete = self.find_club(club_name)
         if club_to_delete == None:
             #Error message
             print("No club with that name exists!")
