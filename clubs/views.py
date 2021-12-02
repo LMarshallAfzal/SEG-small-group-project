@@ -14,6 +14,7 @@ from .models import User
 from django.shortcuts import redirect, render
 from .helpers import login_prohibited
 from django.db.models import Count
+from .club_list import ClubList, Club
 
 
 @login_prohibited
@@ -25,28 +26,43 @@ def log_in(request):
             password = form.cleaned_data.get('password')
             user = authenticate(username = username, password = password)
             if user is not None:
-                if user.groups.filter(name = 'Officer'):
-                    #user.groups.filter(name ='Member').exists()
-                    login(request, user)
-                    redirect_url = request.POST.get('next') or 'officer'
-                    return redirect(redirect_url)
-                    """View for member"""
-                elif user.groups.filter(name = 'Member'):
-                    login(request, user)
-                    #redirect_url = request.POST.get('next') or 'member_list'
-                    return redirect('member_list')
-                    #return redirect('show_current_user_profile')
-                    """View for owner"""
-                elif user.groups.filter(name = 'Owner'):
-                    pass
-                    """View for applicant"""
-                elif user.groups.filter(name = 'Applicant'):
-                    pass
-        #Add error message here
+                user_groups = []
+                for group in request.user.groups.all():
+                    user_groups.append(group.name)
+
+                user_clubs = []
+                for club in ClubList.club_list:
+                    club_groups = club.getGroupsForClub()
+                    for group in club_groups:
+                        if group in user_groups:
+                            user_clubs.append(club)
+
+                """Redirect to club selection page, with option to create new club"""
+
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     form = LogInForm()
     next = request.GET.get('next') or 'officer'
     return render(request, 'log_in.html', {'form': form, 'next' : next})
+
+
+def placeholder_function()
+    if user.groups.filter(name = 'Officer'):
+        #user.groups.filter(name ='Member').exists()
+        login(request, user)
+        redirect_url = request.POST.get('next') or 'officer'
+        return redirect(redirect_url)
+        """View for member"""
+    elif user.groups.filter(name = 'Member'):
+        login(request, user)
+        #redirect_url = request.POST.get('next') or 'member_list'
+        return redirect('member_list')
+        #return redirect('show_current_user_profile')
+        """View for owner"""
+    elif user.groups.filter(name = 'Owner'):
+        pass
+        """View for applicant"""
+    elif user.groups.filter(name = 'Applicant'):
+        pass
 
 def log_out(request):
     logout(request)
@@ -157,7 +173,7 @@ def newOwner(request,user_id):
         owner.user_set.remove(current_owner)
         logout(request)
         return redirect('home')
-       
+
     else:
         messages.add_message(request, messages.ERROR, "New owner has to be an officer!")
         return redirect('show_user')
