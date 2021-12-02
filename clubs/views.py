@@ -73,7 +73,7 @@ def sign_up(request):
             group = Group.objects.get(name = 'Applicant')
             user.groups.add(group)
             login(request, user)
-            return redirect('profile')
+            return redirect('show_current_user_profile')
     else:
         form = SignUpForm()
     return render(request, 'sign_up.html', {'form': form})
