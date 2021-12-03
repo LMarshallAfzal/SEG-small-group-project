@@ -45,24 +45,24 @@ def log_in(request):
     return render(request, 'log_in.html', {'form': form, 'next' : next})
 
 
-def placeholder_function():
-    if user.groups.filter(name = 'Officer'):
-        #user.groups.filter(name ='Member').exists()
-        login(request, user)
-        redirect_url = request.POST.get('next') or 'officer'
-        return redirect(redirect_url)
-        """View for member"""
-    elif user.groups.filter(name = 'Member'):
-        login(request, user)
-        #redirect_url = request.POST.get('next') or 'member_list'
-        return redirect('member_list')
-        #return redirect('show_current_user_profile')
-        """View for owner"""
-    elif user.groups.filter(name = 'Owner'):
-        pass
-        """View for applicant"""
-    elif user.groups.filter(name = 'Applicant'):
-        pass
+# def placeholder_function()
+#     if user.groups.filter(name = 'Officer'):
+#         #user.groups.filter(name ='Member').exists()
+#         login(request, user)
+#         redirect_url = request.POST.get('next') or 'officer'
+#         return redirect(redirect_url)
+#         """View for member"""
+#     elif user.groups.filter(name = 'Member'):
+#         login(request, user)
+#         #redirect_url = request.POST.get('next') or 'member_list'
+#         return redirect('member_list')
+#         #return redirect('show_current_user_profile')
+#         """View for owner"""
+#     elif user.groups.filter(name = 'Owner'):
+#         pass
+#         """View for applicant"""
+#     elif user.groups.filter(name = 'Applicant'):
+#         pass
 
 def log_out(request):
     logout(request)
