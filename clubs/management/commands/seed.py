@@ -81,27 +81,66 @@ class Command(BaseCommand):
             )
 
             #TODO: Make the group assignments for users realistic percentage + seed an owner for each club
-            club = random.choice(ClubList.club_list)
-            group = Group.objects.get(name = club.club_codename + " " + random.choice(['Applicant', 'Member','Officer']))
-            user.groups.add(group)
+        club = random.choice(ClubList.club_list)
+        group = Group.objects.get(name = club.club_codename + " " + random.choice(['Applicant', 'Member','Officer']))
+        user.groups.add(group)
 
-        for club in ClubList.club_list:
-            if club.club_name != "Kerbal Chess Club":
-                club_users = User.objects.filter(groups__name__in = ClubList.find_club(club.club_name).getGroupsForClub())
-                new_owner = random.choice(club_users)
+        ash = User.objects.create_user(
+            username = "Ash.Peckham@example.org",
+            first_name = "Ashraf",
+            last_name = "Peckham",
+            email = "Ash.Peckham@example.org",
+            password = "Password123",
+            bio = self.faker.unique.text(max_nb_chars = 520),
+            personal_statement = self.faker.text(max_nb_chars = 1250),
+        )
 
-                user_groups = []
-                for group in request.user.groups.all():
-                    user_groups.append(group.name)
+        group = Group.objects.get(name = "KCL Chess Society Owner")
+        ash.groups.add(group)
 
-                user_club_group = []
-                club_groups = club.getGroupsForClub()
-                for group in club_groups:
-                    if group in user_groups:
-                        user_club_group.append(group)
+        stuart = User.objects.create_user(
+            username = "Stuart.Bruton@example.org",
+            first_name = "Stuart",
+            last_name = "Bruton",
+            email = "Stuart.Bruton@example.org",
+            password = "Password123",
+            bio = self.faker.unique.text(max_nb_chars = 520),
+            personal_statement = self.faker.text(max_nb_chars = 1250),
+        )
 
-                club.getClubOwnerGroup().user_set.add(new_owner)
-                user_club_group[0].user_set.remove(new_owner)
+        group = Group.objects.get(name = "UCL Terrible Chess Team Owner")
+        stuart.groups.add(group)
+
+        margot = User.objects.create_user(
+            username = "Margot.Levrenz@example.org",
+            first_name = "Margot",
+            last_name = "Levrenz",
+            email = "Margot.Levrenz@example.org",
+            password = "Password123",
+            bio = self.faker.unique.text(max_nb_chars = 520),
+            personal_statement = self.faker.text(max_nb_chars = 1250),
+        )
+
+        group = Group.objects.get(name = "Elite Cambridge Chess Owner")
+        margot.groups.add(group)
+
+        # for club in ClubList.club_list:
+        #     if club.club_name != "Kerbal Chess Club":
+        #         club_users = User.objects.filter(groups__name__in = ClubList.find_club(club.club_name).getGroupsForClub())
+        #         new_owner = random.choice(club_users)
+        #
+        #         user_groups = []
+        #         for group in request.user.groups.all():
+        #             user_groups.append(group.name)
+        #
+        #         user_club_group = []
+        #         club_groups = club.getGroupsForClub()
+        #         for group in club_groups:
+        #             if group in user_groups:
+        #                 user_club_group.append(group)
+        #
+        #         club.getClubOwnerGroup().user_set.add(new_owner)
+        #         user_club_group[0].user_set.remove(new_owner)
 
 
         print('User seeding complete')
