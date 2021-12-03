@@ -110,8 +110,27 @@ def password(request):
     return render(request, 'password.html', {'form': form})
 
 def member_list(request):
-    users = User.objects.filter(groups__name__in=['Owner', 'Member', 'Officer'])
-    return render(request, 'member_list.html', {'users': users})
+    current_user = request.user
+
+    if current_user.groups.filter(name = 'Officer'):
+        users = User.objects.all()
+        number_of_applicants = User.objects.filter(groups__name = 'Applicant').count()
+        number_of_members = User.objects.filter(groups__name__in = ['Owner','Member','Officer']).count()
+        return render(request, 'officer.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members})
+
+        """View for member"""
+    elif current_user.groups.filter(name = 'Member'):
+        users = User.objects.all()
+        return render(request, 'member_list.html', {'users': users})
+
+        """View for owner"""
+    elif current_user.groups.filter(name = 'Owner'):
+        users = User.objects.all()
+        number_of_applicants = User.objects.filter(groups__name = 'Applicant').count()
+        number_of_members = User.objects.filter(groups__name__in = ['Owner','Member']).count()
+        number_of_officers = User.objects.filter(groups__name = 'Officer').count()
+        return render(request, 'owner.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers})
+        return redirect('owner')
 
 def show_user(request, user_id):
     User = get_user_model()
