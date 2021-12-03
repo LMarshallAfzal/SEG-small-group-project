@@ -3,17 +3,17 @@ from clubs.groups import ChessClubGroups
 
 
 class ClubList:
-    club_list = [] #This class variable will track all clubs.
+    club_list = [] #As this is a class variable, new instances of ClubList will retain the current state of club_list
 
     def find_club(self, club_name):
-        for club in club_list:
+        for club in ClubList.club_list:
             if club.club_name == club_name or club.club_codename == club_name:
                 return club
         return None
 
     def create_new_club(self, club_name):
-        if self.find_club(club_name) != None:
-            club_list.append(Club(club_name))
+        if self.find_club(club_name) == None:
+            ClubList.club_list.append(Club(club_name))
         else:
             #Error message
             print("A club with that name already exists!")
@@ -27,6 +27,13 @@ class ClubList:
         else:
             club_list.remove(club_to_delete)
             #Complete deletion process
+
+    #Returns 2D array in the form [[groups for a club][groups for a club]]
+    def get_all_groups(self):
+        all_groups = []
+        for club in ClubList.club_list:
+            all_groups.append(club.getGroupsForClub())
+        return all_groups
 
 
 
