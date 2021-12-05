@@ -1,12 +1,12 @@
 from django.core.management.base import BaseCommand, CommandError
-from clubs.models import User
+from clubs.models import User, Club
 from django.db import IntegrityError
 from faker import Faker
 import faker.providers
 import random
 from django.contrib.auth.models import Group
 import clubs.groups
-from clubs.club_list import ClubList, Club
+from clubs.club_list import ClubList
 
 class Command(BaseCommand):
     USER_COUNT = 100
