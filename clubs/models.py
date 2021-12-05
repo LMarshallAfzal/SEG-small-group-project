@@ -44,12 +44,12 @@ class User(AbstractUser):
         """Return a URL to a miniature version of the user's gravatar."""
         return self.gravatar(size=60)
 
-    def approve_applicant(self, user, club_codename):
-        """Change the group from applicant to member"""
-        member = Group.objects.get(name = club_codename + " Member")
-        member.user_set.add(user)
-        applicant_group = Group.objects.get(name = club_codename + " Applicant")
-        applicant_group.user_set.remove(user)
+    # def approve_applicant(self, user, club_codename):
+    #     """Change the group from applicant to member"""
+    #     member = Group.objects.get(name = club_codename + " Member")
+    #     member.user_set.add(user)
+    #     applicant_group = Group.objects.get(name = club_codename + " Applicant")
+    #     applicant_group.user_set.remove(user)
 
 
 

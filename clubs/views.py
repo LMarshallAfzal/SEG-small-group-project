@@ -196,7 +196,7 @@ def newOwner(request,user_id):
     club = list_of_clubs.find_club(name_of_club)
     user = get_user_model()
     user = User.objects.get(id = user_id)
-    officer = Group.objects.get(name = club.getClubOfficerGroup)
+    officer = Group.objects.get(name = club.getClubOfficerGroup())
     if user in officer.user_set:
         owner = Group.objects.get(name = club.getClubOwnerGroup())
         owners = List(Group.objects.getAll(name = club.getClubOwnerGroup()))
@@ -217,7 +217,7 @@ def promoteOfficer(request,user_id):
     club = list_of_clubs.find_club(name_of_club)
     user = get_user_model()
     user = User.objects.get(id = user_id)
-    officer = Group.objects.get(name = club.getClubOfficerGroup)
+    officer = Group.objects.get(name = club.getClubOfficerGroup())
     officer.user_set.add(user)
     return redirect('show_user')
 
