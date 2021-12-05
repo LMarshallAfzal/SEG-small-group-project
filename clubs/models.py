@@ -2,6 +2,7 @@ from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from libgravatar import Gravatar
+from django.contrib.auth.models import Group
 
 class User(AbstractUser):
     BEGINNER = 'Beginner'
@@ -36,3 +37,28 @@ class User(AbstractUser):
         """Change the group from applicant to member"""
         member = Group.objects.get(name = 'Member')
         member.user_set.add(user)
+
+
+
+class Club(models.Model):
+    club_name = models.CharField(max_length = 50, blank = False, unique = True)
+    club_codename = models.CharField(max_length = 50, blank = False, unique = True)
+
+    def create_groups_and_permissions_for_club(self):
+        from .groups import ChessClubGroups
+        club_groups_and_permissions = ChessClubGroups(self.club_codename)
+
+    def getGroupsForClub(self):
+        return [self.getClubApplicantGroup(), self.getClubMemberGroup(), self.getClubOfficerGroup(), self.getClubOwnerGroup()]
+
+    def getClubApplicantGroup(self):
+        return Group.objects.get(name = self.club_codename + " Applicant")
+
+    def getClubMemberGroup(self):
+        return Group.objects.get(name = self.club_codename + " Member")
+
+    def getClubOfficerGroup(self):
+        return Group.objects.get(name = self.club_codename + " Officer")
+
+    def getClubOwnerGroup(self):
+        return Group.objects.get(name = self.club_codename + " Owner")

@@ -27,7 +27,7 @@ def log_in(request):
             user = authenticate(username = username, password = password)
             if user is not None:
                 user_groups = []
-                for group in request.user.groups.all():
+                for group in user.groups.all():
                     user_groups.append(group.name)
 
                 user_clubs = []
