@@ -27,42 +27,50 @@ def log_in(request):
             user = authenticate(username = username, password = password)
             if user is not None:
                 user_groups = []
+                #all groups a user is a part of
                 for group in request.user.groups.all():
                     user_groups.append(group.name)
 
                 user_clubs = []
+                #gets the club that a user is a part of
                 for club in ClubList.club_list:
                     club_groups = club.getGroupsForClub()
                     for group in club_groups:
                         if group in user_groups:
                             user_clubs.append(club)
 
+                #Find a way of redirecting correct users to the club club_selection
+                #Ensure that they only can see clubs they are a part of
+                #When they access a club make sure they have correct peremissions (applicant, member, officer, owner)
+
                 """Redirect to club selection page, with option to create new club"""
+                login(request, user)
+                return redirect('club_selection')
 
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
     form = LogInForm()
     next = request.GET.get('next') or 'officer'
     return render(request, 'log_in.html', {'form': form, 'next' : next})
 
-
-# def placeholder_function()
-#     if user.groups.filter(name = 'Officer'):
-#         #user.groups.filter(name ='Member').exists()
-#         login(request, user)
-#         redirect_url = request.POST.get('next') or 'officer'
-#         return redirect(redirect_url)
-#         """View for member"""
-#     elif user.groups.filter(name = 'Member'):
-#         login(request, user)
-#         #redirect_url = request.POST.get('next') or 'member_list'
-#         return redirect('member_list')
-#         #return redirect('show_current_user_profile')
-#         """View for owner"""
-#     elif user.groups.filter(name = 'Owner'):
-#         pass
-#         """View for applicant"""
-#     elif user.groups.filter(name = 'Applicant'):
-#         pass
+def group_check(request):
+    list_of_clubs = ClubList()
+    if user.groups.filter(name = list_of_clubs.getClubOfficerGroup()):
+        #user.groups.filter(name ='Member').exists()
+        login(request, user)
+        redirect_url = request.POST.get('next') or 'officer'
+        return redirect(redirect_url)
+        """View for member"""
+    elif user.groups.filter(name = list_of_clubs.getClubMemberGroup()):
+        login(request, user)
+        #redirect_url = request.POST.get('next') or 'member_list'
+        return redirect('member_list')
+        #return redirect('show_current_user_profile')
+        """View for owner"""
+    elif user.groups.filter(name = list_of_clubs.getClubOwnerGroup()):
+        pass
+        """View for applicant"""
+    elif user.groups.filter(name = list_of_clubs.getClubApplicantGroup()):
+        pass
 
 def log_out(request):
     logout(request)
@@ -146,11 +154,12 @@ def reject_accept_handler(request, user_id):
     return redirect('officer_promote_applicants')
 
 def accept(request, user_id):
+    list_of_clubs = ClubList()
     User = get_user_model()
     user = User.objects.get(id = user_id)
-    member = Group.objects.get(name = 'Member')
+    member = Group.objects.get(name = list_of_clubs.getClubMemberGroup())
     member.user_set.add(user)
-    applicant = Group.objects.get(name = 'Applicant')
+    applicant = Group.objects.get(name = list_of_clubs.getClubApplicantGroup())
     applicant.user_set.remove(user)
     #return redirect('officer_main')
 
@@ -193,3 +202,9 @@ def demoteOfficer(request,user_id):
     officer = Group.objects.get(name = "Officer")
     officer.user_set.remove(user)
     return redirect('show_user')
+
+def club_selection(request):
+    clubs = ClubList.club_list
+    print(len(clubs))
+
+    return render(request, 'club_selection.html', {'clubs':clubs})
