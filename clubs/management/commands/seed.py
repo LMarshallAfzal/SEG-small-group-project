@@ -96,6 +96,7 @@ class Command(BaseCommand):
 
 
         print('User seeding complete')
+        print(len(list_of_clubs.club_list))
 
     def _email(self, first_name, last_name):
         email = f'{first_name}.{last_name}@example.org'

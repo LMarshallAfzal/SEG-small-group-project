@@ -10,6 +10,9 @@ class ClubList:
         for club in Club.objects.all():
             self.club_list.append(club)
 
+    def get_all_clubs(self):
+        return self.club_list
+
     def find_club(self, club_name):
         for club in self.club_list:
             if club.club_name == club_name or club.club_codename == club_name:
