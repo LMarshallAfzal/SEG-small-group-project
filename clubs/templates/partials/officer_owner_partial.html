@@ -16,6 +16,7 @@
                 <p class="card-text">New Applications: {{ number_of_applicants }}</p>
                       <form action="{% url 'officer_promote_applicants' %}" method="post">
                         {% csrf_token %}
+                        <input type="hidden" name="club_name" value="{{ club.club_name }}">  
                         {% include 'partials/bootstrap_form.html' with form=form %}
                         <input type = "submit" value = "Applicants" class = "btn btn-primary" name="applicants">
                       </form>

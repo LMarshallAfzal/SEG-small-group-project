@@ -32,6 +32,7 @@ urlpatterns = [
     path('officer_promote_applicants/', views.officer_promote_applicants, name = 'officer_promote_applicants'),
     path('officer_main/', views.officer_main, name = 'officer_main'),
     path('reject_accept_handler/<int:user_id>', views.reject_accept_handler, name = 'officer_promote_applicants'),
-    path('profile',views.profile,name = 'profile'),
-    path('club_selection', views.club_selection, name = 'club_selection')
+    path('profile/',views.profile,name = 'profile'),
+    path('club_selection/', views.club_selection, name = 'club_selection'),
+    path('group_check/<int:user_id>', views.group_check, name = 'group_check')
 ]

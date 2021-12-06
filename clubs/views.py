@@ -1,7 +1,7 @@
 from typing import List
-from .models import User
 from django import template
 from django.shortcuts import render
+from django.template import RequestContext
 from .forms import LogInForm, SignUpForm, UserForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
@@ -10,12 +10,13 @@ from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import Group
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseForbidden
-from .models import User
+from .models import User, Club
 from django.shortcuts import redirect, render
 from .helpers import login_prohibited
 from django.db.models import Count
-from .club_list import ClubList, Club
+from .club_list import ClubList
 
+name_of_club = ''
 
 @login_prohibited
 def log_in(request):
@@ -26,17 +27,17 @@ def log_in(request):
             password = form.cleaned_data.get('password')
             user = authenticate(username = username, password = password)
             if user is not None:
-                user_groups = []
-                for group in user.groups.all():
-                    user_groups.append(group.name)
-
-                user_clubs = []
+                # user_groups = []
+                # for group in user.groups.all():
+                #     user_groups.append(group.name)
+                #
+                # user_clubs = []
                 #gets the club that a user is a part of
-                for club in ClubList.club_list:
-                    club_groups = club.getGroupsForClub()
-                    for group in club_groups:
-                        if group in user_groups:
-                            user_clubs.append(club)
+                # for club in ClubList.club_list:
+                #     club_groups = club.getGroupsForClub()
+                #     for group in club_groups:
+                #         if group in user_groups:
+                #             user_clubs.append(club)
 
                 #Find a way of redirecting correct users to the club club_selection
                 #Ensure that they only can see clubs they are a part of
@@ -51,25 +52,42 @@ def log_in(request):
     next = request.GET.get('next') or 'officer'
     return render(request, 'log_in.html', {'form': form, 'next' : next})
 
-def group_check(request):
+
+def group_check(request, user_id):
     list_of_clubs = ClubList()
-    if user.groups.filter(name = list_of_clubs.getClubOfficerGroup()):
+    # user_groups = []
+    # for group in user.groups.all():
+    #     user_groups.append(group.name)
+    #
+    # user_clubs = []
+    # #gets the club that a user is a part of
+    # for club in ClubList.club_list:
+    #     club_groups = club.getGroupsForClub()
+    #     for group in club_groups:
+    #         if group in user_groups:
+    #             user_clubs.append(club)
+    request.session['club_name'] = request.POST.get('club_name')
+    name_of_club = request.session.get('club_name')
+    club = list_of_clubs.find_club(name_of_club)
+    print(request.POST.get('club_name'))
+    user = User.objects.get(id = user_id)
+    if user.groups.filter(name = club.getClubOfficerGroup()):
         #user.groups.filter(name ='Member').exists()
-        login(request, user)
         redirect_url = request.POST.get('next') or 'officer'
         return redirect(redirect_url)
         """View for member"""
-    elif user.groups.filter(name = list_of_clubs.getClubMemberGroup()):
-        login(request, user)
+    elif user.groups.filter(name =  club.getClubMemberGroup()):
         #redirect_url = request.POST.get('next') or 'member_list'
         return redirect('member_list')
         #return redirect('show_current_user_profile')
         """View for owner"""
-    elif user.groups.filter(name = list_of_clubs.getClubOwnerGroup()):
+    elif user.groups.filter(name = club.getClubOwnerGroup()):
         pass
         """View for applicant"""
-    elif user.groups.filter(name = list_of_clubs.getClubApplicantGroup()):
+    elif user.groups.filter(name = club.getClubApplicantGroup()):
         pass
+    else:
+        return redirect('club_selection')
 
 def log_out(request):
     logout(request)
@@ -128,9 +146,12 @@ def show_user_officer(request, user_id):
 
 @login_required
 def officer(request):
+    list_of_clubs = ClubList()
+    name_of_club = request.session.get('club_name')
+    club = list_of_clubs.find_club(name_of_club)
     users = User.objects.all()
-    number_of_applicants = User.objects.filter(groups__name = 'Applicant').count()
-    number_of_members = User.objects.filter(groups__name__in = ['Owner','Member','Officer']).count()
+    number_of_applicants = User.objects.filter(groups__name = club.getClubApplicantGroup()).count()
+    number_of_members = User.objects.filter(groups__name__in = [club.getClubOwnerGroup(),club.getClubMemberGroup(),club.getClubOfficerGroup()]).count()
     return render(request, 'officer.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members})
 
 @login_required
@@ -203,7 +224,8 @@ def demoteOfficer(request,user_id):
     return redirect('show_user')
 
 def club_selection(request):
-    clubs = ClubList.club_list
+    list_of_clubs = ClubList()
+    clubs = list_of_clubs.club_list
     print(len(clubs))
 
     return render(request, 'club_selection.html', {'clubs':clubs})

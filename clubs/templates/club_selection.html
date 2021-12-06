@@ -5,9 +5,18 @@
     <div class="col-12">
       <h1>Club Selection</h1>
       <table class="table table-striped table-hover">
-        {% for club in clubs %}
+        {% for c in clubs %}
           <tr>
-              <td><p>"hello"</p></td>
+              <td>{{ c.club_name }}</td>
+              <td>
+                <form action = "{% url 'group_check' user.id %}" method = "post">
+                  {% csrf_token %}
+                  <input type="hidden" name="club_name" value="{{ c.club_name }}">
+                  <input type = "hidden" name = "next" value = "{{ next }}">
+                  {% include 'partials/bootstrap_form.html' with form=form %}
+                  <input type = "submit" value = "Enter club" class="btn btn-primary">
+                </form>
+              </td>
           </tr>
         {% endfor %}
       </table>
