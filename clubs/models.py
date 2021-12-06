@@ -8,6 +8,10 @@ class User(AbstractUser):
     BEGINNER = 'Beginner'
     INTERMEDIATE = 'Intermediate'
     ADVANCED = 'Advanced'
+    KCL = "Kerbal Chess Club"
+    KCS = "KCL Chess Society"
+    UTCT = "UCL Terrible Chess Team"
+    ECCT = "Elite Cambridge Chess Team"
     first_name = models.CharField(max_length = 50, blank = False)
     last_name = models.CharField(max_length = 50, blank = False)
     email = models.EmailField(unique = True, blank = False)
@@ -19,6 +23,13 @@ class User(AbstractUser):
     ]
     experience_level = models.CharField(max_length = 12, choices = EXPERIENCE_CHOICES, default = BEGINNER)
     personal_statement = models.CharField(max_length = 1250, blank = True)
+    club_choice = [
+        (KCL, "Kerbal Chess Club"),
+        (KCS, "KCL Chess Society"),
+        (UTCT, "UCL Terrible Chess Team"),
+        (ECCT, "Elite Cambridge Chess Team")
+    ]
+    clubs = models.CharField(max_length = 50, choices = club_choice, default = KCL)
 
     def full_name(self):
         return f'{self.first_name} {self.last_name}'

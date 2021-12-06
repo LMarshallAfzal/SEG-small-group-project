@@ -16,8 +16,6 @@ from .helpers import login_prohibited
 from django.db.models import Count
 from .club_list import ClubList
 
-name_of_club = ''
-
 @login_prohibited
 def log_in(request):
     if request.method == 'POST':
@@ -52,20 +50,8 @@ def log_in(request):
     next = request.GET.get('next') or 'officer'
     return render(request, 'log_in.html', {'form': form, 'next' : next})
 
-
 def group_check(request, user_id):
     list_of_clubs = ClubList()
-    # user_groups = []
-    # for group in user.groups.all():
-    #     user_groups.append(group.name)
-    #
-    # user_clubs = []
-    # #gets the club that a user is a part of
-    # for club in ClubList.club_list:
-    #     club_groups = club.getGroupsForClub()
-    #     for group in club_groups:
-    #         if group in user_groups:
-    #             user_clubs.append(club)
     request.session['club_name'] = request.POST.get('club_name')
     name_of_club = request.session.get('club_name')
     club = list_of_clubs.find_club(name_of_club)
@@ -87,7 +73,7 @@ def group_check(request, user_id):
     elif user.groups.filter(name = club.getClubApplicantGroup()):
         pass
     else:
-        return redirect('club_selection')
+        return redirect('sign_up')
 
 def log_out(request):
     logout(request)
@@ -104,10 +90,14 @@ def show_current_user_profile(request):
 
 @login_prohibited
 def sign_up(request):
+    list_of_clubs = ClubList()
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
+            club = list_of_clubs.find_club(user.clubs)
+            group = Group.objects.get(name = club.getClubApplicantGroup())
+            user.groups.add(group)
             login(request, user)
             return redirect('profile')#should be an applicant page
     else:
@@ -156,13 +146,19 @@ def officer(request):
 
 @login_required
 def officer_main(request):
-    users = User.objects.filter(groups__name__in=['Owner', 'Member', 'Officer'])
+    list_of_clubs = ClubList()
+    name_of_club = request.session.get('club_name')
+    club = list_of_clubs.find_club(name_of_club)
+    users = User.objects.filter(groups__name__in=[club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()])
     groups = Group.objects.all()
     return render(request, 'officer_main.html', {'users': users})
 
 @login_required
 def officer_promote_applicants(request):
-    users = User.objects.filter(groups__name = 'Applicant');
+    list_of_clubs = ClubList()
+    name_of_club = request.session.get('club_name')
+    club = list_of_clubs.find_club(name_of_club)
+    users = User.objects.filter(groups__name = club.getClubApplicantGroup());
     return render(request, 'officer_promote_applicants.html', {'users': users})
 
 def reject_accept_handler(request, user_id):
@@ -175,11 +171,13 @@ def reject_accept_handler(request, user_id):
 
 def accept(request, user_id):
     list_of_clubs = ClubList()
+    name_of_club = request.session.get('club_name')
+    club = list_of_clubs.find_club(name_of_club)
     User = get_user_model()
     user = User.objects.get(id = user_id)
-    member = Group.objects.get(name = list_of_clubs.getClubMemberGroup())
+    member = Group.objects.get(name = club.getClubMemberGroup())
     member.user_set.add(user)
-    applicant = Group.objects.get(name = list_of_clubs.getClubApplicantGroup())
+    applicant = Group.objects.get(name = club.getClubApplicantGroup())
     applicant.user_set.remove(user)
     #return redirect('officer_main')
 

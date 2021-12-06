@@ -11,7 +11,7 @@ class ClubList:
             self.club_list.append(club)
 
     def get_all_clubs(self):
-        return self.club_list        
+        return self.club_list
 
     def find_club(self, club_name):
         for club in self.club_list:
