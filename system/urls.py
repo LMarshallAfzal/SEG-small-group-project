@@ -39,5 +39,7 @@ urlpatterns = [
     path('owner_member_list', views.owner_member_list, name = 'owner_member_list'),
     path('promote_member/<int:user_id>', views.promote_member, name = 'promote_member'),
     path('demote_officer/<int:user_id>', views.demote_officer, name = 'demote_officer'),
-    path('transfer_ownership/<int:user_id>', views.transfer_ownership, name = 'transfer_ownership')
+    path('transfer_ownership/<int:user_id>', views.transfer_ownership, name = 'transfer_ownership'),
+    path('club_selection/', views.club_selection, name = 'club_selection'),
+    path('group_check/<int:user_id>', views.group_check, name = 'group_check')
 ]
