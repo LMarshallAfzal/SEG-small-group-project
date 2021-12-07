@@ -1,7 +1,7 @@
 from typing import List
 from django import template
 from django.shortcuts import render
-from .forms import LogInForm, SignUpForm, UserForm, PasswordForm
+from .forms import LogInForm, SignUpForm, UserForm, PasswordForm, ApplicationForm
 from django.template import RequestContext
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
@@ -53,14 +53,12 @@ def group_check(request, user_id):
         #return redirect('show_current_user_profile')
         """View for owner"""
     elif user.groups.filter(name = club.getClubOwnerGroup()):
-        login(request, user)
         return redirect('owner')
         """View for applicant"""
     elif user.groups.filter(name = club.getClubApplicantGroup()):
-        login(request, user)
         return redirect('show_current_user_profile')
     else:
-        return redirect('club_selection')
+        return redirect('application_form')
 
 def log_out(request):
     logout(request)
@@ -82,9 +80,9 @@ def sign_up(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            club = list_of_clubs.find_club(user.clubs)
-            group = Group.objects.get(name = club.getClubApplicantGroup())
-            user.groups.add(group)
+            # club = list_of_clubs.find_club(user.clubs)
+            # group = Group.objects.get(name = club.getClubApplicantGroup())
+            # user.groups.add(group)
             login(request, user)
             return redirect('club_selection')#should be an applicant page
     else:
@@ -104,6 +102,27 @@ def profile(request):
     else:
         form = UserForm(instance=current_user)
     return render(request, 'profile.html', {'form': form})
+
+@login_required
+def application_form(request):
+    list_of_clubs = ClubList()
+    name_of_club = request.session.get('club_name')
+    club = list_of_clubs.find_club(name_of_club)
+    current_user = request.user
+    if request.method == 'POST':
+        form = ApplicationForm(instance=current_user, data = request.POST)
+        #form.instance = current_user
+        if form.is_valid():
+            current_user.username = form.cleaned_data.get('email')
+            group = Group.objects.get(name = club.getClubApplicantGroup())
+            current_user.groups.add(group)
+            messages.add_message(request, messages.SUCCESS, "You have joined a new club!")
+            form.save()
+            return redirect('profile')
+    else:
+        form = ApplicationForm(instance=current_user)
+        #form.instance = current_user
+    return render(request, 'application_form.html', {'form': form})
 
 @login_required
 def password(request):
