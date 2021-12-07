@@ -11,28 +11,42 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseForbidden
 from .models import User, Club
+from django.views import View
 from django.shortcuts import redirect, render
 from .helpers import login_prohibited
 from django.db.models import Count
 from .club_list import ClubList
+from django.utils.decorators import method_decorator
+from django.conf import settings
 
-@login_prohibited
-def log_in(request):
-    if request.method == 'POST':
+
+class LogInView(View):
+
+    http_method_names = ['get', 'post']
+
+    @method_decorator(login_prohibited)
+    def dispatch(self, request):
+        return super().dispatch(request)
+
+    def get(self, request):
+        self.next = request.GET.get('next') or 'officer'
+        return self.render()
+
+
+    def post(self, request):
         form = LogInForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('email')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username = username, password = password)
-            if user is not None:
-                """Redirect to club selection page, with option to create new club"""
-                login(request, user)
-                return redirect('club_selection')
-
+        next = request.POST.get('next') or settings.REDIRECT_URL_WHEN_LOGGED_IN
+        user = form.get_user()
+        if user is not None:
+            """Redirect to club selection page, with option to create new club"""
+            login(request, user)
+            return redirect('club_selection')
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
-    form = LogInForm()
-    next = request.GET.get('next') or 'officer'
-    return render(request, 'log_in.html', {'form': form, 'next' : next})
+        return self.render()
+
+    def render(self):
+        form = LogInForm()
+        return render(self.request, 'log_in.html', {'form': form, 'next' : self.next})
 
 @login_required
 def group_check(request, user_id):

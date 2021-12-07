@@ -2,14 +2,20 @@ from django import forms
 from django.core.validators import RegexValidator
 from .models import User, Club
 from .club_list import ClubList
+from django.contrib.auth import authenticate
 
 class LogInForm(forms.Form):
-    email = forms.EmailField(required=True, label = "email")
-    # Tried to make email not case senstive.
-    # def clean_email(self):
-    #     data = self.cleaned_data['email']
-    #     return data.lower()
+    email = forms.EmailField(label = "email")
     password = forms.CharField(label = "Password", widget = forms.PasswordInput())
+
+    def get_user(self):
+
+        user = None
+        if self.is_valid():
+            username = self.cleaned_data.get('email')
+            password = self.cleaned_data.get('password')
+            user = authenticate(username = username, password = password)
+        return user
 
 class UserForm(forms.ModelForm):
     """Form to update user profiles."""
