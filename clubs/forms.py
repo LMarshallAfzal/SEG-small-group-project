@@ -4,7 +4,11 @@ from .models import User, Club
 from .club_list import ClubList
 
 class LogInForm(forms.Form):
-    email = forms.EmailField(label = "email")
+    email = forms.EmailField(required=True, label = "email")
+    # Tried to make email not case senstive.
+    # def clean_email(self):
+    #     data = self.cleaned_data['email']
+    #     return data.lower()
     password = forms.CharField(label = "Password", widget = forms.PasswordInput())
 
 class UserForm(forms.ModelForm):
