@@ -14,5 +14,5 @@ class UserAdmin(admin.ModelAdmin):
     group.short_description = 'Groups'
 
     list_display = [
-    'id', 'first_name', 'last_name', 'email', 'bio', 'experience_level', 'personal_statement', 'clubs' ,'group'
+    'id', 'first_name', 'last_name', 'email', 'bio', 'experience_level', 'personal_statement' ,'group'
     ]

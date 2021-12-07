@@ -13,8 +13,6 @@ class UserForm(forms.ModelForm):
     class Meta:
         """Form options."""
 
-        #This is a tempory hardcoded version
-
         model = User
         fields = ['first_name', 'last_name', 'email', 'bio', 'experience_level', 'personal_statement']
         widgets = { 'bio': forms.Textarea(), 'personal_statement': forms.Textarea()}
@@ -46,13 +44,13 @@ class PasswordForm(forms.Form):
 class SignUpForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'bio', 'experience_level', 'personal_statement', 'clubs']
+        fields = ['first_name', 'last_name', 'email', 'bio', 'experience_level', 'personal_statement']
         widgets = { 'bio': forms.Textarea(), 'personal_statement': forms.Textarea() }
 
     new_password = forms.CharField(
         label = 'Password',
         widget = forms.PasswordInput(),
-        validators = [RegexValidator( 
+        validators = [RegexValidator(
             regex = r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$',
             message = 'Password must contain an uppercase character, a lowercase '
                       'character and a number'
