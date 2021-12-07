@@ -57,9 +57,11 @@ class SignUpViewTestCase(TestCase, LogInTester):
 
     def test_successful_sign_up(self):
         before_count = User.objects.count()
-        response = self.client.post(self.url, self.form_input, follow = True)
+        #The line below also fails and I dont know
+        response = self.client.post(self.url, self.form_input, follow=True)
         after_count = User.objects.count()
         self.assertEqual(after_count, before_count + 1)
+        #The line below fails because of this error AssertionError: '/show_current_user_profile/' != '/profile'
         response_url = reverse('profile')
         self.assertRedirects(response, response_url, status_code = 302, target_status_code = 200)
         self.assertTemplateUsed(response, 'profile.html')
@@ -78,6 +80,7 @@ class SignUpViewTestCase(TestCase, LogInTester):
         response = self.client.post(self.url, self.form_input, follow = True)
         after_count = User.objects.count()
         self.assertEqual(after_count, before_count)
+        #The line below fails because of this error AssertionError: '/show_current_user_profile/' != '/profile'
         redirect_url = reverse('profile')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'profile.html')
