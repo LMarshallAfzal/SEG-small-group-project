@@ -50,15 +50,15 @@ class Command(BaseCommand):
         group = Group.objects.get(name = list_of_clubs.find_club("Kerbal Chess Club").club_codename + " Officer")
         Valentina.groups.add(group)
 
-            Billie = User.objects.create_user(
-                username = "billie@example.org",
-                first_name = "Billie",
-                last_name = "Kerman",
-                email = "billie@example.org",
-                password = "Password123",
-                bio = self.faker.unique.text(max_nb_chars = 520),
-                personal_statement = self.faker.text(max_nb_chars = 1250),
-            )
+        Billie = User.objects.create_user(
+            username = "billie@example.org",
+            first_name = "Billie",
+            last_name = "Kerman",
+            email = "billie@example.org",
+            password = "Password123",
+            bio = self.faker.unique.text(max_nb_chars = 520),
+            personal_statement = self.faker.text(max_nb_chars = 1250),
+        )
 
         group = Group.objects.get(name = list_of_clubs.find_club("Kerbal Chess Club").club_codename + " Owner")
         Billie.groups.add(group)
