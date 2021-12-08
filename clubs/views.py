@@ -1,7 +1,7 @@
 from typing import List
 from django import template
 from django.shortcuts import render
-from .forms import LogInForm, SignUpForm, UserForm, PasswordForm, ApplicationForm
+from .forms import LogInForm, SignUpForm, UserForm, PasswordForm, ApplicationForm, CreateClubForm
 from django.template import RequestContext
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
@@ -347,3 +347,18 @@ def club_selection(request):
     clubs = list_of_clubs.club_list
     print(len(clubs))
     return render(request, 'club_selection.html', {'clubs':clubs})
+
+def create_new_club(request):
+    list_of_clubs = ClubList()
+    user = request.user
+    if request.method == 'POST':
+        form = CreateClubForm()
+        if form.is_valid():
+            form.save()
+            current_user.username = form.cleaned_data.get('email')
+            messages.add_message(request, messages.SUCCESS, "You have created a new chess club!")
+
+            return redirect('club_selection')
+    else:
+        form = CreateClubForm()
+    return render(request, 'new_club_form.html', {'form': form})

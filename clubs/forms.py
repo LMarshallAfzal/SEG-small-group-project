@@ -85,9 +85,17 @@ class SignUpForm(forms.ModelForm):
         return user
 
 class ApplicationForm(forms.ModelForm):
-
     class Meta:
-
         model = User
         fields = ['first_name', 'last_name', 'email', 'bio', 'experience_level', 'personal_statement']
         widgets = { 'bio': forms.Textarea(), 'personal_statement': forms.Textarea()  }
+
+class CreateClubForm(forms.ModelForm):
+    class Meta:
+        model = Club
+        fields = ['club_name']
+
+    def save(self):
+        list_of_clubs = ClubList()
+        list_of_clubs.create_new_club('club_name')
+            
