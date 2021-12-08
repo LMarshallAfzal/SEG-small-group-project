@@ -296,26 +296,6 @@ def promote_member(request, user_id):
     member.user_set.remove(user)
     return redirect('owner_member_list')
 
-# def newOwner(request,user_id):
-#     list_of_clubs = ClubList()
-#     name_of_club = request.session.get('club_name')
-#     club = list_of_clubs.find_club(name_of_club)
-#     user = get_user_model()
-#     user = User.objects.get(id = user_id)
-#     officer = Group.objects.get(name = club.getClubOfficerGroup())
-#     if user in officer.user_set:
-#         owner = Group.objects.get(name = club.getClubOwnerGroup())
-#         owners = List(Group.objects.getAll(name = club.getClubOwnerGroup()))
-#         current_owner = owners[0]
-#         owner.user_set.add(user)
-#         owner.user_set.remove(current_owner)
-#         logout(request)
-#         return redirect('home')
-#
-#     else:
-#         messages.add_message(request, messages.ERROR, "New owner has to be an officer!")
-#         return redirect('show_user')
-
 @login_required
 def promoteOfficer(request,user_id):
     list_of_clubs = ClubList()
