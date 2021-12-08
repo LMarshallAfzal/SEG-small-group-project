@@ -16,9 +16,9 @@ from .helpers import login_prohibited
 from django.db.models import Count
 from django.views import View
 from django.views.generic import ListView
-from django.views import DetailView
+from django.views.generic.detail import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from .club_list import ClubList
 class LogInView(View):
     """Log-in handling view"""
     def get(self,request):
@@ -46,15 +46,33 @@ class MemberListView(LoginRequiredMixin,ListView):
     model = User
     template_name = 'member_list.html'
     context_object_name = 'users'
+    
+    def get_queryset(self):
+          list_of_clubs = ClubList()
+          name_of_club = self.request.session.get('club_name')
+          club = list_of_clubs.find_club(name_of_club)
+          return User.objects.filter(name = club.getClubMemberGroup())
 
-class OfficerListView(ListView):
-    model = User
-    template_name = 'officer_list.html'
-    context_object_name = 'users'
+class OfficerListView(MemberListView):
+    
+    def get_context_data(self, *args, **kwargs):
+        """Generate content to be displayed in the template."""
+        list_of_clubs = ClubList()
+        name_of_club = self.request.session.get('club_name')
+        club = list_of_clubs.find_club(name_of_club)
+        context = super().get_context_data(*args, **kwargs)
+        user = self.get_object()
+        context['number_of_applicants'] = User.objects.filter(groups__name = club.getClubApplicantGroup()).count()
+        context['number_of_members'] = User.objects.filter(groups__name__in = [club.getClubOwnerGroup(),club.getClubMemberGroup(), club.getClubOfficerGroup()]).count()
+        return context
+
+    # def get_queryset(self):
+    #     return super().get_queryset()
+        
 
 class CurrentUserView(DetailView):
     model = User
-    template_name = 'Żhow_current_user_profile.html'
+    template_name = 'show_current_user_profile.html'
     pk_url_kwarg = "user_id"
 
 def show_user(request, user_id):

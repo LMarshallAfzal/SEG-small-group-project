@@ -16,7 +16,7 @@ class LogInForm(forms.Form):
         """Returns authenticated user"""
         user = None
         if self.is_valid():
-            username = self.cleaned_data.get('email')
+            username = self.cleaned_data.get('email').lower()
             password = self.cleaned_data.get('password')
             user = authenticate(username = username, password = password)
         return user
@@ -85,7 +85,7 @@ class SignUpForm(forms.ModelForm):
         user = User.objects.create_user(
             first_name = self.cleaned_data.get('first_name'),
             last_name = self.cleaned_data.get('last_name'),
-            email = self.cleaned_data.get('email'),
+            email = self.cleaned_data.get('email').lower(),
             username = self.cleaned_data.get('email'),
             bio = self.cleaned_data.get('bio'),
             experience_level = self.cleaned_data.get('experience_level'),
