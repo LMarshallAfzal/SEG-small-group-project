@@ -1,10 +1,15 @@
 from django import forms
 from django.core.validators import RegexValidator
-from .models import User
+from .models import User, Club
+from .club_list import ClubList
 from django.contrib.auth import authenticate
 
 class LogInForm(forms.Form):
-    email = forms.EmailField(label = "email")
+    email = forms.EmailField(required=True, label = "email")
+    # Tried to make email not case senstive.
+    # def clean_email(self):
+    #     data = self.cleaned_data['email']
+    #     return data.lower()
     password = forms.CharField(label = "Password", widget = forms.PasswordInput())
 
     def get_user(self):
@@ -88,3 +93,11 @@ class SignUpForm(forms.ModelForm):
             password = self.cleaned_data.get('new_password'),
         )
         return user
+
+class ApplicationForm(forms.ModelForm):
+
+    class Meta:
+
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'bio', 'experience_level', 'personal_statement']
+        widgets = { 'bio': forms.Textarea(), 'personal_statement': forms.Textarea()  }

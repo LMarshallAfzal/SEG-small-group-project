@@ -8,3 +8,13 @@ def login_prohibited(view_function):
         else:
             return view_function(request)
     return modified_view_function
+
+def convert_to_codename(name):
+    club_codename = ""
+    #Removes whitespaces from the club name
+    for character in name:
+        if character == " ":
+            club_codename += "_"
+        else:
+            club_codename += character
+    return club_codename
