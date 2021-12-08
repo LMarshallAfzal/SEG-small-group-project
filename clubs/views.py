@@ -1,7 +1,9 @@
-from typing import List
+from typing import ContextManager, List
+
+from django.views.generic.detail import DetailView
 from .models import User
 from django import template
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from .forms import LogInForm, SignUpForm, UserForm, PasswordForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
@@ -9,22 +11,26 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import Group
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, Http404
 from .models import User
 from django.shortcuts import redirect, render
 from .helpers import login_prohibited
 from django.db.models import Count
+from django.views import View
+from django.views.generic import ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
+class LogInView(View):
+    """Log-in handling view"""
+    def get(self,request):
+        self.next = request.GET.get('next') or 'officer'
+        return self.render()
 
-@login_prohibited
-def log_in(request):
-    if request.method == 'POST':
+    def post(self,request):
         form = LogInForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('email')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username = username, password = password)
-            if user is not None:
+        self.next = request.GET.get('next') or 'officer'
+        user = form.get_user()
+        if user is not None:
                 if user.groups.filter(name = 'Officer'):
                     #user.groups.filter(name ='Member').exists()
                     login(request, user)
@@ -42,13 +48,46 @@ def log_in(request):
                     return redirect('owner')
                     """View for applicant"""
                 elif user.groups.filter(name = 'Applicant'):
-                    login(request, user)
+                    login(request,user)
                     return redirect('show_current_user_profile')
         #Add error message here
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
-    form = LogInForm()
-    next = request.GET.get('next') or 'officer'
-    return render(request, 'log_in.html', {'form': form, 'next' : next})
+        return self.render()
+
+    def render(self):
+        form = LogInForm()
+        return render(self.request, 'log_in.html', {'form': form, 'next' : self.next})
+
+
+class MemberListView(LoginRequiredMixin,ListView):
+    model = User
+    template_name = 'member_list.html'
+    context_object_name = 'users'
+
+class OfficerListView(ListView):
+    model = User
+    template_name = 'officer_list.html'
+    context_object_name = 'users'
+
+class CurrentUserView(DetailView):
+    model = User
+    template_name = 'Żhow_current_user_profile.html'
+    pk_url_kwarg = "user_id"
+
+def show_user(request, user_id):
+    User = get_user_model()
+    user = User.objects.get(id = user_id)
+    return render(request, 'show_user.html', {'user' : user})
+    
+@login_required
+def show_user_officer(request, user_id):
+    User = get_user_model()
+    user = User.objects.get(id = user_id)
+    return render(request, 'show_user_officer.html', {'user' : user})
+
+def show_current_user_profile(request):
+    current_user = request.user
+    return render(request, 'show_current_user_profile.html', {'user': current_user})
 
 @login_required
 def log_out(request):
@@ -109,20 +148,8 @@ def password(request):
     form = PasswordForm()
     return render(request, 'password.html', {'form': form})
 
-def member_list(request):
-    users = User.objects.filter(groups__name__in=['Owner', 'Member', 'Officer'])
-    return render(request, 'member_list.html', {'users': users})
 
-def show_user(request, user_id):
-    User = get_user_model()
-    user = User.objects.get(id = user_id)
-    return render(request, 'show_user.html', {'user' : user})
 
-@login_required
-def show_user_officer(request, user_id):
-    User = get_user_model()
-    user = User.objects.get(id = user_id)
-    return render(request, 'show_user_officer.html', {'user' : user})
 
 @login_required
 def officer(request):

@@ -1,10 +1,20 @@
 from django import forms
 from django.core.validators import RegexValidator
 from .models import User
+from django.contrib.auth import authenticate
 
 class LogInForm(forms.Form):
     email = forms.EmailField(label = "email")
     password = forms.CharField(label = "Password", widget = forms.PasswordInput())
+
+    def get_user(self):
+        """Returns authenticated user"""
+        user = None
+        if self.is_valid():
+            username = self.cleaned_data.get('email')
+            password = self.cleaned_data.get('password')
+            user = authenticate(username = username, password = password)
+        return user
 
 class UserForm(forms.ModelForm):
     """Form to update user profiles."""
