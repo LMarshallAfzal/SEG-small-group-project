@@ -8,7 +8,4 @@ class ClubModelTestCase(TestCase):
     """Unit tests of the Club model"""
     def setUp(self):
         name = "Generic chess club"
-        self.club = Club.objects.create_club(
-            club_name = name,
-            club_codename =
-        )
+        self.club = Club.objects.create_club(name)
