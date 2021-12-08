@@ -1,8 +1,10 @@
+"""Unit tests of the User model"""
 from django.test import TestCase
 from clubs.models import User
 from django.core.exceptions import ValidationError
 
 class UserModelTestCase(TestCase):
+    """Unit tests of the User model"""
     def setUp(self):
         self.user = User.objects.create_user(
         '@jarredbowen',

@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from libgravatar import Gravatar
 from django.contrib.auth.models import Group
+import clubs.helpers
 
 class User(AbstractUser):
     BEGINNER = 'Beginner'
@@ -55,6 +56,10 @@ class User(AbstractUser):
     #     applicant_group.user_set.remove(user)
 
 
+class ClubManager(models.Manager):
+    def create_club(self, name):
+        club = self.create(club_name = name, club_codename = convert_to_codename(name))
+        club.create_groups_and_permissions_for_club()
 
 class Club(models.Model):
     club_name = models.CharField(max_length = 50, blank = False, unique = True)
