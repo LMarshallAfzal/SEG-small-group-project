@@ -352,12 +352,16 @@ def create_new_club(request):
     list_of_clubs = ClubList()
     user = request.user
     if request.method == 'POST':
-        form = CreateClubForm()
+        form = CreateClubForm(data = request.POST)
         if form.is_valid():
-            form.save()
-            current_user.username = form.cleaned_data.get('email')
+            #current_user.username = form.cleaned_data.get('email')
+            #form.save()
+            list_of_clubs = ClubList()
+            list_of_clubs.create_new_club(form.cleaned_data.get('club_name'))
+            club = list_of_clubs.find_club(form.cleaned_data.get('club_name'))
+            group = Group.objects.get(name = club.getClubOwnerGroup())
+            user.groups.add(group)
             messages.add_message(request, messages.SUCCESS, "You have created a new chess club!")
-
             return redirect('club_selection')
     else:
         form = CreateClubForm()

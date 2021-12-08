@@ -94,8 +94,3 @@ class CreateClubForm(forms.ModelForm):
     class Meta:
         model = Club
         fields = ['club_name']
-
-    def save(self):
-        list_of_clubs = ClubList()
-        list_of_clubs.create_new_club('club_name')
-            

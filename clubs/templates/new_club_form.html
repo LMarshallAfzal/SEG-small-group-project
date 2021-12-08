@@ -4,7 +4,7 @@
   <div class = "row">
     <div class = "col-12">
       <h1>Apply to club</h1>
-      <form action="{% url 'application_form' %}" method = "post">
+      <form action="{% url 'create_new_club' %}" method = "post">
         {% csrf_token %}
         {% include 'partials/bootstrap_form.html' with form=form %}
         <input type = "submit" value = "Apply" class="btn btn-primary">
