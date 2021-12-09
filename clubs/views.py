@@ -293,7 +293,7 @@ def promote_member(request, user_id):
     user = User.objects.get(id = user_id)
     officer = Group.objects.get(name = club.getClubOfficerGroup())
     officer.user_set.add(user)
-    member = Group.objects.get(name = club.getClubMemberGroup)
+    member = Group.objects.get(name = club.getClubMemberGroup())
     member.user_set.remove(user)
     return redirect('owner_member_list')
 
