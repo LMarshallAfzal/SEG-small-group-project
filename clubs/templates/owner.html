@@ -14,11 +14,11 @@
               <div class="card-body">
                 <p class="card-text">Applicants ready for approval or rejection</p>
                 <p class="card-text">New Applications: {{ number_of_applicants }}</p>
-                      <form action="{% url 'officer_promote_applicants' %}" method="post">
-                        {% csrf_token %}
-                        {% include 'partials/bootstrap_form.html' with form=form %}
-                        <input type = "submit" value = "Applicants" class = "btn btn-primary" name="applicants">
-                      </form>
+                <form action="{% url 'officer_promote_applicants' %}" method="post">
+                  {% csrf_token %}
+                  {% include 'partials/bootstrap_form.html' with form=form %}
+                  <input type = "submit" value = "Applicants" class = "btn btn-primary" name="applicants">
+                </form>
               </div>
             </div>
           </td>
@@ -47,12 +47,12 @@
               </div>
               <div class="card-body">
                 <p class="card-text">Officers that can be demoted</p>
-                <p class="card-text">Officers : {{ number_of_officers }}</p>
-                      <form action="{% url 'officer_list' %}" method="post">
-                        {% csrf_token %}
-                        {% include 'partials/bootstrap_form.html' with form=form %}
-                        <input type = "submit" value = "Officers" class = "btn btn-primary" name="officers">
-                      </form>
+                <p class="card-text">Officers: {{ number_of_officers }}</p>
+                <form action="{% url 'officer_list' %}" method="post">
+                  {% csrf_token %}
+                  {% include 'partials/bootstrap_form.html' with form=form %}
+                  <input type = "submit" value = "Officers" class = "btn btn-primary" name="officers">
+                </form>
               </div>
             </div>
           </td>
