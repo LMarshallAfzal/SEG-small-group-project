@@ -18,9 +18,9 @@ class ClubList:
                 return club
         return None
 
-    def create_new_club(self, name):
+    def create_new_club(self, name, mission_statement):
         if self.find_club(name) == None:
-            club = Club.objects.create_club(name)
+            club = Club.objects.create_club(name, mission_statement)
             self.club_list.append(club)
         else:
             #Error message

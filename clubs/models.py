@@ -9,7 +9,6 @@ class User(AbstractUser):
     BEGINNER = 'Beginner'
     INTERMEDIATE = 'Intermediate'
     ADVANCED = 'Advanced'
-
     first_name = models.CharField(max_length = 50, blank = False)
     last_name = models.CharField(max_length = 50, blank = False)
     email = models.EmailField(unique = True, blank = False)
@@ -21,19 +20,6 @@ class User(AbstractUser):
     ]
     experience_level = models.CharField(max_length = 12, choices = EXPERIENCE_CHOICES, default = BEGINNER)
     personal_statement = models.CharField(max_length = 1250, blank = True)
-    # KCL = "Kerbal Chess Club"
-    # KCS = "KCL Chess Society"
-    # UTCT = "UCL Terrible Chess Team"
-    # ECCT = "Elite Cambridge Chess Team"
-    # CLUB_CHOICES = [
-    #     (KCL, "Kerbal Chess Club"),
-    #     (KCS, "KCL Chess Society"),
-    #     (UTCT, "UCL Terrible Chess Team"),
-    #     (ECCT, "Elite Cambridge Chess Team")
-    # ]
-    #
-    #
-    # clubs = models.CharField(max_length = 50,choices = CLUB_CHOICES, default = KCL)
 
     def full_name(self):
         return f'{self.first_name} {self.last_name}'
@@ -57,14 +43,15 @@ class User(AbstractUser):
 
 
 class ClubManager(models.Manager):
-    def create_club(self, name):
-        club = self.create(club_name = name, club_codename = h.convert_to_codename(name))
+    def create_club(self, name, mission_statement):
+        club = self.create(club_name = name, club_codename = h.convert_to_codename(name), mission_statement = mission_statement)
         club.create_groups_and_permissions_for_club()
         return club
 
 class Club(models.Model):
     club_name = models.CharField(max_length = 50, blank = False, unique = True)
     club_codename = models.CharField(max_length = 50, blank = False, unique = True)
+    mission_statement = models.CharField(max_length = 150, blank = True, unique = False)
     objects = ClubManager()
 
     def create_groups_and_permissions_for_club(self):

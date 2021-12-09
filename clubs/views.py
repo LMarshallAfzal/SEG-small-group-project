@@ -1,7 +1,7 @@
 from typing import List
 from django import template
 from django.shortcuts import render
-from .forms import LogInForm, SignUpForm, UserForm, PasswordForm, ApplicationForm
+from .forms import LogInForm, SignUpForm, UserForm, PasswordForm, ApplicationForm, CreateClubForm
 from django.template import RequestContext
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
@@ -186,7 +186,6 @@ def application_form(request):
             return redirect('profile')
     else:
         form = ApplicationForm(instance=current_user)
-        #form.instance = current_user
     return render(request, 'application_form.html', {'form': form})
 
 @login_required
@@ -352,26 +351,6 @@ def promote_member(request, user_id):
     member.user_set.remove(user)
     return redirect('owner_member_list')
 
-# def newOwner(request,user_id):
-#     list_of_clubs = ClubList()
-#     name_of_club = request.session.get('club_name')
-#     club = list_of_clubs.find_club(name_of_club)
-#     user = get_user_model()
-#     user = User.objects.get(id = user_id)
-#     officer = Group.objects.get(name = club.getClubOfficerGroup())
-#     if user in officer.user_set:
-#         owner = Group.objects.get(name = club.getClubOwnerGroup())
-#         owners = List(Group.objects.getAll(name = club.getClubOwnerGroup()))
-#         current_owner = owners[0]
-#         owner.user_set.add(user)
-#         owner.user_set.remove(current_owner)
-#         logout(request)
-#         return redirect('home')
-#
-#     else:
-#         messages.add_message(request, messages.ERROR, "New owner has to be an officer!")
-#         return redirect('show_user')
-
 @login_required
 def promoteOfficer(request,user_id):
     list_of_clubs = ClubList()
@@ -403,3 +382,22 @@ def club_selection(request):
     clubs = list_of_clubs.club_list
     print(len(clubs))
     return render(request, 'club_selection.html', {'clubs':clubs})
+
+def create_new_club(request):
+    list_of_clubs = ClubList()
+    user = request.user
+    if request.method == 'POST':
+        form = CreateClubForm(data = request.POST)
+        if form.is_valid():
+            #current_user.username = form.cleaned_data.get('email')
+            #form.save()
+            list_of_clubs = ClubList()
+            list_of_clubs.create_new_club(form.cleaned_data.get('club_name'), form.cleaned_data.get('mission_statement'))
+            club = list_of_clubs.find_club(form.cleaned_data.get('club_name'))
+            group = Group.objects.get(name = club.getClubOwnerGroup())
+            user.groups.add(group)
+            messages.add_message(request, messages.SUCCESS, "You have created a new chess club!")
+            return redirect('club_selection')
+    else:
+        form = CreateClubForm()
+    return render(request, 'new_club_form.html', {'form': form})

@@ -42,5 +42,6 @@ urlpatterns = [
     path('transfer_ownership/<int:user_id>', views.transfer_ownership, name = 'transfer_ownership'),
     path('club_selection/', views.club_selection, name = 'club_selection'),
     path('group_check/<int:user_id>', views.group_check, name = 'group_check'),
-    path('application_form/', views.application_form, name = 'application_form')
+    path('application_form/', views.application_form, name = 'application_form'),
+    path('create_new_club/', views.create_new_club, name = 'create_new_club')
 ]
