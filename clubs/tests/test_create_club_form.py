@@ -30,4 +30,4 @@ class CreateClubFormTestCase(TestCase):
     def test_form_accepts_blank_mission_statement(self):
         self.form_input['mission_statement'] = ''
         form = CreateClubForm(data=self.form_input)
-        self.assertTrue(form.is_valid())    
+        self.assertTrue(form.is_valid())
