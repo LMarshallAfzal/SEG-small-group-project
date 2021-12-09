@@ -21,7 +21,7 @@ class UserFormTestCase(TestCase):
 
     def setUp(self):
         list_of_clubs = ClubList()
-        list_of_clubs.create_new_club("waterBoys")
+        list_of_clubs.create_new_club("waterBoys", "Mission statement for waterBoys")
         club = list_of_clubs.find_club("waterBoys")
         self.user = User.objects.get(username='johndoe@example.org')
         self.url = reverse('owner')
@@ -57,9 +57,9 @@ class UserFormTestCase(TestCase):
 
     def test_can_only_promote_officer_to_owner(self):
         self.officer.user_set.remove(self.other_user)
-        self.assertFalse(self.other_user.groups.filter(name='Officer').exists())
+        self.assertFalse(self.other_user.groups.filter(name=club.getClubOfficerGroup()).exists())
         self.owner.user_set.add(self.other_user)
-        self.assertFalse(self.other_user.groups.filter(name='Owner').exists())
+        self.assertFalse(self.other_user.groups.filter(name=club.getClubOfficerGroup()).exists())
         response = self.client.post(self.url,self.other_user.id)
         response_url = reverse('member_list')
         self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
@@ -69,7 +69,7 @@ class UserFormTestCase(TestCase):
     def test_officer_can_be_promoted(self):
         self.assertTrue(self.other_user_officer)
         self.owner.user_set.add(self.other_user)
-        self.assertTrue(self.user.groups.filter(name='Owner').exists())
+        self.assertTrue(self.user.groups.filter(name=club.getClubOwnerGroup()).exists())
 
 
     def test_owner_change(self):
