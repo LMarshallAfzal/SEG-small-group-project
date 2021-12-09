@@ -19,6 +19,7 @@ from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .club_list import ClubList
+
 class LogInView(View):
     """Log-in handling view"""
     def get(self,request):
@@ -51,10 +52,11 @@ class MemberListView(LoginRequiredMixin,ListView):
           list_of_clubs = ClubList()
           name_of_club = self.request.session.get('club_name')
           club = list_of_clubs.find_club(name_of_club)
-          return User.objects.filter(name = club.getClubMemberGroup())
+          User.objects.filter(groups__name = club.getClubMemberGroup())
+
 
 class OfficerListView(MemberListView):
-    
+
     def get_context_data(self, *args, **kwargs):
         """Generate content to be displayed in the template."""
         list_of_clubs = ClubList()
@@ -68,12 +70,19 @@ class OfficerListView(MemberListView):
 
     # def get_queryset(self):
     #     return super().get_queryset()
-        
 
-class CurrentUserView(DetailView):
+
+class ShowUserView(DetailView):
     model = User
-    template_name = 'show_current_user_profile.html'
+    template_name = 'show_user.html'
     pk_url_kwarg = "user_id"
+
+class ShowOfficerView(DetailView):
+    model = User
+    template_name = 'show_user_officer.html'
+    pk_url_kwarg = "user_id"
+    
+    
 
 def show_user(request, user_id):
     User = get_user_model()
@@ -97,7 +106,7 @@ def group_check(request, user_id):
     name_of_club = request.session.get('club_name')
     club = list_of_clubs.find_club(name_of_club)
     print(request.POST.get('club_name'))
-    user = User.objects.get(id = user_id)
+    user = request.user
     if user.groups.filter(name = club.getClubOfficerGroup()):
         #user.groups.filter(name ='Member').exists()
         redirect_url = request.POST.get('next') or 'officer'
@@ -198,29 +207,29 @@ def password(request):
     return render(request, 'password.html', {'form': form})
 
 def member_list(request):
-    list_of_clubs = ClubList()
-    name_of_club = request.session.get('club_name')
-    club = list_of_clubs.find_club(name_of_club)
-    current_user = request.user
-    if current_user.groups.filter(name = club.getClubOfficerGroup()):
-        users = User.objects.all()
-        number_of_applicants = User.objects.filter(groups__name = club.getClubApplicantGroup()).count()
-        number_of_members = User.objects.filter(groups__name__in = [club.getClubOwnerGroup(),club.getClubMemberGroup(), club.getClubOfficerGroup()]).count()
-        return render(request, 'officer.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members})
+    # list_of_clubs = ClubList()
+    # name_of_club = request.session.get('club_name')
+    # club = list_of_clubs.find_club(name_of_club)
+    # current_user = request.user
+    # if current_user.groups.filter(groups__name = club.getClubOfficerGroup()):
+    #     users = User.objects.all()
+    #     number_of_applicants = User.objects.filter(groups__name = club.getClubApplicantGroup()).count()
+    #     number_of_members = User.objects.filter(groups__name__in = [club.getClubOwnerGroup(),club.getClubMemberGroup(), club.getClubOfficerGroup()]).count()
+    #     return render(request, 'officer.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members})
 
-        """View for member"""
-    elif current_user.groups.filter(name = club.getClubMemberGroup()):
-        users = User.objects.all()
-        return render(request, 'member_list.html', {'users': users})
+    #     """View for member"""
+    # elif current_user.groups.filter(name = club.getClubMemberGroup()):
+    #     users = User.objects.all()
+    #     return render(request, 'member_list.html', {'users': users})
 
-        """View for owner"""
-    elif current_user.groups.filter(name = club.getClubOwnerGroup()):
-        users = User.objects.all()
-        number_of_applicants = User.objects.filter(groups__name =  club.getClubApplicantGroup()).count()
-        number_of_members = User.objects.filter(groups__name__in = [club.getClubOwnerGroup(),club.getClubMemberGroup()]).count()
-        number_of_officers = User.objects.filter(groups__name = club.getClubOfficerGroup()).count()
-        return render(request, 'owner.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers})
-        return redirect('owner')
+    #     """View for owner"""
+    # elif current_user.groups.filter(name = club.getClubOwnerGroup()):
+    #     users = User.objects.all()
+    #     number_of_applicants = User.objects.filter(groups__name =  club.getClubApplicantGroup()).count()
+    #     number_of_members = User.objects.filter(groups__name__in = [club.getClubOwnerGroup(),club.getClubMemberGroup()]).count()
+    #     number_of_officers = User.objects.filter(groups__name = club.getClubOfficerGroup()).count()
+    #     return render(request, 'owner.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers})
+    #     return redirect('owner')
 
     list_of_clubs = ClubList()
     name_of_club = request.session.get('club_name')
