@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 class ClubModelTestCase(TestCase):
     """Unit tests of the User model"""
     def setUp(self):
-        self.club = Club.objects.create_club("Test club", "Test mission statement"
+        self.club = Club.objects.create_club("Test club", "Test mission statement", "Bush House"
         )
 
     def test_club_name_must_not_be_blank(self):
@@ -29,8 +29,16 @@ class ClubModelTestCase(TestCase):
         self.club.mission_statement = 'x' *151
         self._assert_club_is_invalid()
 
+    def test_location_can_be_50_characters_long(self):
+        self.club.location = 'x' *50
+        self._assert_club_is_valid()
+
+    def test_location_can_not_be_longer_50_characters_long(self):
+        self.club.location = 'x' *51
+        self._assert_club_is_invalid()
+
     def _create_second_club(self):
-        club = Club.objects.create_club("Test2 club", "Test2 mission statement")
+        club = Club.objects.create_club("Test2 club", "Test2 mission statement", "Strand Building")
         return club
 
     def _assert_club_is_invalid(self):

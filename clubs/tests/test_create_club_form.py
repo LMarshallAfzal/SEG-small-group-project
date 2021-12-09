@@ -21,6 +21,7 @@ class CreateClubFormTestCase(TestCase):
         form = CreateClubForm()
         self.assertIn('club_name', form.fields)
         self.assertIn('mission_statement', form.fields)
+        self.assertIn('location', form.fields)
 
     def test_form_rejects_blank_club_name(self):
         self.form_input['club_name'] = ''
@@ -29,5 +30,15 @@ class CreateClubFormTestCase(TestCase):
 
     def test_form_accepts_blank_mission_statement(self):
         self.form_input['mission_statement'] = ''
+        form = CreateClubForm(data=self.form_input)
+        self.assertTrue(form.is_valid())
+
+    def test_form_accepts_blank_mission_statement(self):
+        self.form_input['mission_statement'] = ''
+        form = CreateClubForm(data=self.form_input)
+        self.assertTrue(form.is_valid())
+
+    def test_form_accepts_blank_location(self):
+        self.form_input['location'] = ''
         form = CreateClubForm(data=self.form_input)
         self.assertTrue(form.is_valid())
