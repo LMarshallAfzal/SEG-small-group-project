@@ -336,7 +336,7 @@ def create_new_club(request):
             #current_user.username = form.cleaned_data.get('email')
             #form.save()
             list_of_clubs = ClubList()
-            list_of_clubs.create_new_club(form.cleaned_data.get('club_name'))
+            list_of_clubs.create_new_club(form.cleaned_data.get('club_name'), form.cleaned_data.get('mission_statement'))
             club = list_of_clubs.find_club(form.cleaned_data.get('club_name'))
             group = Group.objects.get(name = club.getClubOwnerGroup())
             user.groups.add(group)

@@ -93,4 +93,4 @@ class ApplicationForm(forms.ModelForm):
 class CreateClubForm(forms.ModelForm):
     class Meta:
         model = Club
-        fields = ['club_name']
+        fields = ['club_name', 'mission_statement']
