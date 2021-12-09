@@ -4,6 +4,7 @@ from django.test import TestCase
 from django.urls import reverse
 from clubs.models import User
 from django.contrib.auth.models import Group
+from clubs.club_list import ClubList
 
 class UserFormTestCase(TestCase):
     """Unit tests of the user form."""
@@ -36,9 +37,6 @@ class UserFormTestCase(TestCase):
         applicant.user_set.add(self.applicant_user)
 
 
-
-        
-        
 
     def test_owner_url(self):
         self.assertEqual(self.url,'/owner/')
@@ -102,11 +100,11 @@ class UserFormTestCase(TestCase):
         self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
         self.assertTemplateUsed(response,'owner_member_list.html')
 
-    
+
     def test_officer_can_be_promoted(self):
         self.assertTrue(self.other_user_officer)
         self.owner.user_set.add(self.other_user)
-        self.assertTrue(self.user.groups.filter(name='Owner').exists())
+        self.assertTrue(self.user.groups.filter(name=club.getClubOwnerGroup()).exists())
 
 
     def test_owner_change(self):
@@ -123,9 +121,3 @@ class UserFormTestCase(TestCase):
         owners = self.owner.user_set.getAll.toList
         current_owner = owners[0]
         self.assertEqual(owners[0],self.other_user)
-    
-    
-        
-        
-        
-        

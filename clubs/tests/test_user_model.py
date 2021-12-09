@@ -1,8 +1,10 @@
+"""Unit tests of the User model"""
 from django.test import TestCase
 from clubs.models import User
 from django.core.exceptions import ValidationError
 
 class UserModelTestCase(TestCase):
+    """Unit tests of the User model"""
     def setUp(self):
         self.user = User.objects.create_user(
         '@jarredbowen',
@@ -77,6 +79,11 @@ class UserModelTestCase(TestCase):
         )
         self.user.email = 'bendoe@example.org'
         self._assert_user_is_invalid()
+
+    # def test_email_is_not_case_sensitive(self):
+    #     second_user = self._create_second_user()
+    #     second_user.email = 'JARREDBOWEN@example.org'
+    #     self.assertEqual(self.user.email, second_user.email)
 
     def test_bio_may_be_blank(self):
         self.user.bio = ''
