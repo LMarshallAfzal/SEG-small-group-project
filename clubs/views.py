@@ -49,13 +49,16 @@ class MemberListView(LoginRequiredMixin,ListView):
     context_object_name = 'users'
     
     def get_queryset(self):
+          qs = super().get_queryset()
           list_of_clubs = ClubList()
           name_of_club = self.request.session.get('club_name')
           club = list_of_clubs.find_club(name_of_club)
-          User.objects.filter(groups__name = club.getClubMemberGroup())
+          return qs.filter(groups__name__in=[club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()])
 
 
 class OfficerListView(MemberListView):
+
+    template_name = 'officer_list.html'
 
     def get_context_data(self, *args, **kwargs):
         """Generate content to be displayed in the template."""
@@ -63,13 +66,21 @@ class OfficerListView(MemberListView):
         name_of_club = self.request.session.get('club_name')
         club = list_of_clubs.find_club(name_of_club)
         context = super().get_context_data(*args, **kwargs)
-        user = self.get_object()
         context['number_of_applicants'] = User.objects.filter(groups__name = club.getClubApplicantGroup()).count()
         context['number_of_members'] = User.objects.filter(groups__name__in = [club.getClubOwnerGroup(),club.getClubMemberGroup(), club.getClubOfficerGroup()]).count()
         return context
 
-    # def get_queryset(self):
-    #     return super().get_queryset()
+    def get_queryset(self):
+        return super().get_queryset()
+
+class OwnerListView(OfficerListView):
+    template_name = 'owner_member_list.html'
+
+    def get_context_data(self, *args, **kwargs):
+        return super().get_context_data()
+
+    def get_queryset(self):
+        return super().get_queryset()
 
 
 class ShowUserView(DetailView):
