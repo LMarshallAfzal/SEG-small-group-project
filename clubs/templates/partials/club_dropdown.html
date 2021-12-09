@@ -1,0 +1,20 @@
+  <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <li class="nav-item">
+      {% if perms.clubs.can_access_member_list %}
+      <a class="nav-link" href="{% url 'member_list' %}">Members</a>
+      {% endif %}
+    </li>
+  </ul>
+  <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+    <li class="nav-item dropdown">
+      <a class="nav-link" href="#" id="club--dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <span class="bi-arrow-down-circle-fill"></span>
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="club-dropdown">
+        {% for c in clubs %}
+        <li><a href="/{{c.club_name}}">{{c.club_name}}</a></li>
+        {%endfor%} 
+      </ul>
+    </li>
+  </ul>
+</div>
