@@ -41,10 +41,10 @@ class User(AbstractUser):
     #     applicant_group.user_set.remove(user)
 
 
-
 class Club(models.Model):
     club_name = models.CharField(max_length = 50, blank = False, unique = True)
     club_codename = models.CharField(max_length = 50, blank = False, unique = True)
+    #mission_statement = models.CharField(max_length = 150, blank = False, unique = False)
 
     def create_groups_and_permissions_for_club(self):
         from .groups import ChessClubGroups

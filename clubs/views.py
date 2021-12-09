@@ -121,7 +121,6 @@ def application_form(request):
             return redirect('profile')
     else:
         form = ApplicationForm(instance=current_user)
-        #form.instance = current_user
     return render(request, 'application_form.html', {'form': form})
 
 @login_required
