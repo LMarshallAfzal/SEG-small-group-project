@@ -25,10 +25,10 @@
           </div>
         </div>
       </div>
-      
       {% for c in clubs %}
         <tr>
           <td>{{ c.club_name }}</td>
+          <td>{{ c.mission_statement }}</td>
           <td>
             <form action = "{% url 'group_check' user.id %}" method = "post">
               {% csrf_token %}
