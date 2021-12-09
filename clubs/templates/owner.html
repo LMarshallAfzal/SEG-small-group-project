@@ -47,7 +47,7 @@
               </div>
               <div class="card-body">
                 <p class="card-text">Officers that can be demoted</p>
-                <p class="card-text">Officers : {{ number_of_officers }}</p>
+                <p class="card-text">Officers: {{ number_of_officers }}</p>
                 <form action="{% url 'officer_list' %}" method="post">
                   {% csrf_token %}
                   {% include 'partials/bootstrap_form.html' with form=form %}
