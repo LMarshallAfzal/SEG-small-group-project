@@ -217,6 +217,8 @@ def reject_accept_handler(request, user_id):
             reject(request, user_id)
     return redirect('officer_promote_applicants')
 
+
+
 def accept(request, user_id):
     list_of_clubs = ClubList()
     name_of_club = request.session.get('club_name')
@@ -277,7 +279,7 @@ def transfer_ownership(request, user_id):
     officer.user_set.add(current_owner)
     officer.user_set.remove(user)
     logout(request)
-    return redirect('home')
+    return redirect('owner')
     # else:
     #     messages.add_message(request, messages.ERROR, "New owner has to be an officer!")
     #     return redirect('show_user')
