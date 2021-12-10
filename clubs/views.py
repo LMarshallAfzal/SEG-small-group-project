@@ -329,10 +329,9 @@ def club_selection(request):
     print(len(clubs))
     return render(request, 'club_selection.html', {'clubs':clubs})
 
-def club_dropdown(request):
+def club_dropdown(request, user_id):
     list_of_clubs = ClubList()
     clubs = list_of_clubs.club_list
-    print(len(clubs))
     return render(request, 'club_dropwdown.html', {'clubs':clubs})
 
 def create_new_club(request):
