@@ -3,15 +3,12 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from libgravatar import Gravatar
 from django.contrib.auth.models import Group
+import clubs.helpers as h
 
 class User(AbstractUser):
     BEGINNER = 'Beginner'
     INTERMEDIATE = 'Intermediate'
     ADVANCED = 'Advanced'
-    # KCL = "Kerbal Chess Club"
-    # KCS = "KCL Chess Society"
-    # UTCT = "UCL Terrible Chess Team"
-    # ECCT = "Elite Cambridge Chess Team"
     first_name = models.CharField(max_length = 50, blank = False)
     last_name = models.CharField(max_length = 50, blank = False)
     email = models.EmailField(unique = True, blank = False)
@@ -23,13 +20,6 @@ class User(AbstractUser):
     ]
     experience_level = models.CharField(max_length = 12, choices = EXPERIENCE_CHOICES, default = BEGINNER)
     personal_statement = models.CharField(max_length = 1250, blank = True)
-    # club_choice = [
-    #     (KCL, "Kerbal Chess Club"),
-    #     (KCS, "KCL Chess Society"),
-    #     (UTCT, "UCL Terrible Chess Team"),
-    #     (ECCT, "Elite Cambridge Chess Team")
-    # ]
-    # clubs = models.CharField(max_length = 50, choices = club_choice, default = KCL)
 
     def full_name(self):
         return f'{self.first_name} {self.last_name}'
@@ -52,10 +42,23 @@ class User(AbstractUser):
     #     applicant_group.user_set.remove(user)
 
 
+class ClubManager(models.Manager):
+    def create_club(self, name, mission_statement, location):
+        club = self.create(club_name = name, club_codename = h.convert_to_codename(name), mission_statement = mission_statement, club_location = location)
+        club.create_groups_and_permissions_for_club()
+        return club
 
 class Club(models.Model):
     club_name = models.CharField(max_length = 50, blank = False, unique = True)
     club_codename = models.CharField(max_length = 50, blank = False, unique = True)
+    mission_statement = models.CharField(max_length = 150, blank = True, unique = False)
+    club_location = models.CharField(max_length = 50, blank = True, unique = False)
+    member_count = models.PositiveIntegerField(default = 0)
+    objects = ClubManager()
+
+    def get_club_details(self):
+        owner = User.objects.filter(groups__name = self.club_codename + " Owner")[0] #There should only be one owner
+        return [self.club_name, self.club_location, self.mission_statement, (owner.first_name + owner.last_name), owner.bio, owner.gravatar()]
 
     def create_groups_and_permissions_for_club(self):
         from .groups import ChessClubGroups

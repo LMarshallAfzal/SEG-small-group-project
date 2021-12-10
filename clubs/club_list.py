@@ -1,7 +1,6 @@
 """Contains a list of Club model instances as well as methods to act on Club model instances"""
 from .groups import ChessClubGroups
 from .models import Club
-import clubs.helpers as h
 
 
 class ClubList:
@@ -19,10 +18,9 @@ class ClubList:
                 return club
         return None
 
-    def create_new_club(self, name):
+    def create_new_club(self, name, mission_statement, location):
         if self.find_club(name) == None:
-            club = Club.objects.create(club_name = name, club_codename = h.convert_to_codename(name))
-            club.create_groups_and_permissions_for_club()
+            club = Club.objects.create_club(name, mission_statement, location)
             self.club_list.append(club)
         else:
             #Error message

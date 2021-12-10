@@ -1,7 +1,7 @@
 from typing import List
 from django import template
 from django.shortcuts import render
-from .forms import LogInForm, SignUpForm, UserForm, PasswordForm
+from .forms import LogInForm, SignUpForm, UserForm, PasswordForm, ApplicationForm, CreateClubForm
 from django.template import RequestContext
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
@@ -9,30 +9,109 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import Group
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponseForbidden
-from .models import User, Club
+from django.http import HttpResponseForbidden, Http404
+from .models import User
 from django.shortcuts import redirect, render
 from .helpers import login_prohibited
 from django.db.models import Count
+from django.views import View
+from django.views.generic import ListView
+from django.views.generic.detail import DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .club_list import ClubList
 
-@login_prohibited
-def log_in(request):
-    if request.method == 'POST':
+class LogInView(View):
+    """Log-in handling view"""
+    def get(self,request):
+        self.next = request.GET.get('next') or 'officer'
+        return self.render()
+
+    def post(self,request):
         form = LogInForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('email')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username = username, password = password)
-            if user is not None:
+        self.next = request.POST.get('next') or 'officer'
+        user = form.get_user()
+        if user is not None:
                 """Redirect to club selection page, with option to create new club"""
                 login(request, user)
                 return redirect('club_selection')
 
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
-    form = LogInForm()
-    next = request.GET.get('next') or 'officer'
-    return render(request, 'log_in.html', {'form': form, 'next' : next})
+        return self.render()
+
+    def render(self):
+        form = LogInForm()
+        return render(self.request, 'log_in.html', {'form': form, 'next' : self.next})
+
+
+class MemberListView(LoginRequiredMixin,ListView):
+    model = User
+    template_name = 'member_list.html'
+    context_object_name = 'users'
+    
+    def get_queryset(self):
+          qs = super().get_queryset()
+          list_of_clubs = ClubList()
+          name_of_club = self.request.session.get('club_name')
+          club = list_of_clubs.find_club(name_of_club)
+          return qs.filter(groups__name__in=[club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()])
+
+
+class OfficerListView(MemberListView):
+
+    template_name = 'officer_list.html'
+
+    def get_context_data(self, *args, **kwargs):
+        """Generate content to be displayed in the template."""
+        list_of_clubs = ClubList()
+        name_of_club = self.request.session.get('club_name')
+        club = list_of_clubs.find_club(name_of_club)
+        context = super().get_context_data(*args, **kwargs)
+        context['number_of_applicants'] = User.objects.filter(groups__name = club.getClubApplicantGroup()).count()
+        context['number_of_members'] = User.objects.filter(groups__name__in = [club.getClubOwnerGroup(),club.getClubMemberGroup(), club.getClubOfficerGroup()]).count()
+        return context
+
+    def get_queryset(self):
+        return super().get_queryset()
+
+
+
+class OwnerListView(OfficerListView):
+
+    template_name = 'owner_member_list.html'
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs)
+
+    def get_queryset(self):
+        return super().get_queryset()
+    
+
+class ShowUserView(DetailView):
+    model = User
+    template_name = 'show_user.html'
+    pk_url_kwarg = "user_id"
+
+class ShowOfficerView(DetailView):
+    model = User
+    template_name = 'show_user_officer.html'
+    pk_url_kwarg = "user_id"
+    
+    
+
+def show_user(request, user_id):
+    User = get_user_model()
+    user = User.objects.get(id = user_id)
+    return render(request, 'show_user.html', {'user' : user})
+    
+@login_required
+def show_user_officer(request, user_id):
+    User = get_user_model()
+    user = User.objects.get(id = user_id)
+    return render(request, 'show_user_officer.html', {'user' : user})
+
+def show_current_user_profile(request):
+    current_user = request.user
+    return render(request, 'show_current_user_profile.html', {'user': current_user})
 
 @login_required
 def group_check(request, user_id):
@@ -41,7 +120,7 @@ def group_check(request, user_id):
     name_of_club = request.session.get('club_name')
     club = list_of_clubs.find_club(name_of_club)
     print(request.POST.get('club_name'))
-    user = User.objects.get(id = user_id)
+    user = request.user
     if user.groups.filter(name = club.getClubOfficerGroup()):
         #user.groups.filter(name ='Member').exists()
         redirect_url = request.POST.get('next') or 'officer'
@@ -53,14 +132,12 @@ def group_check(request, user_id):
         #return redirect('show_current_user_profile')
         """View for owner"""
     elif user.groups.filter(name = club.getClubOwnerGroup()):
-        login(request, user)
         return redirect('owner')
         """View for applicant"""
     elif user.groups.filter(name = club.getClubApplicantGroup()):
-        login(request, user)
         return redirect('show_current_user_profile')
     else:
-        return redirect('club_selection')
+        return redirect('application_form')
 
 def log_out(request):
     logout(request)
@@ -82,9 +159,9 @@ def sign_up(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            club = list_of_clubs.find_club(user.clubs)
-            group = Group.objects.get(name = club.getClubApplicantGroup())
-            user.groups.add(group)
+            # club = list_of_clubs.find_club(user.clubs)
+            # group = Group.objects.get(name = club.getClubApplicantGroup())
+            # user.groups.add(group)
             login(request, user)
             return redirect('club_selection')#should be an applicant page
     else:
@@ -106,6 +183,26 @@ def profile(request):
     return render(request, 'profile.html', {'form': form})
 
 @login_required
+def application_form(request):
+    list_of_clubs = ClubList()
+    name_of_club = request.session.get('club_name')
+    club = list_of_clubs.find_club(name_of_club)
+    current_user = request.user
+    if request.method == 'POST':
+        form = ApplicationForm(instance=current_user, data = request.POST)
+        #form.instance = current_user
+        if form.is_valid():
+            current_user.username = form.cleaned_data.get('email')
+            group = Group.objects.get(name = club.getClubApplicantGroup())
+            current_user.groups.add(group)
+            messages.add_message(request, messages.SUCCESS, "You have joined a new club!")
+            form.save()
+            return redirect('profile')
+    else:
+        form = ApplicationForm(instance=current_user)
+    return render(request, 'application_form.html', {'form': form})
+
+@login_required
 def password(request):
     current_user = request.user
     if request.method == 'POST':
@@ -123,29 +220,29 @@ def password(request):
     return render(request, 'password.html', {'form': form})
 
 def member_list(request):
-    list_of_clubs = ClubList()
-    name_of_club = request.session.get('club_name')
-    club = list_of_clubs.find_club(name_of_club)
-    current_user = request.user
-    if current_user.groups.filter(name = club.getClubOfficerGroup()):
-        users = User.objects.all()
-        number_of_applicants = User.objects.filter(groups__name = club.getClubApplicantGroup()).count()
-        number_of_members = User.objects.filter(groups__name__in = [club.getClubOwnerGroup(),club.getClubMemberGroup(), club.getClubOfficerGroup()]).count()
-        return render(request, 'officer.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members})
+    # list_of_clubs = ClubList()
+    # name_of_club = request.session.get('club_name')
+    # club = list_of_clubs.find_club(name_of_club)
+    # current_user = request.user
+    # if current_user.groups.filter(groups__name = club.getClubOfficerGroup()):
+    #     users = User.objects.all()
+    #     number_of_applicants = User.objects.filter(groups__name = club.getClubApplicantGroup()).count()
+    #     number_of_members = User.objects.filter(groups__name__in = [club.getClubOwnerGroup(),club.getClubMemberGroup(), club.getClubOfficerGroup()]).count()
+    #     return render(request, 'officer.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members})
 
-        """View for member"""
-    elif current_user.groups.filter(name = club.getClubMemberGroup()):
-        users = User.objects.all()
-        return render(request, 'member_list.html', {'users': users})
+    #     """View for member"""
+    # elif current_user.groups.filter(name = club.getClubMemberGroup()):
+    #     users = User.objects.all()
+    #     return render(request, 'member_list.html', {'users': users})
 
-        """View for owner"""
-    elif current_user.groups.filter(name = club.getClubOwnerGroup()):
-        users = User.objects.all()
-        number_of_applicants = User.objects.filter(groups__name =  club.getClubApplicantGroup()).count()
-        number_of_members = User.objects.filter(groups__name__in = [club.getClubOwnerGroup(),club.getClubMemberGroup()]).count()
-        number_of_officers = User.objects.filter(groups__name = club.getClubOfficerGroup()).count()
-        return render(request, 'owner.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers})
-        return redirect('owner')
+    #     """View for owner"""
+    # elif current_user.groups.filter(name = club.getClubOwnerGroup()):
+    #     users = User.objects.all()
+    #     number_of_applicants = User.objects.filter(groups__name =  club.getClubApplicantGroup()).count()
+    #     number_of_members = User.objects.filter(groups__name__in = [club.getClubOwnerGroup(),club.getClubMemberGroup()]).count()
+    #     number_of_officers = User.objects.filter(groups__name = club.getClubOfficerGroup()).count()
+    #     return render(request, 'owner.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers})
+    #     return redirect('owner')
 
     list_of_clubs = ClubList()
     name_of_club = request.session.get('club_name')
@@ -153,16 +250,7 @@ def member_list(request):
     users = User.objects.filter(groups__name__in=[club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()])
     return render(request, 'member_list.html', {'users': users})
 
-def show_user(request, user_id):
-    User = get_user_model()
-    user = User.objects.get(id = user_id)
-    return render(request, 'show_user.html', {'user' : user})
 
-@login_required
-def show_user_officer(request, user_id):
-    User = get_user_model()
-    user = User.objects.get(id = user_id)
-    return render(request, 'show_user_officer.html', {'user' : user})
 
 @login_required
 def officer(request):
@@ -198,6 +286,8 @@ def reject_accept_handler(request, user_id):
         elif 'reject' in request.POST:
             reject(request, user_id)
     return redirect('officer_promote_applicants')
+
+
 
 def accept(request, user_id):
     list_of_clubs = ClubList()
@@ -259,7 +349,7 @@ def transfer_ownership(request, user_id):
     officer.user_set.add(current_owner)
     officer.user_set.remove(user)
     logout(request)
-    return redirect('home')
+    return redirect('owner')
     # else:
     #     messages.add_message(request, messages.ERROR, "New owner has to be an officer!")
     #     return redirect('show_user')
@@ -273,29 +363,9 @@ def promote_member(request, user_id):
     user = User.objects.get(id = user_id)
     officer = Group.objects.get(name = club.getClubOfficerGroup())
     officer.user_set.add(user)
-    member = Group.objects.get(name = club.getClubMemberGroup)
+    member = Group.objects.get(name = club.getClubMemberGroup())
     member.user_set.remove(user)
     return redirect('owner_member_list')
-
-# def newOwner(request,user_id):
-#     list_of_clubs = ClubList()
-#     name_of_club = request.session.get('club_name')
-#     club = list_of_clubs.find_club(name_of_club)
-#     user = get_user_model()
-#     user = User.objects.get(id = user_id)
-#     officer = Group.objects.get(name = club.getClubOfficerGroup())
-#     if user in officer.user_set:
-#         owner = Group.objects.get(name = club.getClubOwnerGroup())
-#         owners = List(Group.objects.getAll(name = club.getClubOwnerGroup()))
-#         current_owner = owners[0]
-#         owner.user_set.add(user)
-#         owner.user_set.remove(current_owner)
-#         logout(request)
-#         return redirect('home')
-#
-#     else:
-#         messages.add_message(request, messages.ERROR, "New owner has to be an officer!")
-#         return redirect('show_user')
 
 @login_required
 def promoteOfficer(request,user_id):
@@ -328,3 +398,22 @@ def club_selection(request):
     clubs = list_of_clubs.club_list
     print(len(clubs))
     return render(request, 'club_selection.html', {'clubs':clubs})
+
+def create_new_club(request):
+    list_of_clubs = ClubList()
+    user = request.user
+    if request.method == 'POST':
+        form = CreateClubForm(data = request.POST)
+        if form.is_valid():
+            #current_user.username = form.cleaned_data.get('email')
+            #form.save()
+            list_of_clubs = ClubList()
+            list_of_clubs.create_new_club(form.cleaned_data.get('club_name'), form.cleaned_data.get('mission_statement'))
+            club = list_of_clubs.find_club(form.cleaned_data.get('club_name'))
+            group = Group.objects.get(name = club.getClubOwnerGroup())
+            user.groups.add(group)
+            messages.add_message(request, messages.SUCCESS, "You have created a new chess club!")
+            return redirect('club_selection')
+    else:
+        form = CreateClubForm()
+    return render(request, 'new_club_form.html', {'form': form})
