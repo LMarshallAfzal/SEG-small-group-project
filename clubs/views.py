@@ -1,5 +1,6 @@
 from typing import List
 from django import template
+from django.http.response import HttpResponse
 from django.shortcuts import render
 from .forms import LogInForm, SignUpForm, UserForm, PasswordForm, ApplicationForm, CreateClubForm
 from django.template import RequestContext
@@ -397,6 +398,12 @@ def club_selection(request):
     list_of_clubs = ClubList()
     clubs = list_of_clubs.club_list
     print(len(clubs))
+    return render(request, 'club_selection.html', {'clubs':clubs})
+
+def club_dropdown(request):
+    list_of_clubs = ClubList()
+    clubs = list_of_clubs.club_list
+    context = {'clubs': clubs}
     return render(request, 'club_selection.html', {'clubs':clubs})
 
 def create_new_club(request):
