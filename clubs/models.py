@@ -43,8 +43,8 @@ class User(AbstractUser):
 
 
 class ClubManager(models.Manager):
-    def create_club(self, name, mission_statement):
-        club = self.create(club_name = name, club_codename = h.convert_to_codename(name), mission_statement = mission_statement)
+    def create_club(self, name, mission_statement, location):
+        club = self.create(club_name = name, club_codename = h.convert_to_codename(name), mission_statement = mission_statement, location = location)
         club.create_groups_and_permissions_for_club()
         return club
 
@@ -52,6 +52,7 @@ class Club(models.Model):
     club_name = models.CharField(max_length = 50, blank = False, unique = True)
     club_codename = models.CharField(max_length = 50, blank = False, unique = True)
     mission_statement = models.CharField(max_length = 150, blank = True, unique = False)
+    location = models.CharField(max_length = 50, blank = True, unique = False)
     objects = ClubManager()
 
     def create_groups_and_permissions_for_club(self):
