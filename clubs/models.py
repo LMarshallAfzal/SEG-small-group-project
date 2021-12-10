@@ -43,8 +43,8 @@ class User(AbstractUser):
 
 
 class ClubManager(models.Manager):
-    def create_club(self, name, mission_statement):
-        club = self.create(club_name = name, club_codename = h.convert_to_codename(name), mission_statement = mission_statement)
+    def create_club(self, name, mission_statement, location):
+        club = self.create(club_name = name, club_codename = h.convert_to_codename(name), mission_statement = mission_statement, club_location = location)
         club.create_groups_and_permissions_for_club()
         return club
 
@@ -56,7 +56,7 @@ class Club(models.Model):
     member_count = models.PositiveIntegerField(default = 0)
     objects = ClubManager()
 
-    def get_oclub_details(self):
+    def get_club_details(self):
         owner = User.objects.filter(groups__name = self.club_codename + " Owner")[0] #There should only be one owner
         return [self.club_name, self.club_location, self.mission_statement, (owner.first_name + owner.last_name), owner.bio, owner.gravatar()]
 

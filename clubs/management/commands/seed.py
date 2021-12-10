@@ -18,10 +18,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         list_of_clubs = ClubList()
-        list_of_clubs.create_new_club("Kerbal Chess Club", self.faker.unique.text(max_nb_chars = 150))
-        list_of_clubs.create_new_club("KCL Chess Society", self.faker.unique.text(max_nb_chars = 150))
-        list_of_clubs.create_new_club("UCL Terrible Chess Team", self.faker.unique.text(max_nb_chars = 150))
-        list_of_clubs.create_new_club("Elite Cambridge Chess Team", self.faker.unique.text(max_nb_chars = 150))
+        list_of_clubs.create_new_club("Kerbal Chess Club", self.faker.unique.text(max_nb_chars = 150), self.faker.address())
+        list_of_clubs.create_new_club("KCL Chess Society", self.faker.unique.text(max_nb_chars = 150), self.faker.address())
+        list_of_clubs.create_new_club("UCL Terrible Chess Team", self.faker.unique.text(max_nb_chars = 150), self.faker.address())
+        list_of_clubs.create_new_club("Elite Cambridge Chess Team", self.faker.unique.text(max_nb_chars = 150), self.faker.address())
 
 
         Jebediah = User.objects.create_user(
@@ -96,7 +96,6 @@ class Command(BaseCommand):
 
 
         print('User seeding complete')
-        print(len(list_of_clubs.club_list))
 
     def _email(self, first_name, last_name):
         email = f'{first_name}.{last_name}@example.org'
