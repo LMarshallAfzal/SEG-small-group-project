@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.urls import reverse
 from clubs.forms import LogInForm
 from clubs.models import User
-from .helpers import LogInTester
+from clubs.tests.helpers import LogInTester
 
 class OfficerViewTestCase(TestCase):
     """Tests of the officer view"""
@@ -22,5 +22,3 @@ class OfficerViewTestCase(TestCase):
 
     def test_officer_url(self):
         self.assertEqual(self.url, '/officer/')
-
-      
