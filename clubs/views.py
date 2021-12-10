@@ -1,5 +1,6 @@
 from typing import List
 from django import template
+from django.http.response import HttpResponse
 from django.shortcuts import render
 from .forms import LogInForm, SignUpForm, UserForm, PasswordForm, ApplicationForm, CreateClubForm
 from django.template import RequestContext
@@ -9,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import Group
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponseForbidden, Http404
+from django.http import HttpResponseForbidden, Http404, HttpResponse
 from .models import User
 from django.shortcuts import redirect, render
 from .helpers import login_prohibited
@@ -19,6 +20,7 @@ from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .club_list import ClubList
+from django.template.response import TemplateResponse
 
 class LogInView(View):
     """Log-in handling view"""
@@ -399,10 +401,10 @@ def club_selection(request):
     print(len(clubs))
     return render(request, 'club_selection.html', {'clubs':clubs})
 
-def club_dropdown(request, user_id):
-    list_of_clubs = ClubList()
-    clubs = list_of_clubs.club_list
-    return render(request, 'club_dropwdown.html', {'clubs':clubs})
+def club_dropdown(request):
+    clubs = ["one","two","three"]
+    # context = context ={'clubs': clubs}
+    return render(request, 'partials/club_dropdown.html',{'clubs': clubs})
 
 def create_new_club(request):
     list_of_clubs = ClubList()
