@@ -73,15 +73,18 @@ class OfficerListView(MemberListView):
     def get_queryset(self):
         return super().get_queryset()
 
+
+
 class OwnerListView(OfficerListView):
+
     template_name = 'owner_member_list.html'
 
-    def get_context_data(self, *args, **kwargs):
-        return super().get_context_data()
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs)
 
     def get_queryset(self):
         return super().get_queryset()
-
+    
 
 class ShowUserView(DetailView):
     model = User
