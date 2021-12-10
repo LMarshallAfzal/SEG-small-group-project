@@ -15,7 +15,7 @@ class UserFormTestCase(TestCase):
         'clubs/tests/fixtures/member.json',
         'clubs/tests/fixtures/applicant.json',
     ]
-    
+
 #To do fix tests
     def setUp(self):
         self.user = User.objects.get(email = "johndoe@example.org")
@@ -56,7 +56,7 @@ class UserFormTestCase(TestCase):
         self.assertTrue(self.member_user.groups.filter(name='Member').exists())
         self.officer.user_set.add(self.member_user)
         self.member.user_set.remove(self.member_user)
-        self.assertTrue(self.member_user.groups.filter(name='Officer').exists())  
+        self.assertTrue(self.member_user.groups.filter(name='Officer').exists())
         self.assertFalse(self.member_user.groups.filter(name='Member').exists())
         response = self.client.post(self.url,self.officer_user.id,follow=True)
         response_url = reverse('officer_list')
@@ -74,13 +74,13 @@ class UserFormTestCase(TestCase):
         self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
         self.assertTemplateUsed(response,'officer_list.html')
 
-    
+
     def test_cannnot_promote_member_to_owner(self):
         self.assertFalse(self.member_user.groups.filter(name='Officer').exists())
         self.assertTrue(self.member_user.groups.filter(name='Member').exists())
         self.owner.user_set.add(self.member_user)
-        self.assertFalse(self.member_user.groups.filter(name='Owner').exists())  
-        self.assertFalse(self.member_user.groups.filter(name='Officer').exists())  
+        self.assertFalse(self.member_user.groups.filter(name='Owner').exists())
+        self.assertFalse(self.member_user.groups.filter(name='Officer').exists())
         response = self.client.post(self.url,self.other_user.id,follow=True)
         response_url = reverse('owner_member_list')
         self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
@@ -92,9 +92,9 @@ class UserFormTestCase(TestCase):
         self.assertFalse(self.applicant_user.groups.filter(name='Member').exists())
         self.assertTrue(self.applicant_user.groups.filter(name='Applicant').exists())
         self.owner.user_set.add(self.applicant_user)
-        self.assertFalse(self.applicant_user.groups.filter(name='Owner').exists()) 
-        self.assertFalse(self.applicant_user.groups.filter(name='Officer').exists())  
-        self.assertFalse(self.applicant_user.groups.filter(name='Member').exists())   
+        self.assertFalse(self.applicant_user.groups.filter(name='Owner').exists())
+        self.assertFalse(self.applicant_user.groups.filter(name='Officer').exists())
+        self.assertFalse(self.applicant_user.groups.filter(name='Member').exists())
         response = self.client.post(self.url,self.other_user.id,follow=True)
         response_url = reverse('owner_member_list')
         self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
