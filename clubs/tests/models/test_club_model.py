@@ -53,4 +53,3 @@ class ClubModelTestCase(TestCase):
             self.club.full_clean()
         except(ValidationError):
             self.fail('Test club should be valid')
-    

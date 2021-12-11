@@ -69,11 +69,14 @@ class Club(models.Model):
         from .groups import ChessClubGroups
         club_groups_and_permissions = ChessClubGroups(self.club_codename)
 
+    #Includes failsafe to switch the role of the user in the club if they werw already in the club
     def add_user_to_club(self, user, initial_role):
-        group = Group.objects.get(name = club.club_codename + " " + initial_role)
-        user.groups.add(group)
-        if initial_role == "Member":
-            member_count += 1
+        if h.get_user_role_in_club(user, self) == None:
+            user.groups.add(Group.objects.get(name = club.club_codename + " " + initial_role))
+            if initial_role == "Member":
+                member_count += 1
+        else:
+            self.switch_user_role_in_club(user, initial_role)
 
     #Will not add users to a club if they were not in the club to begin with.
     def switch_user_role_in_club(self, user, new_role):
@@ -90,9 +93,10 @@ class Club(models.Model):
 
     def remove_user_from_club(self, user):
         old_role = h.get_user_role_in_club(user, self)
-        user.groups.remove(user.groups.filter(name = club.club_codename + " " + old_role))
-        if old_role == "Member":
-            member_count -= 1
+        if old_role != None:
+            user.groups.remove(user.groups.filter(name = club.club_codename + " " + old_role))
+            if old_role == "Member":
+                member_count -= 1
 
     def getGroupsForClub(self):
         return [self.getClubApplicantGroup(), self.getClubMemberGroup(), self.getClubOfficerGroup(), self.getClubOwnerGroup()]

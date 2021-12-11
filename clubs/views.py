@@ -12,7 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseForbidden, Http404
 from .models import User
 from django.shortcuts import redirect, render
-from .helpers import login_prohibited
+from .helpers import login_prohibited, get_user_role_in_club
 from django.db.models import Count
 from django.views import View
 from django.views.generic import ListView
@@ -127,20 +127,21 @@ def group_check(request, user_id):
     club = list_of_clubs.find_club(name_of_club)
     print(request.POST.get('club_name'))
     user = request.user
-    if user.groups.filter(name = club.getClubOfficerGroup()):
+    group_role = get_user_role_in_club(user, club)
+    if group_role == "Officer"):
         #user.groups.filter(name ='Member').exists()
         redirect_url = request.POST.get('next') or 'officer'
         return redirect(redirect_url)
         """View for member"""
-    elif user.groups.filter(name =  club.getClubMemberGroup()):
+    elif group_role == "Member":
         #redirect_url = request.POST.get('next') or 'member_list'
         return redirect('member_list')
         #return redirect('show_current_user_profile')
         """View for owner"""
-    elif user.groups.filter(name = club.getClubOwnerGroup()):
+    elif group_role == "Owner":
         return redirect('owner')
         """View for applicant"""
-    elif user.groups.filter(name = club.getClubApplicantGroup()):
+    elif group_role == "Applicant":
         return redirect('show_current_user_profile')
     else:
         return redirect('application_form')
@@ -199,8 +200,7 @@ def application_form(request):
         #form.instance = current_user
         if form.is_valid():
             current_user.username = form.cleaned_data.get('email')
-            group = Group.objects.get(name = club.getClubApplicantGroup())
-            current_user.groups.add(group)
+            club.add_user_to_club(user, "Applicant")
             messages.add_message(request, messages.SUCCESS, "You have joined a new club!")
             form.save()
             return redirect('profile')
@@ -307,10 +307,7 @@ def accept(request, user_id):
     club = list_of_clubs.find_club(name_of_club)
     User = get_user_model()
     user = User.objects.get(id = user_id)
-    member = Group.objects.get(name = club.getClubMemberGroup())
-    member.user_set.add(user)
-    applicant = Group.objects.get(name = club.getClubApplicantGroup())
-    applicant.user_set.remove(user)
+    club.switch_user_role_in_club(user, "Member")
 
 def reject(request, user_id):
     User = get_user_model()
@@ -356,13 +353,9 @@ def transfer_ownership(request, user_id):
     club = list_of_clubs.find_club(name_of_club)
     user = get_user_model()
     user = User.objects.get(id = user_id)
-    officer = Group.objects.get(name = club.getClubOfficerGroup())
-    owner = Group.objects.get(name = club.getOwnerGroup())
     current_owner = User.objects.get(username = request.user.get_username())
-    owner.user_set.add(user)
-    owner.user_set.remove(current_owner)
-    officer.user_set.add(current_owner)
-    officer.user_set.remove(user)
+    club.switch_user_role_in_club(user, "Owner")
+    club.switch_user_role_in_club(current_owner, "Officer")
     logout(request)
     return redirect('owner')
     # else:
@@ -376,12 +369,10 @@ def promote_member(request, user_id):
     club = list_of_clubs.find_club(name_of_club)
     user = get_user_model()
     user = User.objects.get(id = user_id)
-    officer = Group.objects.get(name = club.getClubOfficerGroup())
-    officer.user_set.add(user)
-    member = Group.objects.get(name = club.getClubMemberGroup())
-    member.user_set.remove(user)
+    club.switch_user_role_in_club(user, "Officer")
     return redirect('owner_member_list')
 
+#Duplicate function to promote_member?
 @login_required
 def promoteOfficer(request,user_id):
     list_of_clubs = ClubList()
@@ -402,10 +393,7 @@ def demote_officer(request, user_id):
     club = list_of_clubs.find_club(name_of_club)
     user = get_user_model()
     user = User.objects.get(id = user_id)
-    officer = Group.objects.get(name = club.getClubOfficerGroup())
-    officer.user_set.remove(user)
-    member = Group.objects.get(name = club.getClubMemberGroup())
-    member.user_set.add(user)
+    club.switch_user_role_in_club(user, "Member")
     return redirect('officer_list')
 
 def club_selection(request):
@@ -423,10 +411,13 @@ def create_new_club(request):
             #current_user.username = form.cleaned_data.get('email')
             #form.save()
             list_of_clubs = ClubList()
-            list_of_clubs.create_new_club(form.cleaned_data.get('club_name'), form.cleaned_data.get('mission_statement'))
+            list_of_clubs.create_new_club(
+                form.cleaned_data.get('club_name'),
+                form.cleaned_data.get('mission_statement'),
+                form.cleaned_data.get('club_location')
+            )
             club = list_of_clubs.find_club(form.cleaned_data.get('club_name'))
-            group = Group.objects.get(name = club.getClubOwnerGroup())
-            user.groups.add(group)
+            club.add_user_to_club(user, "Owner")
             messages.add_message(request, messages.SUCCESS, "You have created a new chess club!")
             return redirect('club_selection')
     else:
