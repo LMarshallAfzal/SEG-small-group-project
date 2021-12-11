@@ -79,9 +79,6 @@ class OfficerMainListView(MemberListView):
         qs = super().get_queryset()
         return qs
           
-          
-
-
 
 class OwnerMemberListView(OfficerMainListView):
 
@@ -126,6 +123,7 @@ class ApplicantListView(ListView):
           name_of_club = self.request.session.get('club_name')
           club = list_of_clubs.find_club(name_of_club)
           return qs.filter(groups__name__in= [club.getClubApplicantGroup()])
+          
 
 class ShowUserView(DetailView):
     model = User
