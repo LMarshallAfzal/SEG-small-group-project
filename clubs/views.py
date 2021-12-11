@@ -68,10 +68,10 @@ class OfficerListView(MemberListView):
 
     def get_context_data(self, *args, **kwargs):
         """Generate content to be displayed in the template."""
+        context = super().get_context_data(*args, **kwargs)
         list_of_clubs = ClubList()
         name_of_club = self.request.session.get('club_name')
         club = list_of_clubs.find_club(name_of_club)
-        context = super().get_context_data(*args, **kwargs)
         context['number_of_applicants'] = User.objects.filter(groups__name = club.getClubApplicantGroup()).count()
         context['number_of_members'] = User.objects.filter(groups__name__in = [club.getClubOwnerGroup(),club.getClubMemberGroup(), club.getClubOfficerGroup()]).count()
         return context
