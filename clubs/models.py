@@ -69,34 +69,46 @@ class Club(models.Model):
         from .groups import ChessClubGroups
         club_groups_and_permissions = ChessClubGroups(self.club_codename)
 
+    def get_user_role_in_club(self, user):
+        if user.groups.filter(name = self.club_codename + " Applicant").exists():
+            return "Applicant"
+        elif user.groups.filter(name = self.club_codename + " Member").exists():
+            return "Member"
+        elif user.groups.filter(name = self.club_codename + " Officer").exists():
+            return "Officer"
+        elif user.groups.filter(name = self.club_codename + " Owner").exists():
+            return "Owner"
+        else:
+            return None #If the user is not part of the club this will be returned
+
     #Includes failsafe to switch the role of the user in the club if they werw already in the club
     def add_user_to_club(self, user, initial_role):
-        if h.get_user_role_in_club(user, self) == None:
-            user.groups.add(Group.objects.get(name = club.club_codename + " " + initial_role))
+        if self.get_user_role_in_club(user) == None:
+            user.groups.add(Group.objects.get(name = self.club_codename + " " + initial_role))
             if initial_role == "Member":
-                member_count += 1
+                self.member_count += 1
         else:
             self.switch_user_role_in_club(user, initial_role)
 
     #Will not add users to a club if they were not in the club to begin with.
     def switch_user_role_in_club(self, user, new_role):
-        old_role = h.get_user_role_in_club(user, self)
+        old_role = self.get_user_role_in_club(user)
         if old_role != None:
-            user.groups.remove(user.groups.filter(name = club.club_codename + " " + old_role))
-            user.groups.add(Group.objects.get(name = club.club_codename + " " + new_role))
+            user.groups.remove(user.groups.filter(name = self.club_codename + " " + old_role)[0])
+            user.groups.add(Group.objects.get(name = self.club_codename + " " + new_role))
             if old_role == "Member":
-                member_count -= 1
+                self.member_count -= 1
             if new_role == "Member":
-                member_count += 1
+                self.member_count += 1
             return True
         return False
 
     def remove_user_from_club(self, user):
-        old_role = h.get_user_role_in_club(user, self)
+        old_role = self.get_user_role_in_club(user)
         if old_role != None:
-            user.groups.remove(user.groups.filter(name = club.club_codename + " " + old_role))
+            user.groups.remove(user.groups.filter(name = self.club_codename + " " + old_role)[0])
             if old_role == "Member":
-                member_count -= 1
+                self.member_count -= 1
 
     def getGroupsForClub(self):
         return [self.getClubApplicantGroup(), self.getClubMemberGroup(), self.getClubOfficerGroup(), self.getClubOwnerGroup()]

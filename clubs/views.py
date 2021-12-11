@@ -12,7 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseForbidden, Http404
 from .models import User
 from django.shortcuts import redirect, render
-from .helpers import login_prohibited, get_user_role_in_club
+from .helpers import login_prohibited
 from django.db.models import Count
 from django.views import View
 from django.views.generic import ListView
@@ -127,8 +127,8 @@ def group_check(request, user_id):
     club = list_of_clubs.find_club(name_of_club)
     print(request.POST.get('club_name'))
     user = request.user
-    group_role = get_user_role_in_club(user, club)
-    if group_role == "Officer"):
+    group_role = club.get_user_role_in_club(user)
+    if group_role == "Officer":
         #user.groups.filter(name ='Member').exists()
         redirect_url = request.POST.get('next') or 'officer'
         return redirect(redirect_url)
