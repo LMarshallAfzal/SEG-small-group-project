@@ -22,10 +22,52 @@ from .club_list import ClubList
 from django.core.paginator import Paginator
 from django.conf import settings
 
+class LoginProhibitedMixin:
 
-@login_prohibited
-def log_in(request):
-    if request.method == 'POST':
+    def dispatch(self, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            return redirect('profile')
+
+        return super().dispatch(*args, **kwargs)
+                
+    
+
+class MemberOnlyMixin:
+
+    def dispatch(self, *args, **kwargs):
+        current_user = self.request.user
+        list_of_clubs = ClubList()
+        name_of_club = self.request.session.get('club_name')
+        club = list_of_clubs.find_club(name_of_club)
+        if not (current_user.groups.filter(name = club.getClubMemberGroup()).exists()):
+            return redirect('profile')
+        return super().dispatch(*args, **kwargs)
+
+
+
+class OfficerOnlyMixin:
+
+    def dispatch(self, *args, **kwargs):
+        current_user = self.request.user
+        list_of_clubs = ClubList()
+        name_of_club = self.request.session.get('club_name')
+        club = list_of_clubs.find_club(name_of_club)
+        if not (current_user.groups.filter(name = club.getClubOfficerGroup()).exists()):
+            return redirect('profile')
+        return super().dispatch(*args, **kwargs)
+
+
+class OwnerOnlyMixin:
+
+    def dispatch(self, *args, **kwargs):
+        current_user = self.request.user
+        list_of_clubs = ClubList
+        name_of_club = self.request.session.get('club_name')
+        club = list_of_clubs.find_club(name_of_club)
+        if not (current_user.groups.filter(name = club.getClubOwnerGroup()).exists()):
+            return redirect('profile')
+        return super().dispatch(*args, **kwargs)
+
 
 class LogInView(View):
     """Log-in handling view"""
@@ -187,11 +229,9 @@ def log_out(request):
     logout(request)
     return redirect('home')
 
-@login_prohibited
 def home(request):
     return render(request, 'home.html')
 
-@login_required
 def show_current_user_profile(request):
     current_user = request.user
     return render(request, 'show_current_user_profile.html', {'user': current_user})
@@ -331,7 +371,7 @@ def officer_promote_applicants(request):
     list_of_clubs = ClubList()
     name_of_club = request.session.get('club_name')
     club = list_of_clubs.find_club(name_of_club)
-    users = User.objects.filter(groups__name = club.getClubApplicantGroup());
+    users = User.objects.filter(groups__name = club.getClubApplicantGroup())
     paginator = Paginator(users, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
