@@ -2,7 +2,7 @@ from django.test import TestCase
 from clubs.forms import SignUpForm
 from clubs.models import User
 from django.urls import reverse
-from .helpers import LogInTester
+from clubs.tests.helpers import LogInTester
 from django.contrib.auth.hashers import check_password
 
 class SignUpViewTestCase(TestCase, LogInTester):
@@ -49,9 +49,9 @@ class SignUpViewTestCase(TestCase, LogInTester):
         response = self.client.post(self.url, self.form_input,follow=True)
         after_count = User.objects.count()
         self.assertEqual(after_count, before_count + 1)
-        response_url = reverse('profile')
+        response_url = reverse('club_selection')
         self.assertRedirects(response, response_url, status_code = 302, target_status_code = 200)
-        self.assertTemplateUsed(response, 'profile.html')
+        self.assertTemplateUsed(response, 'club_selection.html')
         user = User.objects.get(first_name = 'Jack')
         self.assertEqual(user.first_name, 'Jack')
         self.assertEqual(user.last_name, 'Henwood')

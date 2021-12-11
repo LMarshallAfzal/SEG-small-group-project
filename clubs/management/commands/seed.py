@@ -1,11 +1,12 @@
 from django.core.management.base import BaseCommand, CommandError
-from clubs.models import User
+from clubs.models import User, Club
 from django.db import IntegrityError
 from faker import Faker
 import faker.providers
 import random
 from django.contrib.auth.models import Group
 import clubs.groups
+from clubs.club_list import ClubList
 
 class Command(BaseCommand):
     USER_COUNT = 100
@@ -14,48 +15,60 @@ class Command(BaseCommand):
         super().__init__()
         self.faker = Faker('en_GB')
 
+
     def handle(self, *args, **options):
-        if not User.objects.get(username="jeb@example.org").exists() or User.objects.get(username="val@example.org") or User.objects.get(username="billie@example.org"):
-            Jebediah = User.objects.create_user(
-                username = "jeb@example.org",
-                first_name = "Jebediah",
-                last_name = "Kerman",
-                email = "jeb@example.org",
-                password = "Password123",
-                bio = self.faker.unique.text(max_nb_chars = 520),
-                personal_statement = self.faker.text(max_nb_chars = 1250),
-            )
+        #Seeds in clubs
+        list_of_clubs = ClubList()
+        list_of_clubs.create_new_club("Kerbal Chess Club", self.faker.unique.text(max_nb_chars = 150), "Buckingham Palace")
+        list_of_clubs.create_new_club("KCL Chess Society", self.faker.unique.text(max_nb_chars = 150), "Windsor Castle")
+        list_of_clubs.create_new_club("UCL Terrible Chess Team", self.faker.unique.text(max_nb_chars = 150), "Drachenburg")
+        list_of_clubs.create_new_club("Elite Cambridge Chess Team", self.faker.unique.text(max_nb_chars = 150), "Neuschwarnstein")
 
-            group = Group.objects.get(name = 'Member')
-            Jebediah.groups.add(group)
+        #Seeds in a member, officer and owner for the first club "Kerbal Chess Club"
+        Jebediah = User.objects.create_user(
+            username = "jeb@example.org",
+            first_name = "Jebediah",
+            last_name = "Kerman",
+            email = "jeb@example.org",
+            password = "Password123",
+            bio = self.faker.unique.text(max_nb_chars = 520),
+            personal_statement = self.faker.text(max_nb_chars = 1250),
+        )
 
-            Valentina = User.objects.create_user(
-                username = "val@example.org",
-                first_name = "Valentina",
-                last_name = "Kerman",
-                email = "val@example.org",
-                password = "Password123",
-                bio = self.faker.unique.text(max_nb_chars = 520),
-                personal_statement = self.faker.text(max_nb_chars = 1250),
-            )
+        #TODO: Add failsafes for when the name is invalid
+        club = list_of_clubs.find_club("Kerbal Chess Club")
+        group = Group.objects.get(name = club.club_codename + " Member")
+        club.add_user_to_club(Jebediah, "Member")
 
-            group = Group.objects.get(name = 'Officer')
-            Valentina.groups.add(group)
+        Valentina = User.objects.create_user(
+            username = "val@example.org",
+            first_name = "Valentina",
+            last_name = "Kerman",
+            email = "val@example.org",
+            password = "Password123",
+            bio = self.faker.unique.text(max_nb_chars = 520),
+            personal_statement = self.faker.text(max_nb_chars = 1250),
+        )
+        club = list_of_clubs.find_club("Kerbal Chess Club")
+        group = Group.objects.get(name = club.club_codename + " Officer")
+        club.add_user_to_club(Valentina, "Officer")
 
-            Billie = User.objects.create_user(
-                username = "billie@example.org",
-                first_name = "Billie",
-                last_name = "Kerman",
-                email = "billie@example.org",
-                password = "Password123",
-                bio = self.faker.unique.text(max_nb_chars = 520),
-                personal_statement = self.faker.text(max_nb_chars = 1250),
-            )
+        Billie = User.objects.create_user(
+            username = "billie@example.org",
+            first_name = "Billie",
+            last_name = "Kerman",
+            email = "billie@example.org",
+            password = "Password123",
+            bio = self.faker.unique.text(max_nb_chars = 520),
+            personal_statement = self.faker.text(max_nb_chars = 1250),
+        )
 
-            group = Group.objects.get(name = 'Owner')
-            Billie.groups.add(group)
+        club = list_of_clubs.find_club("Kerbal Chess Club")
+        group = Group.objects.get(name = club.club_codename + " Owner")
+        club.add_user_to_club(Valentina, "Owner")
 
 
+        #Adds 100 users, split among clubs and non-owner roles within a club
         for _ in range(100):
             firstName = self.faker.unique.first_name()
             lastName = self.faker.unique.last_name()
@@ -75,9 +88,18 @@ class Command(BaseCommand):
                 personal_statement = personalStatement,
             )
 
-            #TODO: Make the group assignments for users realistic percentage
-            group = Group.objects.get(name = random.choice(['Applicant', 'Member','Officer']))
-            user.groups.add(group)
+            #TODO: Make the group assignments for users a realistic percentage
+            club = random.choice(list_of_clubs.club_list)
+            role = random.choice(['Applicant', 'Member','Officer'])
+            club.add_user_to_club(user, role)
+
+        #Switches the role of a random user in each of the 3 extra clubs to owner
+        for club in list_of_clubs.club_list:
+            if club.club_name != "Kerbal Chess Club":
+                club_users = User.objects.filter(groups__name__in = list_of_clubs.find_club(club.club_name).getGroupsForClub())
+                new_owner = random.choice(club_users)
+                club.switch_user_role_in_club(new_owner, "Owner")
+
 
         print('User seeding complete')
 

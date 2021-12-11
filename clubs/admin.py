@@ -1,6 +1,7 @@
 """Configuration of the admin interface for clubs"""
 from django.contrib import admin
-from .models import User
+from .models import User, Club
+from .club_list import ClubList
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -13,5 +14,5 @@ class UserAdmin(admin.ModelAdmin):
     group.short_description = 'Groups'
 
     list_display = [
-    'id', 'first_name', 'last_name', 'email', 'bio', 'experience_level', 'personal_statement', 'group',
+    'id', 'first_name', 'last_name', 'email', 'bio', 'experience_level', 'personal_statement' ,'group'
     ]

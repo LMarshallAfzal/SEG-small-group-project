@@ -10,6 +10,7 @@ def login_prohibited(view_function):
     return modified_view_function
 
 
+
 def owner_only(view_function):
     def modified_view_function(request,*args, **kwargs):
         current_user = request.user
@@ -51,3 +52,13 @@ def member_only(view_function):
         else:
             return view_function(request,*args, **kwargs)
     return modified_view_function
+
+def convert_to_codename(name):
+    club_codename = ""
+    #Removes whitespaces from the club name
+    for character in name:
+        if character == " ":
+            club_codename += "_"
+        else:
+            club_codename += character
+
