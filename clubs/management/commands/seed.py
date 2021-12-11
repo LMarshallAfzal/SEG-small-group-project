@@ -35,8 +35,10 @@ class Command(BaseCommand):
         )
 
         #TODO: Add failsafe for when the name is invalid
-        group = Group.objects.get(name = list_of_clubs.find_club("Kerbal Chess Club").club_codename + " Member")
+        club = list_of_clubs.find_club("Kerbal Chess Club")
+        group = Group.objects.get(name = club.club_codename + " Member")
         Jebediah.groups.add(group)
+        club.member_count += 1
 
         Valentina = User.objects.create_user(
             username = "val@example.org",

@@ -69,6 +69,18 @@ class Club(models.Model):
         from .groups import ChessClubGroups
         club_groups_and_permissions = ChessClubGroups(self.club_codename)
 
+    def add_user_to_club(self, user, role):
+        group = Group.objects.get(name = club.club_codename + " " + role)
+        user.groups.add(group)
+        member_count += 1
+
+    def switch_user_role_in_club(self, user, old_role, new_role):
+        user.groups.remove(user.groups.filter(name = club.club_codename + " " + old_role))
+        user.groups.add(Group.objects.get(name = club.club_codename + " " + new_role))
+
+    def remove_user_from_club(self, user):
+        pass
+
     def getGroupsForClub(self):
         return [self.getClubApplicantGroup(), self.getClubMemberGroup(), self.getClubOfficerGroup(), self.getClubOwnerGroup()]
 
