@@ -1,4 +1,4 @@
-{%extends 'base_content.html'%}
+{% extends 'base_content.html'%}
 {% load bootstrap_pagination %}
 {% block content %}
 <div class="container">
@@ -11,6 +11,8 @@
           <tr>
             <th scope="col"></th>
             <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Experience</th>
           </tr>
         </thead>
         {% for user in users %}
@@ -19,12 +21,19 @@
               <img src="{{ user.mini_gravatar }}" alt="Gravatar of {{ user.first_name }}" class="rounded-circle" >
             </td>
             <td>{{ user.full_name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.experience_level }}</td>
             <td>
-              <form action = "{% url 'show_user' user.id %}" method = "post">
+              <form action = "{% url 'show_user_officer' user.id %}" method = "post">
                 {% csrf_token %}
                 <input type = "hidden" name = "next" value = "{{ next }}">
                 {% include 'partials/bootstrap_form.html' with form=form %}
-                <input type = "submit" value = "Go to profile" class="btn btn-primary">
+                <td><input type = "submit" value = "Go to profile" class="btn btn-primary"></td>
+              </form>
+              <form action="{% url 'promote_member' user.id %}" method="post">
+                {% csrf_token %}
+                {% include 'partials/bootstrap_form.html' with form=form %}
+                <td> <input type = "submit" value = "Promote to officer" class = "btn btn-primary" name="reject"></td>
               </form>
             </td>
           </tr>

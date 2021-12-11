@@ -37,10 +37,10 @@ class SignUpFormTestCase(TestCase):
         password_confirmation_widget = form.fields['password_confirmation'].widget
         self.assertTrue(isinstance(password_confirmation_widget, forms.PasswordInput))
 
-    # def test_form_uses_model_validation(self):
-    #     self.form_input['username'] = 'badusername'
-    #     form = SignUpForm(data = self.form_input)
-    #     self.assertFalse(form.is_valid())
+    def test_form_uses_model_validation(self):
+        self.form_input['email'] = 'bademail@@email.org'
+        form = SignUpForm(data = self.form_input)
+        self.assertFalse(form.is_valid())
 
     def test_password_must_contain_uppercase_character(self):
         self.form_input['new_password'] = 'password123'
@@ -75,7 +75,7 @@ class SignUpFormTestCase(TestCase):
         user = User.objects.get(first_name = 'Jack')
         self.assertEqual(user.first_name, 'Jack')
         self.assertEqual(user.last_name, 'Henwood')
-        self.assertEqual(user.email, 'jackhenwood@example.org')
+        self.assertEqual(user.username, 'jackhenwood@example.org')
         self.assertEqual(user.bio, 'My bio')
         self.assertEqual(user.experience_level, 'Beginner')
         self.assertEqual(user.personal_statement, 'My personal statement!')
