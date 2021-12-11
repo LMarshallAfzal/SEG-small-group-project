@@ -19,6 +19,7 @@ from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .club_list import ClubList
+from django.core.paginator import Paginator
 from django.conf import settings
 
 
@@ -60,8 +61,10 @@ class MemberListView(LoginRequiredMixin,ListView):
 
 
 class OfficerListView(MemberListView):
-
     template_name = 'officer_list.html'
+    context_object_name = 'users'
+    #context_object_name = 'users'
+    #paginate_by = settings.USERS_PER_PAGE
 
     def get_context_data(self, *args, **kwargs):
         """Generate content to be displayed in the template."""
@@ -74,7 +77,7 @@ class OfficerListView(MemberListView):
         return context
 
     def get_queryset(self):
-        return super().get_queryset()
+        qs =  super().get_queryset()
 
 
 
@@ -271,8 +274,11 @@ def officer_main(request):
     name_of_club = request.session.get('club_name')
     club = list_of_clubs.find_club(name_of_club)
     users = User.objects.filter(groups__name__in=[club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()])
+    paginator = Paginator(users, 10)
     groups = Group.objects.all()
-    return render(request, 'officer_main.html', {'users': users})
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'officer_main.html', {'users': users, 'page_obj': page_obj})
 
 @login_required
 def officer_promote_applicants(request):
@@ -280,7 +286,10 @@ def officer_promote_applicants(request):
     name_of_club = request.session.get('club_name')
     club = list_of_clubs.find_club(name_of_club)
     users = User.objects.filter(groups__name = club.getClubApplicantGroup());
-    return render(request, 'officer_promote_applicants.html', {'users': users})
+    paginator = Paginator(users, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'officer_promote_applicants.html', {'users': users, 'page_obj': page_obj})
 
 def reject_accept_handler(request, user_id):
     if request.POST:
@@ -334,8 +343,11 @@ def owner_member_list(request):
     name_of_club = request.session.get('club_name')
     club = list_of_clubs.find_club(name_of_club)
     users = User.objects.filter(groups__name = club.getClubMemberGroup())
+    paginator = Paginator(users, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     groups = Group.objects.all()
-    return render(request, 'owner_member_list.html', {'users': users})
+    return render(request, 'owner_member_list.html', {'users': users, 'page_obj': page_obj})
 
 @login_required
 def transfer_ownership(request, user_id):
