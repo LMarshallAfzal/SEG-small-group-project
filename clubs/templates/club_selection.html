@@ -42,6 +42,11 @@
                   <input type = "submit" value = "Enter club" class="btn btn-primary">
                 </form>
               </div>
+              <script type="text/javascript" src= "./js/jquery.min.js"></script>
+              <script type="text/javascript" src= "./js/jquery.cookie.js"></script>
+              <script>
+                  $.cookie("clubName","{{ c.club_name }}")
+              </script>
             </div>
           </td>
         </tr>
