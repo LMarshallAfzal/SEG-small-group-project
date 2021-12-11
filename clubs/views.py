@@ -22,6 +22,16 @@ from .club_list import ClubList
 from django.core.paginator import Paginator
 from django.conf import settings
 
+class OfficerOnlyMixin:
+
+    def dispatch(request,self, *args, **kwargs):
+        current_user = request.user
+        list_of_clubs = ClubList
+        name_of_club = self.request.session.get('club_name')
+        club = list_of_clubs.find_club(name_of_club)
+        if not (current_user.groups.filter(name = club.getClubOfficerGroup()).exists()):
+            return redirect('profile')
+        return super().dispatch(*args, **kwargs)
 
 class LogInView(View):
     """Log-in handling view"""
@@ -60,7 +70,7 @@ class MemberListView(LoginRequiredMixin,ListView):
           return qs.filter(groups__name__in=[club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()])
 
 
-class OfficerListView(MemberListView):
+class OfficerListView(OfficerOnlyMixin,MemberListView):
     template_name = 'officer_list.html'
     context_object_name = 'users'
     #context_object_name = 'users'
