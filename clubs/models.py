@@ -57,13 +57,17 @@ class Club(models.Model):
     club_name = models.CharField(max_length = 50, blank = False, unique = True)
     club_codename = models.CharField(max_length = 50, blank = False, unique = True)
     mission_statement = models.CharField(max_length = 150, blank = True, unique = False)
-    club_location = models.CharField(max_length = 50, blank = True, unique = False)
+    club_location = models.CharField(max_length = 100, blank = True, unique = False)
     member_count = models.PositiveIntegerField(default = 0)
     objects = ClubManager()
 
     def get_club_details(self):
-        owner = User.objects.filter(groups__name = self.club_codename + " Owner")[0] #There should only be one owner
-        return [self.club_name, self.club_location, self.mission_statement, (owner.first_name + owner.last_name), owner.bio, owner.gravatar()]
+        owners = User.objects.filter(groups__name = self.club_codename + " Owner")
+        if owners.count() > 0:
+            owner = owners[0] #There should only be one owner
+            return [self.club_name, self.club_location, self.mission_statement, (owner.first_name + owner.last_name), owner.bio, owner.gravatar()]
+        else:
+            return [self.club_name, self.club_location, self.mission_statement, None, None, None] #If there is no owner somehow this prevents a crash
 
     def create_groups_and_permissions_for_club(self):
         from .groups import ChessClubGroups
