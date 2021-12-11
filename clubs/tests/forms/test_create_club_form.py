@@ -11,6 +11,7 @@ class CreateClubFormTestCase(TestCase):
         self.form_input = {
             'club_name': 'Test chess team',
             'mission_statement': 'The mission statement of the test team',
+            'club_location': 'Aldwych',
             }
 
     def test_form_accepts_valid_input(self):
@@ -21,7 +22,7 @@ class CreateClubFormTestCase(TestCase):
         form = CreateClubForm()
         self.assertIn('club_name', form.fields)
         self.assertIn('mission_statement', form.fields)
-        self.assertIn('location', form.fields)
+        self.assertIn('club_location', form.fields)
 
     def test_form_rejects_blank_club_name(self):
         self.form_input['club_name'] = ''

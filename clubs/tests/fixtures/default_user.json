@@ -5,6 +5,10 @@
       "fields": {
         "first_name": "John",
         "last_name": "Doe",
+<<<<<<< HEAD
+        "username": "johndoe@example.org",
+=======
+>>>>>>> f01db290241a0af08c199287444fee2d64cbdcc2
         "email": "johndoe@example.org",
         "username": "johndoe@example.org",
         "bio": "John Doe from example.org",

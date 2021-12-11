@@ -60,11 +60,10 @@ class MemberListView(LoginRequiredMixin,ListView):
           return qs.filter(groups__name__in=[club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()])
 
 
-class OfficerListView(MemberListView):
+class OfficerMainListView(MemberListView):
     template_name = 'officer_main.html'
     context_object_name = 'users'
-    #context_object_name = 'users'
-    #paginate_by = settings.USERS_PER_PAGE
+    paginate_by = settings.USERS_PER_PAGE
 
     def get_context_data(self, *args, **kwargs):
         """Generate content to be displayed in the template."""
@@ -77,13 +76,17 @@ class OfficerListView(MemberListView):
         return context
 
     def get_queryset(self):
-        qs =  super().get_queryset()
+        qs = super().get_queryset()
+        return qs
+          
+          
 
 
 
-class OwnerListView(OfficerListView):
+class OwnerMemberListView(OfficerMainListView):
 
     template_name = 'owner_member_list.html'
+    paginate_by = settings.USERS_PER_PAGE
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(**kwargs)
@@ -91,6 +94,38 @@ class OwnerListView(OfficerListView):
     def get_queryset(self):
         return super().get_queryset()
 
+
+class OfficerListView(OfficerMainListView):
+
+    template_name = 'officer_list.html'
+    paginate_by = settings.USERS_PER_PAGE
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs)
+
+    def get_queryset(self):
+          qs = super().get_queryset()
+          list_of_clubs = ClubList()
+          name_of_club = self.request.session.get('club_name')
+          club = list_of_clubs.find_club(name_of_club)
+          return qs.filter(groups__name__in=[club.getClubOfficerGroup()])
+ 
+
+class ApplicantListView(ListView):
+    model = User
+    template_name = 'officer_promote_applicants.html'
+    context_object_name = 'users'
+    paginate_by = settings.USERS_PER_PAGE
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs)
+
+    def get_queryset(self):
+          qs = super().get_queryset()
+          list_of_clubs = ClubList()
+          name_of_club = self.request.session.get('club_name')
+          club = list_of_clubs.find_club(name_of_club)
+          return qs.filter(groups__name__in= [club.getClubApplicantGroup()])
 
 class ShowUserView(DetailView):
     model = User

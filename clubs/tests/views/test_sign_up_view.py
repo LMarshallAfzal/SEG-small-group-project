@@ -2,7 +2,7 @@ from django.test import TestCase
 from clubs.forms import SignUpForm
 from clubs.models import User
 from django.urls import reverse
-from .helpers import LogInTester
+from clubs.tests.helpers import LogInTester
 from django.contrib.auth.hashers import check_password
 
 class SignUpViewTestCase(TestCase, LogInTester):
