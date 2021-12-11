@@ -19,6 +19,8 @@ from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .club_list import ClubList
+from django.conf import settings
+
 
 class LogInView(View):
     """Log-in handling view"""
@@ -47,7 +49,8 @@ class MemberListView(LoginRequiredMixin,ListView):
     model = User
     template_name = 'member_list.html'
     context_object_name = 'users'
-    
+    paginate_by = settings.USERS_PER_PAGE
+
     def get_queryset(self):
           qs = super().get_queryset()
           list_of_clubs = ClubList()
@@ -84,7 +87,7 @@ class OwnerListView(OfficerListView):
 
     def get_queryset(self):
         return super().get_queryset()
-    
+
 
 class ShowUserView(DetailView):
     model = User
@@ -95,14 +98,14 @@ class ShowOfficerView(DetailView):
     model = User
     template_name = 'show_user_officer.html'
     pk_url_kwarg = "user_id"
-    
-    
+
+
 
 def show_user(request, user_id):
     User = get_user_model()
     user = User.objects.get(id = user_id)
     return render(request, 'show_user.html', {'user' : user})
-    
+
 @login_required
 def show_user_officer(request, user_id):
     User = get_user_model()

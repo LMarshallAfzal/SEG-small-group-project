@@ -1,0 +1,12 @@
+[
+    {
+      "model": "clubs.club",
+      "pk": 5,
+      "fields": {
+        "club_name": "The Buzzards",
+        "mission_statement": "Scavenging wastelander tribe of bandits",
+        "club_location": "The sunken city",
+        "member_count": 1
+      }
+    }
+]

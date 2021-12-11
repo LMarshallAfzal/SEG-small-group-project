@@ -21,6 +21,11 @@ class User(AbstractUser):
     experience_level = models.CharField(max_length = 12, choices = EXPERIENCE_CHOICES, default = BEGINNER)
     personal_statement = models.CharField(max_length = 1250, blank = True)
 
+    class Meta:
+        """Model options."""
+
+        ordering = ('last_name','first_name')
+
     def full_name(self):
         return f'{self.first_name} {self.last_name}'
 
