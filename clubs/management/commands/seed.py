@@ -17,13 +17,14 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
+        #Seeds in clubs
         list_of_clubs = ClubList()
         list_of_clubs.create_new_club("Kerbal Chess Club", self.faker.unique.text(max_nb_chars = 150), "Buckingham Palace")
         list_of_clubs.create_new_club("KCL Chess Society", self.faker.unique.text(max_nb_chars = 150), "Windsor Castle")
         list_of_clubs.create_new_club("UCL Terrible Chess Team", self.faker.unique.text(max_nb_chars = 150), "Drachenburg")
         list_of_clubs.create_new_club("Elite Cambridge Chess Team", self.faker.unique.text(max_nb_chars = 150), "Neuschwarnstein")
 
-
+        #Seeds in a member, officer and owner for the first club "Kerbal Chess Club"
         Jebediah = User.objects.create_user(
             username = "jeb@example.org",
             first_name = "Jebediah",
@@ -34,9 +35,10 @@ class Command(BaseCommand):
             personal_statement = self.faker.text(max_nb_chars = 1250),
         )
 
-        #TODO: Add failsafe for when the name is invalid
-        group = Group.objects.get(name = list_of_clubs.find_club("Kerbal Chess Club").club_codename + " Member")
-        Jebediah.groups.add(group)
+        #TODO: Add failsafes for when the name is invalid
+        club = list_of_clubs.find_club("Kerbal Chess Club")
+        group = Group.objects.get(name = club.club_codename + " Member")
+        club.add_user_to_club(Jebediah, "Member")
 
         Valentina = User.objects.create_user(
             username = "val@example.org",
@@ -47,8 +49,9 @@ class Command(BaseCommand):
             bio = self.faker.unique.text(max_nb_chars = 520),
             personal_statement = self.faker.text(max_nb_chars = 1250),
         )
-        group = Group.objects.get(name = list_of_clubs.find_club("Kerbal Chess Club").club_codename + " Officer")
-        Valentina.groups.add(group)
+        club = list_of_clubs.find_club("Kerbal Chess Club")
+        group = Group.objects.get(name = club.club_codename + " Officer")
+        club.add_user_to_club(Valentina, "Officer")
 
         Billie = User.objects.create_user(
             username = "billie@example.org",
@@ -60,9 +63,12 @@ class Command(BaseCommand):
             personal_statement = self.faker.text(max_nb_chars = 1250),
         )
 
-        group = Group.objects.get(name = list_of_clubs.find_club("Kerbal Chess Club").club_codename + " Owner")
-        Billie.groups.add(group)
+        club = list_of_clubs.find_club("Kerbal Chess Club")
+        group = Group.objects.get(name = club.club_codename + " Owner")
+        club.add_user_to_club(Valentina, "Owner")
 
+
+        #Adds 100 users, split among clubs and non-owner roles within a club
         for _ in range(100):
             firstName = self.faker.unique.first_name()
             lastName = self.faker.unique.last_name()
@@ -82,21 +88,20 @@ class Command(BaseCommand):
                 personal_statement = personalStatement,
             )
 
-            #TODO: Make the group assignments for users realistic percentage + seed an owner for each club
+            #TODO: Make the group assignments for users a realistic percentage
             club = random.choice(list_of_clubs.club_list)
-            group = Group.objects.get(name = club.club_codename + " " + random.choice(['Applicant', 'Member','Officer']))
-            user.groups.add(group)
+            role = random.choice(['Applicant', 'Member','Officer'])
+            club.add_user_to_club(user, role)
 
+        #Switches the role of a random user in each of the 3 extra clubs to owner
         for club in list_of_clubs.club_list:
             if club.club_name != "Kerbal Chess Club":
                 club_users = User.objects.filter(groups__name__in = list_of_clubs.find_club(club.club_name).getGroupsForClub())
                 new_owner = random.choice(club_users)
-                new_owner.groups.clear()
-                club.getClubOwnerGroup().user_set.add(new_owner)
+                club.switch_user_role_in_club(new_owner, "Owner")
 
 
         print('User seeding complete')
-        print(len(list_of_clubs.club_list))
 
     def _email(self, first_name, last_name):
         email = f'{first_name}.{last_name}@example.org'

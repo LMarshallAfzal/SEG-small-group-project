@@ -103,7 +103,7 @@ class ApplicationForm(forms.ModelForm):
 class CreateClubForm(forms.ModelForm):
     class Meta:
         model = Club
-        fields = ['club_name', 'mission_statement', 'location']
+        fields = ['club_name', 'mission_statement', 'club_location']
 
     def clean(self):
         super().clean()

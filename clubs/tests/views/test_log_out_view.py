@@ -1,7 +1,7 @@
 from django.test import TestCase
 from clubs.models import User
 from django.urls import reverse
-from .helpers import LogInTester
+from clubs.tests.helpers import LogInTester
 
 class LogOutViewTestCase(TestCase, LogInTester):
     """Test for log out view"""

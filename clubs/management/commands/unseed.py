@@ -1,6 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
 from clubs.models import User, Club
-from clubs.club_list import ClubList
 from django.contrib.auth.models import Group, Permission
 
 class Command(BaseCommand):
