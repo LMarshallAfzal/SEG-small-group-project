@@ -189,7 +189,7 @@ def show_user(request, user_id):
     user = User.objects.get(id = user_id)
     return render(request, 'show_user.html', {'user' : user})
 
-@login_required
+
 def show_user_officer(request, user_id):
     User = get_user_model()
     user = User.objects.get(id = user_id)
@@ -199,7 +199,7 @@ def show_current_user_profile(request):
     current_user = request.user
     return render(request, 'show_current_user_profile.html', {'user': current_user})
 
-@login_required
+
 def group_check(request, user_id):
     list_of_clubs = ClubList()
     request.session['club_name'] = request.POST.get('club_name')
@@ -237,7 +237,7 @@ def show_current_user_profile(request):
     current_user = request.user
     return render(request, 'show_current_user_profile.html', {'user': current_user})
 
-@login_prohibited
+
 def sign_up(request):
     list_of_clubs = ClubList()
     if request.method == 'POST':
@@ -253,7 +253,7 @@ def sign_up(request):
         form = SignUpForm()
     return render(request, 'sign_up.html', {'form': form})
 
-@login_required
+
 def profile(request):
     current_user = request.user
     if request.method == 'POST':
@@ -267,7 +267,7 @@ def profile(request):
         form = UserForm(instance=current_user)
     return render(request, 'profile.html', {'form': form})
 
-@login_required
+
 def application_form(request):
     list_of_clubs = ClubList()
     name_of_club = request.session.get('club_name')
@@ -286,7 +286,7 @@ def application_form(request):
         form = ApplicationForm(instance=current_user)
     return render(request, 'application_form.html', {'form': form})
 
-@login_required
+
 def password(request):
     current_user = request.user
     if request.method == 'POST':
@@ -303,8 +303,6 @@ def password(request):
     form = PasswordForm()
     return render(request, 'password.html', {'form': form})
 
-@login_required
-@member_only
 def member_list(request):
     # list_of_clubs = ClubList()
     # name_of_club = request.session.get('club_name')
@@ -336,14 +334,13 @@ def member_list(request):
     users = User.objects.filter(groups__name__in=[club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()])
     return render(request, 'member_list.html', {'users': users})
 
-@login_required
+
 def show_user(request, user_id):
     User = get_user_model()
     user = User.objects.get(id = user_id)
     return render(request, 'show_user.html', {'user' : user})
 
-@login_required
-@officer_only
+
 def officer(request):
     list_of_clubs = ClubList()
     name_of_club = request.session.get('club_name')
@@ -353,8 +350,7 @@ def officer(request):
     number_of_members = User.objects.filter(groups__name__in = [club.getClubOwnerGroup(),club.getClubMemberGroup(),club.getClubOfficerGroup()]).count()
     return render(request, 'officer.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members})
 
-@login_required
-@officer_only
+
 def officer_main(request):
     list_of_clubs = ClubList()
     name_of_club = request.session.get('club_name')
@@ -366,8 +362,7 @@ def officer_main(request):
     page_obj = paginator.get_page(page_number)
     return render(request, 'officer_main.html', {'users': users, 'page_obj': page_obj})
 
-@login_required
-@officer_only
+
 def officer_promote_applicants(request):
     list_of_clubs = ClubList()
     name_of_club = request.session.get('club_name')
@@ -378,7 +373,6 @@ def officer_promote_applicants(request):
     page_obj = paginator.get_page(page_number)
     return render(request, 'officer_promote_applicants.html', {'users': users, 'page_obj': page_obj})
 
-@officer_only
 def reject_accept_handler(request, user_id):
     if request.POST:
         if 'accept' in request.POST:
@@ -388,7 +382,6 @@ def reject_accept_handler(request, user_id):
     return redirect('officer_promote_applicants')
 
 
-@officer_only
 def accept(request, user_id):
     list_of_clubs = ClubList()
     name_of_club = request.session.get('club_name')
@@ -397,14 +390,12 @@ def accept(request, user_id):
     user = User.objects.get(id = user_id)
     club.switch_user_role_in_club(user, "Member")
 
-@officer_only
 def reject(request, user_id):
     User = get_user_model()
     user = User.objects.get(id = user_id)
     user.delete()
 
-@login_required
-@owner_only
+
 def owner(request):
     list_of_clubs = ClubList()
     name_of_club = request.session.get('club_name')
@@ -415,8 +406,7 @@ def owner(request):
     number_of_officers = User.objects.filter(groups__name = club.getClubOfficerGroup()).count()
     return render(request, 'owner.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers})
 
-@login_required
-@owner_only
+
 def officer_list(request):
     list_of_clubs = ClubList()
     name_of_club = request.session.get('club_name')
@@ -425,8 +415,7 @@ def officer_list(request):
     groups = Group.objects.all()
     return render(request, 'officer_list.html', {'users': users})
 
-@login_required
-@owner_only
+
 def owner_member_list(request):
     list_of_clubs = ClubList()
     name_of_club = request.session.get('club_name')
@@ -438,8 +427,7 @@ def owner_member_list(request):
     groups = Group.objects.all()
     return render(request, 'owner_member_list.html', {'users': users, 'page_obj': page_obj})
 
-@login_required
-@owner_only
+
 def transfer_ownership(request, user_id):
     list_of_clubs = ClubList()
     name_of_club = request.session.get('club_name')
@@ -455,8 +443,7 @@ def transfer_ownership(request, user_id):
     #     messages.add_message(request, messages.ERROR, "New owner has to be an officer!")
     #     return redirect('show_user')
 
-@login_required
-@owner_only
+
 def promote_member(request, user_id):
     list_of_clubs = ClubList()
     name_of_club = request.session.get('club_name')
@@ -467,7 +454,7 @@ def promote_member(request, user_id):
     return redirect('owner_member_list')
 
 #Duplicate function to promote_member?
-@login_required
+
 def promoteOfficer(request,user_id):
     list_of_clubs = ClubList()
     name_of_club = request.session.get('club_name')
@@ -480,8 +467,6 @@ def promoteOfficer(request,user_id):
     member.user_set.remove(user)
     return redirect('owner_member_list')
 
-@login_required
-@owner_only
 def demote_officer(request, user_id):
     list_of_clubs = ClubList()
     name_of_club = request.session.get('club_name')
