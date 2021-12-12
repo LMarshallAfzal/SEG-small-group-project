@@ -142,4 +142,36 @@ class ClubListTestCase(TestCase):
         second_club = self._create_and_find_second_club()
         first_club.add_user_to_club(user, "Applicant")
         second_club.add_user_to_club(user, "Applicant")
-        pass
+        self.assertEquals(user.groups.all().count(), 2)
+        self.assertTrue(user.groups.filter(name = first_club.club_codename + " Applicant").exists())
+        self.assertTrue(user.groups.filter(name = second_club.club_codename + " Applicant").exists())
+
+    def test_users_can_be_a_part_of_multiple_clubs_with_different_roles(self):
+        user = self._create_random_user()
+        first_club = self._create_and_find_club()
+        second_club = self._create_and_find_second_club()
+        first_club.add_user_to_club(user, "Applicant")
+        second_club.add_user_to_club(user, "Member")
+        self.assertEquals(user.groups.all().count(), 2)
+        self.assertTrue(user.groups.filter(name = first_club.club_codename + " Applicant").exists())
+        self.assertTrue(user.groups.filter(name = second_club.club_codename + " Member").exists())
+
+    def test_switching_the_role_of_a_user_in_a_club_does_not_affect_the_other_club(self):
+        user = self._create_random_user()
+        first_club = self._create_and_find_club()
+        second_club = self._create_and_find_second_club()
+        first_club.add_user_to_club(user, "Applicant")
+        second_club.add_user_to_club(user, "Applicant")
+        first_club.switch_user_role_in_club(user, "Member")
+        self.assertEquals(user.groups.all().count(), 2)
+        self.assertTrue(user.groups.filter(name = first_club.club_codename + " Member").exists())
+        self.assertFalse(user.groups.filter(name = first_club.club_codename + " Applicant").exists())
+        self.assertTrue(user.groups.filter(name = second_club.club_codename + " Applicant").exists())
+
+    def test_deleting_a_user_from_a_club_does_not_affect_the_other_club(self):
+        user = self._create_random_user()
+        first_club = self._create_and_find_club()
+        second_club = self._create_and_find_second_club()
+        first_club.add_user_to_club(user, "Applicant")
+        second_club.add_user_to_club(user, "Applicant")
+        first_club.remove_user_from_club(user)

@@ -275,6 +275,24 @@ class ClubModelTestCase(TestCase):
         owner_group = self.club.getClubOwnerGroup()
         self.assertEqual(owner_group, Group.objects.get(self.club.club_codename + " Owner"))
 
+    def test_switching_user_roles_in_a_club_means_the_user_is_not_part_of_the_old_role(self):
+        user = self._create_new_user()
+        self.club.add_user_to_club(user, "Applicant")
+        self.club.switch_user_role_in_club(user, "Member")
+        self.assertFalse(user.groups.filter(name = self.club.club_codename + " Applicant").exists())
+        self.assertTrue(user.groups.filter(name = self.club.club_codename + " Member").exists())
+
+    def test_attempting_to_switch_user_roles_in_a_club_they_are_not_a_part_off_does_not_add_them_to_the_club(self):
+        user = self._create_new_user()
+        self.club.switch_user_role_in_club(user, "Member")
+        self.assertFalse(user.groups.filter(name = self.club.club_codename + " Member").exists())
+
+    def test_removing_a_user_from_the_club_removes_them_from_the_relevant_groups(self):
+        pass
+
+    def test_attempting_to_remove_a_user_from_a_club_they_are_not_a_part_of_does_nothing(self):
+        pass
+
 
     def _assert_club_is_valid(self):
         try:
