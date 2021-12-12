@@ -25,7 +25,7 @@ class ClubList:
             self.club_list.append(club)
             return True
         else:
-            #Error message, possible return to keep UI elements in views.py?
+            #Error message using False return to keep UI elements in views.py?
             print("A club with that name already exists!")
             return False
 
@@ -33,12 +33,12 @@ class ClubList:
     def delete_club(self, club_name):
         club_to_delete = self.find_club(club_name)
         if club_to_delete == None:
-            #Error message, possible return to keep UI elements in views.py?
-            print("No club with that name exists!")
+            #Error message using False return to keep UI elements in views.py?
+            #print("No club with that name exists!")
             return False
         else:
             self.club_list.remove(club_to_delete)
-            club.delete()
+            club_to_delete.delete()
             return True
 
     #Returns 2D array in the form [[groups for a club][groups for a club]]

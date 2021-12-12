@@ -31,13 +31,13 @@ class ClubListTestCase(TestCase):
     #Uses random user creation from seed command
     def _create_random_user(self):
         new_faker = Faker('en_GB')
-        firstName = self.faker.unique.first_name()
-        lastName = self.faker.unique.last_name()
+        firstName = new_faker.unique.first_name()
+        lastName = new_faker.unique.last_name()
         email1 = f'{firstName}.{lastName}@example.org'
         userName = email1
         pass1 = "Password123"
-        bio1 = self.faker.unique.text(max_nb_chars = 520)
-        personalStatement = self.faker.text(max_nb_chars=1250)
+        bio1 = new_faker.unique.text(max_nb_chars = 520)
+        personalStatement = new_faker.text(max_nb_chars=1250)
 
         new_user = User.objects.create_user(
             username = userName,
@@ -69,13 +69,13 @@ class ClubListTestCase(TestCase):
     def test_adding_2_clubs_with_the_same_name_only_increments_number_of_entries_by_one(self):
         number_of_clubs = len(self.list_of_clubs.club_list)
         self._create_club()
-        self._create_second_club()
+        self._create_club()
         self.assertEqual(number_of_clubs+1, len(self.list_of_clubs.club_list))
 
 
     """Tests for the find_club() function"""
     def test_find_club_returns_a_club_object(self):
-        self._create_and_find_club()
+        found_club = self._create_and_find_club()
         self.assertTrue(isinstance(found_club, Club))
 
     def test_find_club_returns_correct_club_object(self):

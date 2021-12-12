@@ -2,7 +2,7 @@
 from django.test import TestCase
 from clubs.models import Club, User
 from django.core.exceptions import ValidationError
-import clubs.helpers
+import clubs.helpers as h
 from django.contrib.auth.models import Group
 
 class ClubModelTestCase(TestCase):
@@ -45,8 +45,8 @@ class ClubModelTestCase(TestCase):
         self._assert_club_is_invalid()
 
     def test_club_name_must_be_unique(self):
-        second_club = _create_second_club()
-        second_club.club_name = self.club.club_name
+        second_club = self._create_second_club()
+        self.club.club_name = second_club.club_name
         self._assert_club_is_invalid()
 
     def test_club_name_can_be_50_characters(self):
@@ -60,15 +60,15 @@ class ClubModelTestCase(TestCase):
 
     """Tests for club_codename field"""
     def test_codename_generates_correctly(self):
-        self.assertEqual(helpers.convert_to_codename(self.club.club_name), self.club.club_codename)
+        self.assertEqual(h.convert_to_codename(self.club.club_name), self.club.club_codename)
 
     def test_club_codename_cannot_be_blank(self):
         self.club.club_codename = ""
         self._assert_club_is_invalid()
 
     def test_club_codename_must_be_unique(self):
-        second_club = _create_second_club()
-        second_club.club_name = self.club.club_name
+        second_club = self._create_second_club()
+        self.club.club_name = second_club.club_name
         self._assert_club_is_invalid()
 
     def test_club_codename_can_be_50_characters(self):
@@ -86,16 +86,16 @@ class ClubModelTestCase(TestCase):
         self._assert_club_is_valid()
 
     def test_club_mission_statement_need_not_be_unique(self):
-        second_club = _create_second_club()
+        second_club = self._create_second_club()
         second_club.mission_statement = self.club.mission_statement
         self._assert_club_is_valid()
 
     def test_club_mission_statement_can_be_150_characters(self):
-        self.club.club_name = "x" * 150
+        self.club.mission_statement = "x" * 150
         self._assert_club_is_valid()
 
     def test_club_mission_statement_cannot_be_151_characters(self):
-        self.club.club_name = "x" * 151
+        self.club.mission_statement = "x" * 151
         self._assert_club_is_invalid()
 
 
