@@ -17,11 +17,13 @@ from .helpers import login_prohibited,owner_only ,officer_only, member_only
 from django.db.models import Count
 from django.views import View
 from django.views.generic import ListView
+from django.views.generic import CreateView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .club_list import ClubList
 from django.core.paginator import Paginator
 from django.conf import settings
+from django.urls import reverse
 
 class LoginProhibitedMixin:
 
@@ -153,6 +155,24 @@ class OfficerListView(OfficerMainListView):
           name_of_club = self.request.session.get('club_name')
           club = list_of_clubs.find_club(name_of_club)
           return qs.filter(groups__name__in=[club.getClubOfficerGroup()])
+
+
+class OwnerView(OfficerMainListView):
+    template_name = "owner.html"
+
+    def get_context_data(self, **kwargs):
+        list_of_clubs = ClubList()
+        name_of_club = self.request.session.get('club_name')
+        club = list_of_clubs.find_club(name_of_club)
+        context = super().get_context_data(**kwargs)
+        context['number_of_officers'] = User.objects.filter(groups__name = club.getClubOfficerGroup()).count()
+        return context
+    
+    def get_queryset(self):
+        return super().get_queryset()
+
+
+    
  
 
 class ApplicantListView(ListView):
@@ -182,6 +202,44 @@ class ShowOfficerView(DetailView):
     template_name = 'show_user_officer.html'
     pk_url_kwarg = "user_id"
 
+class SignUpView(View):
+    def get(self,request):
+        return self.render()
+
+    def post(self,request):
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+                """Redirect to profile page since signups are for applicants"""
+                user = form.save()
+                login(request, user)
+                return redirect('profile')
+
+    def render(self):
+        form = SignUpForm()
+        return render(self.request,'sign_up.html', {'form': form})
+
+
+
+class ProfileView(View):
+    def get(self,request):
+        return self.render()
+
+    def post(self,request):
+        current_user = request.user
+        form = UserForm(request.POST)
+        if form.is_valid():
+            current_user.username = form.cleaned_data.get('email')
+            messages.add_message(request, messages.SUCCESS, "Profile updated!")
+            form.save()
+           
+        return redirect('profile')
+
+
+
+    def render(self):
+        current_user = self.request.user
+        form = UserForm(instance=current_user)
+        return render(self.request,'profile.html', {'form': form})
 
 
 def show_user(request, user_id):
@@ -499,8 +557,8 @@ def club_selection(request):
 
 def club_dropdown(request):
     list_of_clubs = ClubList()
-    clubs = list_of_clubs.club_list
-    # context = {'clubs':clubs}
+    clubs= list_of_clubs.club_list
+    print(len(clubs))
     return render(request, 'club_dropdown.html', {'clubs':clubs})
 
 def create_new_club(request):
