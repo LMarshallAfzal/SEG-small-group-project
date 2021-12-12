@@ -46,7 +46,7 @@ class LogInView(View):
         return render(self.request, 'log_in.html', {'form': form, 'next' : self.next})
 
 
-class MemberListView(LoginRequiredMixin,ListView):
+class MemberListView(LoginRequiredMixin,View):
     model = User
     template_name = 'member_list.html'
     context_object_name = 'users'
