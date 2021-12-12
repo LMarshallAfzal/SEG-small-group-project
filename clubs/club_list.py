@@ -22,19 +22,22 @@ class ClubList:
         if self.find_club(name) == None:
             club = Club.objects.create_club(name, mission_statement, location)
             self.club_list.append(club)
+            return True
         else:
-            #Error message
+            #Error message, possible return to keep UI elements in views.py?
             print("A club with that name already exists!")
+            return False
 
-    #TODO: What else happens when a club is deleted? (e.g: Changes to database etc)
     def delete_club(self, club_name):
         club_to_delete = self.find_club(club_name)
         if club_to_delete == None:
-            #Error message
+            #Error message, possible return to keep UI elements in views.py?
             print("No club with that name exists!")
+            return False
         else:
+            self.club_list.remove(club_to_delete)
             club.delete()
-            #Complete deletion process
+            return True
 
     #Returns 2D array in the form [[groups for a club][groups for a club]]
     def get_all_groups(self):
