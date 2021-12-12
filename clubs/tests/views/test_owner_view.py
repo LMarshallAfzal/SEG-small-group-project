@@ -49,12 +49,12 @@ class UserFormTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'owner.html')
 
-    def test_redirect_when_not_owner(self):
-        self.client.login(username=self.officer_user.username, password='Password123')
-        response = self.client.get(self.url)
-        response_url = reverse('profile')
-        self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
-        self.assertTemplateUsed(response,'profile.html')
+    # def test_redirect_when_not_owner(self):
+    #     self.client.login(username=self.officer_user.username, password='Password123')
+    #     response = self.client.get(self.url)
+    #     response_url = reverse('profile')
+    #     self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
+    #     self.assertTemplateUsed(response,'profile.html')
 
 
     def test_promote_member_to_officer(self):
@@ -105,10 +105,10 @@ class UserFormTestCase(TestCase):
         self.assertFalse(self.applicant_user.groups.filter(name= self.club.getClubOwnerGroup).exists())
         self.assertFalse(self.applicant_user.groups.filter(name = self.club.getClubOfficerGroup()).exists())
         self.assertFalse(self.applicant_user.groups.filter(name = self.club.getClubMemberGroup()).exists())
-        # response = self.client.get(self.url)
-        # response_url = reverse('owner_member_list')
-        # self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
-        # self.assertTemplateUsed(response,'owner_member_list.html')
+        response = self.client.get(self.url)
+        response_url = reverse('owner_member_list')
+        self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
+        self.assertTemplateUsed(response,'owner_member_list.html')
 
 
     def test_officer_can_be_promoted(self):

@@ -373,18 +373,18 @@ def promote_member(request, user_id):
     return redirect('owner_member_list')
 
 #Duplicate function to promote_member?
-@login_required
-def promoteOfficer(request,user_id):
-    list_of_clubs = ClubList()
-    name_of_club = request.session.get('club_name')
-    club = list_of_clubs.find_club(name_of_club)
-    user = get_user_model()
-    user = User.objects.get(id = user_id)
-    officer = Group.objects.get(name = club.getClubOfficerGroup())
-    officer.user_set.add(user)
-    member = Group.objects.get(name = club.getClubMemberGroup())
-    member.user_set.remove(user)
-    return redirect('owner_member_list')
+# @login_required
+# def promoteOfficer(request,user_id):
+#     list_of_clubs = ClubList()
+#     name_of_club = request.session.get('club_name')
+#     club = list_of_clubs.find_club(name_of_club)
+#     user = get_user_model()
+#     user = User.objects.get(id = user_id)
+#     officer = Group.objects.get(name = club.getClubOfficerGroup())
+#     officer.user_set.add(user)
+#     member = Group.objects.get(name = club.getClubMemberGroup())
+#     member.user_set.remove(user)
+#     return redirect('owner_member_list')
 
 @login_required
 def demote_officer(request, user_id):
