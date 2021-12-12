@@ -7,6 +7,7 @@ import clubs.helpers
 from faker import Faker
 import faker.providers
 import clubs.helpers as h
+from django.contrib.auth.models import Group
 
 class ClubListTestCase(TestCase):
     """Tests of the ClubList class and the multi-club functionality it helps to provide"""
@@ -135,5 +136,10 @@ class ClubListTestCase(TestCase):
 
 
     """Tests for users interacting with multiple clubs"""
-    def test_users_can_be_a_part_of_multiple_clubs(self):
+    def test_users_can_be_a_part_of_multiple_clubs_with_the_same_role(self):
+        user = self._create_random_user()
+        first_club = self._create_and_find_club()
+        second_club = self._create_and_find_second_club()
+        first_club.add_user_to_club(user, "Applicant")
+        second_club.add_user_to_club(user, "Applicant")
         pass

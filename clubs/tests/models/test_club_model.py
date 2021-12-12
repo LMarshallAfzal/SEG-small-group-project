@@ -3,6 +3,7 @@ from django.test import TestCase
 from clubs.models import Club, User
 from django.core.exceptions import ValidationError
 import clubs.helpers
+from django.contrib.auth.models import Group
 
 class ClubModelTestCase(TestCase):
     """Unit tests of the Club model as well as the groups created by the club"""
@@ -15,11 +16,12 @@ class ClubModelTestCase(TestCase):
             )
 
     def _create_second_club(self):
-        second_club = Club.objects._create_club(
+        second_club = Club.objects.create_club(
             name = "Even more generic chess club",
             mission_statement = "Play chess",
             location = "Somewhere"
         )
+        return second_club
 
     def _create_new_user(self):
         user = User.objects.create_user(
@@ -199,10 +201,80 @@ class ClubModelTestCase(TestCase):
         self.club.remove_user_from_club(user)
         self.assertEqual(count, self.club.member_count)
 
+    def test_adding_a_user_to_multiple_clubs_as_a_member_increments_member_count_correctly_for_both_clubs(self):
+        user = self._create_new_user()
+        second_club = self._create_second_club()
+        first_club_member_count = self.club.member_count
+        second_club_member_count = second_club.member_count
+        self.club.add_user_to_club(user, "Member")
+        second_club.add_user_to_club(user, "Member")
+        self.assertEqual(first_club_member_count+1, self.club.member_count)
+        self.assertEqual(second_club_member_count+1, second_club.member_count)
+
+    def test_adding_a_user_to_multiple_clubs_as_a_member_for_only_one_of_them_increments_member_count_correctly_for_both_clubs(self):
+        user = self._create_new_user()
+        second_club = self._create_second_club()
+        first_club_member_count = self.club.member_count
+        second_club_member_count = second_club.member_count
+        self.club.add_user_to_club(user, "Member")
+        second_club.add_user_to_club(user, "Applicant")
+        self.assertEqual(first_club_member_count+1, self.club.member_count)
+        self.assertEqual(second_club_member_count, second_club.member_count)
+
+    def test_adding_a_user_to_multiple_clubs_as_a_non_member_for_both_does_not_increment_either_member_count(self):
+        user = self._create_new_user()
+        second_club = self._create_second_club()
+        first_club_member_count = self.club.member_count
+        second_club_member_count = second_club.member_count
+        self.club.add_user_to_club(user, "Applicant")
+        second_club.add_user_to_club(user, "Applicant")
+        self.assertEqual(first_club_member_count, self.club.member_count)
+        self.assertEqual(second_club_member_count, second_club.member_count)
+
+    def test_switching_a_user_to_member_in_one_club_does_not_affect_member_count_for_the_other(self):
+        user = self._create_new_user()
+        second_club = self._create_second_club()
+        first_club_member_count = self.club.member_count
+        second_club_member_count = second_club.member_count
+        self.club.add_user_to_club(user, "Applicant")
+        second_club.add_user_to_club(user, "Applicant")
+        first_club_member_count = self.club.member_count
+        second_club_member_count = second_club.member_count
+        self.club.switch_user_role_in_club(user, "Member")
+        self.assertEqual(first_club_member_count+1, self.club.member_count)
+        self.assertEqual(second_club_member_count, second_club.member_count)
+
+    def test_switching_a_user_from_member_in_one_club_does_not_affect_member_count_for_the_other(self):
+        user = self._create_new_user()
+        second_club = self._create_second_club()
+        first_club_member_count = self.club.member_count
+        second_club_member_count = second_club.member_count
+        self.club.add_user_to_club(user, "Member")
+        second_club.add_user_to_club(user, "Applicant")
+        first_club_member_count = self.club.member_count
+        second_club_member_count = second_club.member_count
+        self.club.switch_user_role_in_club(user, "Officer")
+        self.assertEqual(first_club_member_count-1, self.club.member_count)
+        self.assertEqual(second_club_member_count, second_club.member_count)
+
 
     """Tests around the groups automatically created by the club"""
-    def test_club_automatically_generates_applicant_group_for_it(self):
-        pass
+    def test_club_automatically_generates_applicant_group_for_club(self):
+        applicant_group = self.club.getClubApplicantGroup()
+        self.assertEqual(applicant_group, Group.objects.get(self.club.club_codename + " Applicant"))
+
+    def test_club_automatically_generates_member_group_for_club(self):
+        member_group = self.club.getClubMemberGroup()
+        self.assertEqual(member_group, Group.objects.get(self.club.club_codename + " Member"))
+
+    def test_club_automatically_generates_officer_group_for_club(self):
+        officer_group = self.club.getClubOfficerGroup()
+        self.assertEqual(officer_group, Group.objects.get(self.club.club_codename + " Officer"))
+
+    def test_club_automatically_generates_owner_group_for_club(self):
+        owner_group = self.club.getClubOwnerGroup()
+        self.assertEqual(owner_group, Group.objects.get(self.club.club_codename + " Owner"))
+
 
     def _assert_club_is_valid(self):
         try:
