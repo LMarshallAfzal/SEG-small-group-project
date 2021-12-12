@@ -84,7 +84,7 @@ class OwnerMemberListView(OfficerMainListView):
 
     template_name = 'owner_member_list.html'
     paginate_by = settings.USERS_PER_PAGE
-
+    
     def get_context_data(self, **kwargs):
         return super().get_context_data(**kwargs)
 
@@ -233,7 +233,7 @@ def application_form(request):
         #form.instance = current_user
         if form.is_valid():
             current_user.username = form.cleaned_data.get('email')
-            club.add_user_to_club(user, "Applicant")
+            club.add_user_to_club(current_user, "Applicant")
             messages.add_message(request, messages.SUCCESS, "You have joined a new club!")
             form.save()
             return redirect('profile')
