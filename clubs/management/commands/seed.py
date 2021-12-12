@@ -65,7 +65,7 @@ class Command(BaseCommand):
 
         club = list_of_clubs.find_club("Kerbal Chess Club")
         group = Group.objects.get(name = club.club_codename + " Owner")
-        club.add_user_to_club(Valentina, "Owner")
+        club.add_user_to_club(Billie, "Owner")
 
 
         #Adds 100 users, split among clubs and non-owner roles within a club
