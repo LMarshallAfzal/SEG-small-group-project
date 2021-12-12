@@ -200,6 +200,9 @@ class ClubModelTestCase(TestCase):
         self.assertEqual(count, self.club.member_count)
 
 
+    """Tests around the groups automatically created by the club"""
+    def test_club_automatically_generates_applicant_group_for_it(self):
+        pass
 
     def _assert_club_is_valid(self):
         try:
