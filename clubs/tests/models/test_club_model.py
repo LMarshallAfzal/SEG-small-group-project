@@ -261,19 +261,19 @@ class ClubModelTestCase(TestCase):
     """Tests around the groups automatically created by the club"""
     def test_club_automatically_generates_applicant_group_for_club(self):
         applicant_group = self.club.getClubApplicantGroup()
-        self.assertEqual(applicant_group, Group.objects.get(self.club.club_codename + " Applicant"))
+        self.assertEqual(applicant_group, Group.objects.get(name = self.club.club_codename + " Applicant"))
 
     def test_club_automatically_generates_member_group_for_club(self):
         member_group = self.club.getClubMemberGroup()
-        self.assertEqual(member_group, Group.objects.get(self.club.club_codename + " Member"))
+        self.assertEqual(member_group, Group.objects.get(name = self.club.club_codename + " Member"))
 
     def test_club_automatically_generates_officer_group_for_club(self):
         officer_group = self.club.getClubOfficerGroup()
-        self.assertEqual(officer_group, Group.objects.get(self.club.club_codename + " Officer"))
+        self.assertEqual(officer_group, Group.objects.get(name = self.club.club_codename + " Officer"))
 
     def test_club_automatically_generates_owner_group_for_club(self):
         owner_group = self.club.getClubOwnerGroup()
-        self.assertEqual(owner_group, Group.objects.get(self.club.club_codename + " Owner"))
+        self.assertEqual(owner_group, Group.objects.get(name = self.club.club_codename + " Owner"))
 
     def test_switching_user_roles_in_a_club_means_the_user_is_not_part_of_the_old_role(self):
         user = self._create_new_user()
