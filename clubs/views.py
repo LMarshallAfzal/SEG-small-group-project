@@ -516,4 +516,5 @@ def create_new_club(request):
             return redirect('club_selection')
     else:
         form = CreateClubForm()
+        messages.add_message(request, messages.ERROR, "There's already a club with that name")
     return render(request, 'new_club_form.html', {'form': form})
