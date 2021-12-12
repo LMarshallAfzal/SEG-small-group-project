@@ -497,11 +497,11 @@ def club_selection(request):
     print(len(clubs))
     return render(request, 'club_selection.html', {'clubs':clubs})
 
-def club_dropdown(request):
-    list_of_clubs = ClubList()
-    clubs = list_of_clubs.club_list
-    # context = {'clubs':clubs}
-    return render(request, 'club_dropdown.html', {'clubs':clubs})
+# def club_dropdown(request):
+#     list_of_clubs = ClubList()
+#     clubs = list_of_clubs.get_user_clubs
+#     # context = {'clubs':clubs}
+#     return render(request, 'club_dropdown.html', {'clubs':clubs})
 
 def create_new_club(request):
     list_of_clubs = ClubList()
