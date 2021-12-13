@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from typing import List
 from django import template
 from django.db.models.query import QuerySet
@@ -26,6 +27,13 @@ from .club_list import ClubList
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.urls import reverse
+=======
+from .models import User
+from django.shortcuts import render, redirect
+from .forms import LogInForm, SignUpForm
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+>>>>>>> 63505a1f4aee82cc90ff1d9f2e729f3dbe71f45f
 
 class LoginProhibitedMixin:
 
@@ -82,10 +90,18 @@ class LogInView(View):
 
     def post(self,request):
         form = LogInForm(request.POST)
+<<<<<<< HEAD
         self.next = request.POST.get('next') or 'officer'
         user = form.get_user()
         if user is not None:
                 """Redirect to club selection page, with option to create new club"""
+=======
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            password = form.cleaned_data.get('password')
+            user = authenticate(email = email, password = password)
+            if user is not None:
+>>>>>>> 63505a1f4aee82cc90ff1d9f2e729f3dbe71f45f
                 login(request, user)
                 return redirect('club_selection')
 
