@@ -130,10 +130,6 @@ class OfficerMainListView(MemberListView):
 
 class OwnerMemberListView(ListView):
     
-
-
-
-
     def get_context_data(self, *args, **kwargs):
         """Generate content to be displayed in the template."""
         context = super().get_context_data(*args, **kwargs)
@@ -161,7 +157,12 @@ class OwnerMemberListView(ListView):
 
 
     def render(self):
-        return render(self.request, 'owner_member_list.html')
+        qs = super().get_queryset()
+        list_of_clubs = ClubList()
+        name_of_club = self.request.session.get('club_name')
+        club = list_of_clubs.find_club(name_of_club)
+        users = qs.filter(groups__name__in=[club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()])
+        return render(self.request, 'owner_member_list.html', {'users':users})
 
 
 
