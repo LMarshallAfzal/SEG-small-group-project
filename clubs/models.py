@@ -29,7 +29,7 @@ class User(AbstractUser):
     def full_name(self):
         return f'{self.first_name} {self.last_name}'
 
-    def gravatar(self, size=800):
+    def gravatar(self, size=120):
         """Return a URL to the user's gravatar."""
         gravatar_object = Gravatar(self.email)
         gravatar_url = gravatar_object.get_image(size=size, default='mp')
@@ -65,7 +65,7 @@ class Club(models.Model):
     objects = ClubManager()
 
     def get_club_owner(self):
-        return User.objects.filter(groups__name = self.club_codename + " Owner")
+        return User.objects.filter(groups__name = self.club_codename + " Owner")[0]
 
     def get_club_details(self):
         owners = User.objects.filter(groups__name = self.club_codename + " Owner")
@@ -134,3 +134,9 @@ class Club(models.Model):
 
     def getClubOwnerGroup(self):
         return Group.objects.get(name = self.club_codename + " Owner")
+
+    def remove_user_from_group(self):
+        pass
+
+    def add_user_to_group(self):
+        pass
