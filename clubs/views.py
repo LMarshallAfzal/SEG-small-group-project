@@ -79,7 +79,7 @@ class OwnerOnlyMixin:
         return super().dispatch(*args, **kwargs)
 
 
-class LogInView(View):
+class LogInView(LoginProhibitedMixin,View):
     """Log-in handling view"""
     def get(self,request):
         self.next = request.GET.get('next') or 'officer'
@@ -245,14 +245,14 @@ class ApplicantListView(OfficerMainListView):
         return render(self.request, 'officer_promote_applicants.html', {'users':users})
 
 
-class ShowUserView(DetailView):
+class ShowUserView(LoginRequiredMixin,DetailView):
     model = User
     template_name = 'show_user.html'
     pk_url_kwarg = "user_id"
 
 
 
-class ShowOfficerView(DetailView):
+class ShowOfficerView(OfficerOnlyMixin,DetailView):
     model = User
     template_name = 'show_user_officer.html'
     pk_url_kwarg = "user_id"
