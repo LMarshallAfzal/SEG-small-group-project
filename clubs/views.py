@@ -17,7 +17,8 @@ from django.shortcuts import redirect, render
 from .helpers import login_prohibited,owner_only ,officer_only, member_only
 from django.db.models import Count
 from django.views import View
-from django.views.generic import ListView, TemplateView
+from django.views.generic import ListView
+from django.views.generic import UpdateView
 from django.views.generic.edit import FormView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -25,11 +26,14 @@ from .club_list import ClubList
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.urls import reverse
+<<<<<<< HEAD
+=======
 from .models import User
 from django.shortcuts import render, redirect
 from .forms import LogInForm, SignUpForm
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
+>>>>>>> 69633f320e77da84928f5bf74a918f1e1d4134a3
 
 class LoginProhibitedMixin:
 
@@ -90,11 +94,14 @@ class LogInView(View):
         user = form.get_user()
         if user is not None:
                 """Redirect to club selection page, with option to create new club"""
+<<<<<<< HEAD
+=======
         if form.is_valid():
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
             user = authenticate(email = email, password = password)
             if user is not None:
+>>>>>>> 69633f320e77da84928f5bf74a918f1e1d4134a3
                 login(request, user)
                 return redirect('club_selection')
 
@@ -254,25 +261,6 @@ class ProfileView(View):
         form = UserForm(instance=current_user)
         return render(self.request,'profile.html', {'form': form})
 
-class OwnerView(TemplateView):
-    template_name = 'owner.html'
-    context_object_name = 'users'
-    # paginate_by = settings.USERS_PER_PAGE
-
-    def get_queryset(self):
-        return super().get_queryset()
-    
-
-    def get_context_data(self, *args, **kwargs):
-        """Generate content to be displayed in the template."""
-        context = super().get_context_data(*args, **kwargs)
-        list_of_clubs = ClubList()
-        name_of_club = self.request.session.get('club_name')
-        club = list_of_clubs.find_club(name_of_club)
-        context['number_of_applicants'] = User.objects.filter(groups__name = club.getClubApplicantGroup()).count()
-        context['number_of_members'] = User.objects.filter(groups__name__in = [club.getClubOwnerGroup(),club.getClubMemberGroup(), club.getClubOfficerGroup()]).count()
-        return context
-    
 
 def show_user(request, user_id):
     User = get_user_model()
