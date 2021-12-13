@@ -131,3 +131,9 @@ class Club(models.Model):
 
     def getClubOwnerGroup(self):
         return Group.objects.get(name = self.club_codename + " Owner")
+
+    def remove_user_from_group(self):
+        pass
+
+    def add_user_to_group(self):
+        pass
