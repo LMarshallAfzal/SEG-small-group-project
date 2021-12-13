@@ -1,5 +1,6 @@
 from typing import List
 from django import template
+from django.db.models.query import QuerySet
 from django.http.response import HttpResponse
 from django.shortcuts import render
 from .forms import LogInForm, SignUpForm, UserForm, PasswordForm, ApplicationForm, CreateClubForm
@@ -17,6 +18,7 @@ from .helpers import login_prohibited,owner_only ,officer_only, member_only
 from django.db.models import Count
 from django.views import View
 from django.views.generic import ListView
+from django.views.generic import UpdateView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .club_list import ClubList
@@ -104,7 +106,7 @@ class MemberListView(LoginRequiredMixin,ListView):
           list_of_clubs = ClubList()
           name_of_club = self.request.session.get('club_name')
           club = list_of_clubs.find_club(name_of_club)
-          return qs.filter(groups__name__in=[club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()])
+          return qs.filter(groups__name__in=[club.getClubApplicantGroup(),club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()])
 
 
 class OfficerMainListView(MemberListView):
@@ -122,65 +124,93 @@ class OfficerMainListView(MemberListView):
         context['number_of_members'] = User.objects.filter(groups__name__in = [club.getClubOwnerGroup(),club.getClubMemberGroup(), club.getClubOfficerGroup()]).count()
         return context
 
+    def get(self,request,*args, **kwargs):
+        # list_of_clubs = ClubList()
+        # name_of_club = self.request.session.get('club_name')
+        # club = list_of_clubs.find_club(name_of_club)
+        # queryset = User.objects.filter(groups__name=club.getClubMemberGroup())
+        # users = queryset
+        return self.render()
+
+        
+    
+    def post(self,request,*args, **kwargs):
+        # list_of_clubs = ClubList()
+        # name_of_club = self.request.session.get('club_name')
+        # club = list_of_clubs.find_club(name_of_club)
+        # queryset = User.objects.filter(groups__name=club.getClubMemberGroup())
+        # users = queryset
+        return self.render()
+
     def get_queryset(self):
         qs = super().get_queryset()
         return qs
 
+    def render(self):
+        qs = super().get_queryset()
+        list_of_clubs = ClubList()
+        name_of_club = self.request.session.get('club_name')
+        club = list_of_clubs.find_club(name_of_club)
+        users = qs.filter(groups__name__in=[club.getClubMemberGroup()])
+        return render(self.request, 'officer_main.html', {'users':users})
+          
 
 class OwnerMemberListView(OfficerMainListView):
-
+    
     template_name = 'owner_member_list.html'
-    paginate_by = settings.USERS_PER_PAGE
+    # paginate_by = settings.USERS_PER_PAGE
 
-    def get_context_data(self, **kwargs):
-        return super().get_context_data(**kwargs)
-
-    def get_queryset(self):
-        return super().get_queryset()
+    def render(self):
+        qs = super().get_queryset()
+        list_of_clubs = ClubList()
+        name_of_club = self.request.session.get('club_name')
+        club = list_of_clubs.find_club(name_of_club)
+        users = qs.filter(groups__name__in=[club.getClubMemberGroup()])
+        return render(self.request, 'owner_member_list.html', {'users':users})
 
 
 class OfficerListView(OfficerMainListView):
 
     template_name = 'officer_list.html'
-    paginate_by = settings.USERS_PER_PAGE
+    
+    def render(self):
+        qs = super().get_queryset()
+        list_of_clubs = ClubList()
+        name_of_club = self.request.session.get('club_name')
+        club = list_of_clubs.find_club(name_of_club)
+        users = qs.filter(groups__name__in=[club.getClubOfficerGroup()])
+        return render(self.request, 'officer_list.html', {'users':users})
+ 
 
-    def get_context_data(self, **kwargs):
-        return super().get_context_data(**kwargs)
-
-    def get_queryset(self):
-          qs = super().get_queryset()
-          list_of_clubs = ClubList()
-          name_of_club = self.request.session.get('club_name')
-          club = list_of_clubs.find_club(name_of_club)
-          return qs.filter(groups__name__in=[club.getClubOfficerGroup()])
-
-
-class ApplicantListView(ListView):
-    model = User
+class ApplicantListView(OfficerMainListView):
     template_name = 'officer_promote_applicants.html'
-    context_object_name = 'users'
-    paginate_by = settings.USERS_PER_PAGE
 
-    def get_context_data(self, **kwargs):
-        return super().get_context_data(**kwargs)
+    def render(self):
+        qs = super().get_queryset()
+        list_of_clubs = ClubList()
+        name_of_club = self.request.session.get('club_name')
+        club = list_of_clubs.find_club(name_of_club)
+        users = qs.filter(groups__name__in=[club.getClubApplicantGroup()])
+        return render(self.request, 'officer_promote_applicants.html', {'users':users})
+ 
+   
 
-    def get_queryset(self):
-          qs = super().get_queryset()
-          list_of_clubs = ClubList()
-          name_of_club = self.request.session.get('club_name')
-          club = list_of_clubs.find_club(name_of_club)
-          return qs.filter(groups__name__in= [club.getClubApplicantGroup()])
 
 
 class ShowUserView(DetailView):
     model = User
     template_name = 'show_user.html'
     pk_url_kwarg = "user_id"
+   
+    
+
+   
 
 class ShowOfficerView(DetailView):
     model = User
     template_name = 'show_user_officer.html'
     pk_url_kwarg = "user_id"
+   
 
 
 
@@ -475,6 +505,8 @@ def demote_officer(request, user_id):
     user = User.objects.get(id = user_id)
     club.switch_user_role_in_club(user, "Member")
     return redirect('officer_list')
+
+    
 
 def club_selection(request):
     list_of_clubs = ClubList()
