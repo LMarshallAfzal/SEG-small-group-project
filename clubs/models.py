@@ -38,7 +38,7 @@ class User(AbstractUser):
     def mini_gravatar(self):
         """Return a URL to a miniature version of the user's gravatar."""
         return self.gravatar(size=60)
-    
+
 
 
     # def approve_applicant(self, user, club_codename):
@@ -64,13 +64,22 @@ class Club(models.Model):
     member_count = models.PositiveIntegerField(default = 0)
     objects = ClubManager()
 
+    #TODO: Convert to dictionary to ensure consistent ordering
     def get_club_details(self):
+        club_details = {
+            name: self.club_name,
+            location: self.club_location,
+            mission_statement: self.mission_statement
+        }
         owners = User.objects.filter(groups__name = self.club_codename + " Owner")
         if owners.count() > 0:
             owner = owners[0] #There should only be one owner
-            return [self.club_name, self.club_location, self.mission_statement, (owner.first_name + owner.last_name), owner.bio, owner.gravatar()]
-        else:
-            return [self.club_name, self.club_location, self.mission_statement, None, None, None] #If there is no owner somehow this prevents a crash
+            club_details.update({
+                owner_name = (owner.first_name + " " +owner.last_name),
+                owner_bio = owner.bio,
+                owner.gravatar()
+            })
+            return club_details #If there is no owner, the dictionary keys related to owner will not exist. Use this fact to check if the club has an owner to prevent potential crashes.
 
     def create_groups_and_permissions_for_club(self):
         from .groups import ChessClubGroups
@@ -88,7 +97,7 @@ class Club(models.Model):
         else:
             return None #If the user is not part of the club this will be returned
 
-    #Includes failsafe to switch the role of the user in the club if they werw already in the club
+    #Includes failsafe to switch the role of the user in the club if they were already in the club
     def add_user_to_club(self, user, initial_role):
         if self.get_user_role_in_club(user) == None:
             user.groups.add(Group.objects.get(name = self.club_codename + " " + initial_role))

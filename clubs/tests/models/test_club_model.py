@@ -276,64 +276,73 @@ class ClubModelTestCase(TestCase):
         self.assertEqual(owner_group, Group.objects.get(name = self.club.club_codename + " Owner"))
 
 
-    """Tests for users interacting with the club model"""
+    """Tests for users being added to a club"""
     def test_adding_user_as_applicant_increments_number_of_users_in_club_applicant_group_only(self):
         user = self._create_new_user()
-        applicant_count = Group.objects.get(name = self.club.club_codename + " Applicant").count()
-        member_count = Group.objects.get(name = self.club.club_codename + " Member").count()
-        officer_count = Group.objects.get(name = self.club.club_codename + " Officer").count()
-        owner_count = Group.objects.get(name = self.club.club_codename + " Owner").count()
+        applicant_count = Group.objects.get(name = self.club.club_codename + " Applicant").user_set.all().count()
+        member_count = Group.objects.get(name = self.club.club_codename + " Member").user_set.all().count()
+        officer_count = Group.objects.get(name = self.club.club_codename + " Officer").user_set.all().count()
+        owner_count = Group.objects.get(name = self.club.club_codename + " Owner").user_set.all().count()
         self.club.add_user_to_club(user, "Applicant")
-        self.assertEqual(applicant_count+1, Group.objects.get(name = self.club.club_codename + " Applicant").count())
-        self.assertEqual(member_count, Group.objects.get(name = self.club.club_codename + " Member").count())
-        self.assertEqual(officer_count, Group.objects.get(name = self.club.club_codename + " Officer").count())
-        self.assertEqual(owner_count, Group.objects.get(name = self.club.club_codename + " Owner").count())
+        self.assertEqual(applicant_count+1, Group.objects.get(name = self.club.club_codename + " Applicant").user_set.all().count())
+        self.assertEqual(member_count, Group.objects.get(name = self.club.club_codename + " Member").user_set.all().count())
+        self.assertEqual(officer_count, Group.objects.get(name = self.club.club_codename + " Officer").user_set.all().count())
+        self.assertEqual(owner_count, Group.objects.get(name = self.club.club_codename + " Owner").user_set.all().count())
 
     def test_adding_user_as_member_increments_number_of_users_in_club_member_group_only(self):
         user = self._create_new_user()
-        applicant_count = Group.objects.get(name = self.club.club_codename + " Applicant").count()
-        member_count = Group.objects.get(name = self.club.club_codename + " Member").count()
-        officer_count = Group.objects.get(name = self.club.club_codename + " Officer").count()
-        owner_count = Group.objects.get(name = self.club.club_codename + " Owner").count()
+        applicant_count = Group.objects.get(name = self.club.club_codename + " Applicant").user_set.all().count()
+        member_count = Group.objects.get(name = self.club.club_codename + " Member").user_set.all().count()
+        officer_count = Group.objects.get(name = self.club.club_codename + " Officer").user_set.all().count()
+        owner_count = Group.objects.get(name = self.club.club_codename + " Owner").user_set.all().count()
         self.club.add_user_to_club(user, "Member")
-        self.assertEqual(applicant_count, Group.objects.get(name = self.club.club_codename + " Applicant").count())
-        self.assertEqual(member_count+1, Group.objects.get(name = self.club.club_codename + " Member").count())
-        self.assertEqual(officer_count, Group.objects.get(name = self.club.club_codename + " Officer").count())
-        self.assertEqual(owner_count, Group.objects.get(name = self.club.club_codename + " Owner").count())
+        self.assertEqual(applicant_count, Group.objects.get(name = self.club.club_codename + " Applicant").user_set.all().count())
+        self.assertEqual(member_count+1, Group.objects.get(name = self.club.club_codename + " Member").user_set.all().count())
+        self.assertEqual(officer_count, Group.objects.get(name = self.club.club_codename + " Officer").user_set.all().count())
+        self.assertEqual(owner_count, Group.objects.get(name = self.club.club_codename + " Owner").user_set.all().count())
 
     def test_adding_user_as_officer_increments_number_of_users_in_club_officer_group_only(self):
         user = self._create_new_user()
-        applicant_count = Group.objects.get(name = self.club.club_codename + " Applicant").count()
-        member_count = Group.objects.get(name = self.club.club_codename + " Member").count()
-        officer_count = Group.objects.get(name = self.club.club_codename + " Officer").count()
-        owner_count = Group.objects.get(name = self.club.club_codename + " Owner").count()
+        applicant_count = Group.objects.get(name = self.club.club_codename + " Applicant").user_set.all().count()
+        member_count = Group.objects.get(name = self.club.club_codename + " Member").user_set.all().count()
+        officer_count = Group.objects.get(name = self.club.club_codename + " Officer").user_set.all().count()
+        owner_count = Group.objects.get(name = self.club.club_codename + " Owner").user_set.all().count()
         self.club.add_user_to_club(user, "Officer")
-        self.assertEqual(applicant_count, Group.objects.get(name = self.club.club_codename + " Applicant").count())
-        self.assertEqual(member_count, Group.objects.get(name = self.club.club_codename + " Member").count())
-        self.assertEqual(officer_count+1, Group.objects.get(name = self.club.club_codename + " Officer").count())
-        self.assertEqual(owner_count, Group.objects.get(name = self.club.club_codename + " Owner").count())
+        self.assertEqual(applicant_count, Group.objects.get(name = self.club.club_codename + " Applicant").user_set.all().count())
+        self.assertEqual(member_count, Group.objects.get(name = self.club.club_codename + " Member").user_set.all().count())
+        self.assertEqual(officer_count+1, Group.objects.get(name = self.club.club_codename + " Officer").user_set.all().count())
+        self.assertEqual(owner_count, Group.objects.get(name = self.club.club_codename + " Owner").user_set.all().count())
 
     def test_adding_user_as_owner_increments_number_of_users_in_club_owner_group_only(self):
         user = self._create_new_user()
-        applicant_count = Group.objects.get(name = self.club.club_codename + " Applicant").count()
-        member_count = Group.objects.get(name = self.club.club_codename + " Member").count()
-        officer_count = Group.objects.get(name = self.club.club_codename + " Officer").count()
-        owner_count = Group.objects.get(name = self.club.club_codename + " Owner").count()
-        self.club.add_user_to_club(user, "Applicant")
-        self.assertEqual(applicant_count, Group.objects.get(name = self.club.club_codename + " Applicant").count())
-        self.assertEqual(member_count, Group.objects.get(name = self.club.club_codename + " Member").count())
-        self.assertEqual(officer_count, Group.objects.get(name = self.club.club_codename + " Officer").count())
-        self.assertEqual(owner_count+1, Group.objects.get(name = self.club.club_codename + " Owner").count())
+        applicant_count = Group.objects.get(name = self.club.club_codename + " Applicant").user_set.all().count()
+        member_count = Group.objects.get(name = self.club.club_codename + " Member").user_set.all().count()
+        officer_count = Group.objects.get(name = self.club.club_codename + " Officer").user_set.all().count()
+        owner_count = Group.objects.get(name = self.club.club_codename + " Owner").user_set.all().count()
+        self.club.add_user_to_club(user, "Owner")
+        self.assertEqual(applicant_count, Group.objects.get(name = self.club.club_codename + " Applicant").user_set.all().count())
+        self.assertEqual(member_count, Group.objects.get(name = self.club.club_codename + " Member").user_set.all().count())
+        self.assertEqual(officer_count, Group.objects.get(name = self.club.club_codename + " Officer").user_set.all().count())
+        self.assertEqual(owner_count+1, Group.objects.get(name = self.club.club_codename + " Owner").user_set.all().count())
 
     def test_adding_a_user_to_a_club_twice_in_the_same_role_only_adds_the_user_once(self):
         user = self._create_new_user()
         self.club.add_user_to_club(user, "Applicant")
-        applicant_count = Group.objects.get(name = self.club.club_codename + " Applicant").count()
+        applicant_count = Group.objects.get(name = self.club.club_codename + " Applicant").user_set.all().count()
         self.club.add_user_to_club(user, "Applicant")
-        self.assertEqual(applicant_count, Group.objects.get(name = self.club.club_codename + " Applicant").count())
+        self.assertEqual(applicant_count, Group.objects.get(name = self.club.club_codename + " Applicant").user_set.all().count())
 
-    #def test_adding_a_user
+    def test_adding_a_user_to_a_club_twice_in_different_roles_switches_user_role_the_second_time_instead(self):
+        user = self._create_new_user()
+        self.club.add_user_to_club(user, "Applicant")
+        applicant_count = Group.objects.get(name = self.club.club_codename + " Applicant").user_set.all().count()
+        member_count = Group.objects.get(name = self.club.club_codename + " Member").user_set.all().count()
+        self.club.add_user_to_club(user, "Member")
+        self.assertEqual(applicant_count-1, Group.objects.get(name = self.club.club_codename + " Applicant").user_set.all().count())
+        self.assertEqual(member_count+1, Group.objects.get(name = self.club.club_codename + " Member").user_set.all().count())
 
+
+    """Tests for switching the role of a user in the club"""
     def test_switching_user_roles_in_a_club_means_the_user_is_not_part_of_the_old_role(self):
         user = self._create_new_user()
         self.club.add_user_to_club(user, "Applicant")
@@ -341,17 +350,55 @@ class ClubModelTestCase(TestCase):
         self.assertFalse(user.groups.filter(name = self.club.club_codename + " Applicant").exists())
         self.assertTrue(user.groups.filter(name = self.club.club_codename + " Member").exists())
 
+    def test_switching_a_user_to_the_same_non_member_role_does_not_change_user_groups(self):
+        pass
+
+    def test_switching_a_user_to_the_same_member_role_does_not_affect_member_count(self):
+        pass
+
     def test_attempting_to_switch_user_roles_in_a_club_they_are_not_a_part_off_does_not_add_them_to_the_club(self):
         user = self._create_new_user()
         self.club.switch_user_role_in_club(user, "Member")
         self.assertFalse(user.groups.filter(name = self.club.club_codename + " Member").exists())
 
+
+    """Tests for removing a user from the club"""
     def test_removing_a_user_from_the_club_removes_them_from_the_relevant_groups(self):
         user = self._create_new_user()
         self.club.add_user_to_club(user, "Applicant")
         self.assertTrue(user.groups.filter(name = self.club.club_codename + " Applicant").exists())
         self.club.remove_user_from_club(user)
         self.assertFalse(user.groups.filter(name = self.club.club_codename + " Applicant").exists())
+
+    def test_removing_a_user_from_the_club_does_not_affect_unrelated_groups(self):
+        pass
+
+    def test_attempting_to_remove_a_user_from_a_club_they_are_not_a_part_of_does_affect_club_groups(self):
+        pass
+
+
+    """Tests for get_club_groups method and for getting individual groups"""
+    def test_get_club_groups_retrives_correct_groups(self):
+        pass
+
+    def test_get_club_applicant_group_gets_correct_group(self):
+        pass
+
+    def test_get_club_member_group_gets_correct_group(self):
+        pass
+
+    def test_get_club_officer_group_gets_correct_group(self):
+        pass
+
+    def test_get_club_owner_group_gets_correct_group(self):
+        pass
+
+    """Tests for get_club_details() method"""
+    def test_get_club_details_gets_full_set_of_correct_details(self):
+        pass
+
+    def test_get_club_details_without_a_club_owner_returns_None_for_owner_related_fields(self):
+        pass
 
     def _assert_club_is_valid(self):
         try:
