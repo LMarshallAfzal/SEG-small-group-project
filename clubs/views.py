@@ -18,6 +18,7 @@ from .helpers import login_prohibited,owner_only ,officer_only, member_only
 from django.db.models import Count
 from django.views import View
 from django.views.generic import ListView
+from django.views.generic import UpdateView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .club_list import ClubList
@@ -105,7 +106,7 @@ class MemberListView(LoginRequiredMixin,ListView):
           list_of_clubs = ClubList()
           name_of_club = self.request.session.get('club_name')
           club = list_of_clubs.find_club(name_of_club)
-          return qs.filter(groups__name__in=[club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()])
+          return qs.filter(groups__name__in=[club.getClubApplicantGroup(),club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()])
 
 
 class OfficerMainListView(MemberListView):
@@ -157,7 +158,6 @@ class OfficerMainListView(MemberListView):
 class OwnerMemberListView(OfficerMainListView):
     
     template_name = 'owner_member_list.html'
-    template = 'owner_member_list.html'
     # paginate_by = settings.USERS_PER_PAGE
 
     def render(self):
@@ -178,37 +178,39 @@ class OfficerListView(OfficerMainListView):
         list_of_clubs = ClubList()
         name_of_club = self.request.session.get('club_name')
         club = list_of_clubs.find_club(name_of_club)
-        users = qs.filter(groups__name__in=[club.getClubMemberGroup()])
-        return render(self.request, 'officer_list', {'users':users})
+        users = qs.filter(groups__name__in=[club.getClubOfficerGroup()])
+        return render(self.request, 'officer_list.html', {'users':users})
  
 
-class ApplicantListView(ListView):
-    model = User
-    context_object_name = 'users'
+class ApplicantListView(OfficerMainListView):
     template_name = 'officer_promote_applicants.html'
 
-    def post(self,user_id,request,*args, **kwargs):
-        reject_accept_handler(user_id=user_id)
-        return redirect('officer_promote_applicants')
-    
     def render(self):
         qs = super().get_queryset()
         list_of_clubs = ClubList()
         name_of_club = self.request.session.get('club_name')
         club = list_of_clubs.find_club(name_of_club)
-        users = qs.filter(groups__name__in=[club.getClubMemberGroup()])
+        users = qs.filter(groups__name__in=[club.getClubApplicantGroup()])
         return render(self.request, 'officer_promote_applicants.html', {'users':users})
-          
+ 
+   
+
+
 
 class ShowUserView(DetailView):
     model = User
     template_name = 'show_user.html'
     pk_url_kwarg = "user_id"
+   
+    
+
+   
 
 class ShowOfficerView(DetailView):
     model = User
     template_name = 'show_user_officer.html'
     pk_url_kwarg = "user_id"
+   
 
 
 
