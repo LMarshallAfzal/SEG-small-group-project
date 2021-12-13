@@ -19,6 +19,7 @@ from django.db.models import Count
 from django.views import View
 from django.views.generic import ListView
 from django.views.generic import UpdateView
+from django.views.generic.edit import FormView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .club_list import ClubList
@@ -133,8 +134,8 @@ class OfficerMainListView(MemberListView):
         # users = queryset
         return self.render()
 
-        
-    
+
+
     def post(self,request,*args, **kwargs):
         # list_of_clubs = ClubList()
         # name_of_club = self.request.session.get('club_name')
@@ -154,10 +155,10 @@ class OfficerMainListView(MemberListView):
         club = list_of_clubs.find_club(name_of_club)
         users = qs.filter(groups__name__in=[club.getClubMemberGroup()])
         return render(self.request, 'officer_main.html', {'users':users})
-          
+
 
 class OwnerMemberListView(OfficerMainListView):
-    
+
     template_name = 'owner_member_list.html'
     # paginate_by = settings.USERS_PER_PAGE
 
@@ -173,7 +174,7 @@ class OwnerMemberListView(OfficerMainListView):
 class OfficerListView(OfficerMainListView):
 
     template_name = 'officer_list.html'
-    
+
     def render(self):
         qs = super().get_queryset()
         list_of_clubs = ClubList()
@@ -181,7 +182,7 @@ class OfficerListView(OfficerMainListView):
         club = list_of_clubs.find_club(name_of_club)
         users = qs.filter(groups__name__in=[club.getClubOfficerGroup()])
         return render(self.request, 'officer_list.html', {'users':users})
- 
+
 
 class ApplicantListView(OfficerMainListView):
     template_name = 'officer_promote_applicants.html'
@@ -193,20 +194,20 @@ class ApplicantListView(OfficerMainListView):
         club = list_of_clubs.find_club(name_of_club)
         users = qs.filter(groups__name__in=[club.getClubApplicantGroup()])
         return render(self.request, 'officer_promote_applicants.html', {'users':users})
- 
+
 
 class ShowUserView(DetailView):
     model = User
     template_name = 'show_user.html'
     pk_url_kwarg = "user_id"
-   
-   
+
+
 
 class ShowOfficerView(DetailView):
     model = User
     template_name = 'show_user_officer.html'
     pk_url_kwarg = "user_id"
-   
+
 
 class SignUpView(View):
     def get(self,request):
@@ -232,15 +233,12 @@ class ProfileView(View):
 
     def post(self,request):
         current_user = request.user
-        form = UserForm(request.POST)
+        form = UserForm(instance=current_user, data=request.POST)
         if form.is_valid():
             current_user.username = form.cleaned_data.get('email')
             messages.add_message(request, messages.SUCCESS, "Profile updated!")
             form.save()
-           
-        return redirect('profile')
-
-
+            return redirect('profile')#depends on the user type
 
     def render(self):
         current_user = self.request.user
@@ -365,22 +363,31 @@ def application_form(request):
         form = ApplicationForm(instance=current_user)
     return render(request, 'application_form.html', {'form': form})
 
+class PasswordView(LoginRequiredMixin, FormView):
+    """View that handles password change requests."""
 
-def password(request):
-    current_user = request.user
-    if request.method == 'POST':
-        form = PasswordForm(data=request.POST)
-        if form.is_valid():
-            password = form.cleaned_data.get('password')
-            if check_password(password, current_user.password):
-                new_password = form.cleaned_data.get('new_password')
-                current_user.set_password(new_password)
-                current_user.save()
-                login(request, current_user)
-                messages.add_message(request, messages.SUCCESS, "Password updated!")
-                return redirect('profile')
-    form = PasswordForm()
-    return render(request, 'password.html', {'form': form})
+    template_name = 'password.html'
+    form_class = PasswordForm
+
+    def get_form_kwargs(self, **kwargs):
+        """Pass the current user to the password change form."""
+
+        kwargs = super().get_form_kwargs(**kwargs)
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
+    def form_valid(self, form):
+        """Handle valid form by saving the new password."""
+
+        form.save()
+        login(self.request, self.request.user)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """Redirect the user after successful password change."""
+
+        messages.add_message(self.request, messages.SUCCESS, "Password updated!")
+        return reverse('profile')
 
 def member_list(request):
     # list_of_clubs = ClubList()
@@ -555,7 +562,7 @@ def demote_officer(request, user_id):
     club.switch_user_role_in_club(user, "Member")
     return redirect('officer_list')
 
-    
+
 
 def club_selection(request):
     list_of_clubs = ClubList()
