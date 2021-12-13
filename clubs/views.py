@@ -30,8 +30,8 @@ class LoginProhibitedMixin:
             return redirect('profile')
 
         return super().dispatch(*args, **kwargs)
-                
-    
+
+
 
 class MemberOnlyMixin:
 
@@ -125,7 +125,7 @@ class OfficerMainListView(MemberListView):
     def get_queryset(self):
         qs = super().get_queryset()
         return qs
-          
+
 
 class OwnerMemberListView(OfficerMainListView):
 
@@ -153,7 +153,7 @@ class OfficerListView(OfficerMainListView):
           name_of_club = self.request.session.get('club_name')
           club = list_of_clubs.find_club(name_of_club)
           return qs.filter(groups__name__in=[club.getClubOfficerGroup()])
- 
+
 
 class ApplicantListView(ListView):
     model = User
@@ -170,7 +170,7 @@ class ApplicantListView(ListView):
           name_of_club = self.request.session.get('club_name')
           club = list_of_clubs.find_club(name_of_club)
           return qs.filter(groups__name__in= [club.getClubApplicantGroup()])
-          
+
 
 class ShowUserView(DetailView):
     model = User
@@ -200,7 +200,7 @@ def show_current_user_profile(request):
     return render(request, 'show_current_user_profile.html', {'user': current_user})
 
 
-def group_check(request, user_id):
+def group_check(request):
     list_of_clubs = ClubList()
     request.session['club_name'] = request.POST.get('club_name')
     name_of_club = request.session.get('club_name')
@@ -479,8 +479,13 @@ def demote_officer(request, user_id):
 def club_selection(request):
     list_of_clubs = ClubList()
     clubs = list_of_clubs.club_list
-    print(len(clubs))
-    return render(request, 'club_selection.html', {'clubs':clubs})
+    owners = []
+    for club in clubs:
+        owners.append(club.get_club_owner())
+    for owner in owners:
+        print(owner)    
+    clubs_and_owners = zip(clubs, owners)
+    return render(request, 'club_selection.html', {'clubs_and_owners' : clubs_and_owners})
 
 # def club_dropdown(request):
 #     list_of_clubs = ClubList()

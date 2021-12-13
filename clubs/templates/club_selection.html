@@ -11,35 +11,37 @@
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
               Create new club
             </button>
-          </h2>
+          </h3>
           <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
             <div
               class="accordion-body">Here you can create a new chess club
               <form action = "{% url 'create_new_club' %}" method = "post">
                 {% csrf_token %}
                 <input type = "hidden" name = "next" value = "{{ next }}">
-                {% include 'partials/bootstrap_form.html' with form=form %}
+                {% include 'partials/bootstrap_form.html'%}
                 <input type = "submit" value = "Create new club" class="btn btn-primary">
               </form>
             </div>
           </div>
         </div>
       </div>
-      {% for c in clubs %}
+      {% for club, owner in clubs_and_owners %}
         <tr>
           <td>
             <div class="card">
               <div class="card-header text-center">
-                <h5 class="card-title">{{ c.club_name }}</h5>
+                <h5 class="card-title">{{ club.club_name }}</h5>
               </div>
+              <img src="{{ owner.mini_gravatar }}"  alt="Gravatar of {{ owner.first_name }}" class="card-img-top">
               <div class="card-body">
-                <p class="card-text">{{ c.mission_statement }}</p>
-                <form action = "{% url 'group_check' user.id %}" method = "post">
+                <p class="card-text">{{ club.mission_statement }}</p>
+                 {# alt="Gravatar of {{ c.get_club_owner.first_name }}" class="rounded-circle" ></p> #}
+                <form action = "{% url 'group_check' %}" method = "post">
                   {% csrf_token %}
-                  <input type="hidden" name="club_name" value="{{ c.club_name }}">
+                  <input type="hidden" name="club_name" value="{{ club.club_name }}">
                   <input type = "hidden" name = "next" value = "{{ next }}">
                   {% include 'partials/bootstrap_form.html' with form=form %}
-                  <input type = "submit" value = "Enter club" class="btn btn-primary">
+                  <input type = "submit" value = "Enter {{ club.club_name }}" class="btn btn-primary">
                 </form>
               </div>
             </div>

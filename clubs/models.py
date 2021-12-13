@@ -38,7 +38,7 @@ class User(AbstractUser):
     def mini_gravatar(self):
         """Return a URL to a miniature version of the user's gravatar."""
         return self.gravatar(size=60)
-    
+
 
 
     # def approve_applicant(self, user, club_codename):
@@ -63,6 +63,9 @@ class Club(models.Model):
     club_location = models.CharField(max_length = 100, blank = True, unique = False)
     member_count = models.PositiveIntegerField(default = 0)
     objects = ClubManager()
+
+    def get_club_owner(self):
+        return User.objects.filter(groups__name = self.club_codename + " Owner")
 
     def get_club_details(self):
         owners = User.objects.filter(groups__name = self.club_codename + " Owner")
