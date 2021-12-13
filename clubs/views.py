@@ -17,8 +17,7 @@ from django.shortcuts import redirect, render
 from .helpers import login_prohibited,owner_only ,officer_only, member_only
 from django.db.models import Count
 from django.views import View
-from django.views.generic import ListView
-from django.views.generic import UpdateView
+from django.views.generic import ListView, TemplateView
 from django.views.generic.edit import FormView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -82,10 +81,11 @@ class LogInView(View):
 
     def post(self,request):
         form = LogInForm(request.POST)
-        self.next = request.POST.get('next') or 'officer'
-        user = form.get_user()
-        if user is not None:
-                """Redirect to club selection page, with option to create new club"""
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            password = form.cleaned_data.get('password')
+            user = authenticate(email = email, password = password)
+            if user is not None:
                 login(request, user)
                 return redirect('club_selection')
 
@@ -245,10 +245,14 @@ class ProfileView(View):
         form = UserForm(instance=current_user)
         return render(self.request,'profile.html', {'form': form})
 
-class OwnerView(View):
-    template_name = 'officer_main.html'
+class OwnerView(TemplateView):
+    template_name = 'owner.html'
     context_object_name = 'users'
     # paginate_by = settings.USERS_PER_PAGE
+
+    def get_queryset(self):
+        return super().get_queryset()
+    
 
     def get_context_data(self, *args, **kwargs):
         """Generate content to be displayed in the template."""
