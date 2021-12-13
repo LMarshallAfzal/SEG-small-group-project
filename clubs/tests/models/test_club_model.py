@@ -460,14 +460,14 @@ class ClubModelTestCase(TestCase):
     """Tests for get_club_owner() function"""
     def test_get_club_owner_correctly_returns_club_owner(self):
         owner = self._create_new_user()
-        self.club.add_user_to_club(user, "Owner")
+        self.club.add_user_to_club(owner, "Owner")
         returned_owner = self.club.get_club_owner()
         self.assertEqual(owner, returned_owner)
 
     def test_get_club_owner_returns_None_if_there_is_no_owner(self):
         returned_owner = self.club.get_club_owner()
         self.assertEqual(returned_owner, None)
-        
+
 
     def _assert_club_is_valid(self):
         try:
