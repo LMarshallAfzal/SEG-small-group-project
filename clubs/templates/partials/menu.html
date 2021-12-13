@@ -1,46 +1,4 @@
-<div class="collapse navbar-collapse" id="navbarSupportedContent">
-  <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-    <li class="nav-item dropdown">
-      <a class="nav-link" href="#" id="club--dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-        CLUBS
-      </a>
-      <div class="dropdown-menu dropdown-menu" aria-labelledby="club-dropdown">
-        <a class="dropdown-item" href="{% url 'club_selection' %}">Club Selection</a>
-        <a class="dropdown-item" href="{% url 'create_new_club' %}">Create a club</a>
-      </div>
-    <!-- a dropdown menu that user can select the clubs on through navbar -->
-    <li class="nav-item dropdown">
-      <a class="nav-link" href="#" id="club--dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-        Current Clubs  <span class="bi-arrow-down-circle-fill"></span>
-      </a>
-      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="club-dropdown">
-        {% for club in clubs %}
-          <form action = "{% url 'group_check' user.id %}" method = "post">
-            {% csrf_token %}
-            <input type="hidden" name="club_name" value="{{ club.club_name }}">
-            <style>
-              .btn:hover {
-                background-color: lightgrey;
-              }
-              .btn-group.special {
-                display: flex;
-              }
-              .special .btn {
-                flex: 1;
-              }
-            </style>
-            <div class="btn-group special" role="group">
-              <input type = "submit" value = "{{club.club_name}}" class="btn col-xs-11 text-left" style=".btn-primary:hover; text-align:left; padding-left:6px">
-            </div>
-          </form>
-
-
-          <!-- <li><a class="dropdown-item" href="{% url 'group_check' user.id%}">{{club.club_name}}</a></li> -->
-        {%endfor%}
-      </ul>
-    </li>
-  </ul>
-
+<div>
   <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
     <li>
       <a class="nav-link" href="{% url 'show_current_user_profile' %}">Profile</a>
