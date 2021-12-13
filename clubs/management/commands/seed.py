@@ -55,17 +55,28 @@ class Command(BaseCommand):
                 personal_statement = self.faker.text(max_nb_chars = 1250),
             )
 
-            club = list_of_clubs.find_club("Kerbal Chess Club")
-            group = Group.objects.get(name = club.club_codename + " Member")
-            club.add_user_to_club(Jebediah, "Member")
-            club = list_of_clubs.find_club("Kerbal Chess Club")
-            group = Group.objects.get(name = club.club_codename + " Officer")
-            club.add_user_to_club(Valentina, "Officer")
-            club = list_of_clubs.find_club("Kerbal Chess Club")
-            group = Group.objects.get(name = club.club_codename + " Owner")
-            club.add_user_to_club(Billie, "Owner")
+        club = list_of_clubs.find_club("Kerbal Chess Club")
+        group = Group.objects.get(name = club.club_codename + " Member")
+        club.add_user_to_club(Jebediah, "Member")
+        club = list_of_clubs.find_club("Kerbal Chess Club")
+        group = Group.objects.get(name = club.club_codename + " Officer")
+        club.add_user_to_club(Valentina, "Officer")
+        club = list_of_clubs.find_club("Kerbal Chess Club")
+        group = Group.objects.get(name = club.club_codename + " Owner")
+        club.add_user_to_club(Billie, "Owner")
 
-            #TODO: Add failsafes for when the name is invalid
+        #Creates a bucket of roles to choose from such that random.choice will choose approximately that percentage of each role
+        applicant_percentage = 10
+        member_percentage = 80
+        officer_percentage = 10
+        bucket = []
+        for i in range(applicant_percentage + member_percentage + officer_percentage):
+            if i < applicant_percentage:
+                bucket.append("Applicant")
+            elif i < applicant_percentage + member_percentage:
+                bucket.append("Member")
+            else:
+                bucket.append("Officer")
         #Adds 100 users, split among clubs and non-owner roles within a club
         for _ in range(250):
             first_name = self.faker.first_name()
@@ -86,9 +97,9 @@ class Command(BaseCommand):
                 personal_statement = personal_statement,
             )
 
-            #TODO: Make the group assignments for users a realistic percentage
+
             club = random.choice(list_of_clubs.club_list)
-            role = random.choice(['Applicant', 'Member','Officer'])
+            role = random.choice(bucket)
             club.add_user_to_club(user, role)
 
         #Switches the role of a random user in each of the 3 extra clubs to owner
