@@ -247,6 +247,21 @@ class ProfileView(View):
         form = UserForm(instance=current_user)
         return render(self.request,'profile.html', {'form': form})
 
+class OwnerView(View):
+    template_name = 'officer_main.html'
+    context_object_name = 'users'
+    # paginate_by = settings.USERS_PER_PAGE
+
+    def get_context_data(self, *args, **kwargs):
+        """Generate content to be displayed in the template."""
+        context = super().get_context_data(*args, **kwargs)
+        list_of_clubs = ClubList()
+        name_of_club = self.request.session.get('club_name')
+        club = list_of_clubs.find_club(name_of_club)
+        context['number_of_applicants'] = User.objects.filter(groups__name = club.getClubApplicantGroup()).count()
+        context['number_of_members'] = User.objects.filter(groups__name__in = [club.getClubOwnerGroup(),club.getClubMemberGroup(), club.getClubOfficerGroup()]).count()
+        return context
+    
 
 def show_user(request, user_id):
     User = get_user_model()
