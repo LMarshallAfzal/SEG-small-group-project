@@ -175,3 +175,5 @@ class ClubListTestCase(TestCase):
         first_club.add_user_to_club(user, "Applicant")
         second_club.add_user_to_club(user, "Applicant")
         first_club.remove_user_from_club(user)
+        self.assertFalse(user.groups.filter(name = first_club.club_codename + " Applicant").exists())
+        self.assertTrue(user.groups.filter(name = second_club.club_codename + " Applicant").exists())
