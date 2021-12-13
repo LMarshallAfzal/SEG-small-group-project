@@ -18,11 +18,7 @@ from .helpers import login_prohibited,owner_only ,officer_only, member_only
 from django.db.models import Count
 from django.views import View
 from django.views.generic import ListView
-<<<<<<< HEAD
-from django.views.generic import CreateView
-=======
 from django.views.generic import UpdateView
->>>>>>> db7baefe0b8bed5164be4bb8b8c399a46bbd8e21
 from django.views.generic.detail import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .club_list import ClubList
@@ -177,37 +173,6 @@ class OwnerMemberListView(OfficerMainListView):
 class OfficerListView(OfficerMainListView):
 
     template_name = 'officer_list.html'
-<<<<<<< HEAD
-    paginate_by = settings.USERS_PER_PAGE
-
-    def get_context_data(self, **kwargs):
-        return super().get_context_data(**kwargs)
-
-    def get_queryset(self):
-          qs = super().get_queryset()
-          list_of_clubs = ClubList()
-          name_of_club = self.request.session.get('club_name')
-          club = list_of_clubs.find_club(name_of_club)
-          return qs.filter(groups__name__in=[club.getClubOfficerGroup()])
-
-
-class OwnerView(OfficerMainListView):
-    template_name = "owner.html"
-
-    def get_context_data(self, **kwargs):
-        list_of_clubs = ClubList()
-        name_of_club = self.request.session.get('club_name')
-        club = list_of_clubs.find_club(name_of_club)
-        context = super().get_context_data(**kwargs)
-        context['number_of_officers'] = User.objects.filter(groups__name = club.getClubOfficerGroup()).count()
-        return context
-    
-    def get_queryset(self):
-        return super().get_queryset()
-
-
-    
-=======
     
     def render(self):
         qs = super().get_queryset()
@@ -216,7 +181,6 @@ class OwnerView(OfficerMainListView):
         club = list_of_clubs.find_club(name_of_club)
         users = qs.filter(groups__name__in=[club.getClubOfficerGroup()])
         return render(self.request, 'officer_list.html', {'users':users})
->>>>>>> db7baefe0b8bed5164be4bb8b8c399a46bbd8e21
  
 
 class ApplicantListView(OfficerMainListView):
@@ -230,17 +194,12 @@ class ApplicantListView(OfficerMainListView):
         users = qs.filter(groups__name__in=[club.getClubApplicantGroup()])
         return render(self.request, 'officer_promote_applicants.html', {'users':users})
  
-   
-
-
 
 class ShowUserView(DetailView):
     model = User
     template_name = 'show_user.html'
     pk_url_kwarg = "user_id"
    
-    
-
    
 
 class ShowOfficerView(DetailView):
@@ -585,11 +544,6 @@ def demote_officer(request, user_id):
 
 def club_selection(request):
     list_of_clubs = ClubList()
-<<<<<<< HEAD
-    clubs= list_of_clubs.club_list
-    print(len(clubs))
-    return render(request, 'club_dropdown.html', {'clubs':clubs})
-=======
     clubs = list_of_clubs.club_list
     owners = []
     for club in clubs:
@@ -604,7 +558,6 @@ def club_selection(request):
 #     clubs = list_of_clubs.get_user_clubs
 #     # context = {'clubs':clubs}
 #     return render(request, 'club_dropdown.html', {'clubs':clubs})
->>>>>>> db7baefe0b8bed5164be4bb8b8c399a46bbd8e21
 
 def create_new_club(request):
     list_of_clubs = ClubList()
