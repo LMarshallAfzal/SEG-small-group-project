@@ -3,6 +3,7 @@ from django.test import TestCase
 from clubs.forms import CreateClubForm
 from clubs.models import Club
 from django.urls import reverse
+from clubs.club_list import ClubList
 
 
 class CreateClubViewTestCase(TestCase):
@@ -12,6 +13,7 @@ class CreateClubViewTestCase(TestCase):
         self.form_input = {
             'club_name': 'Test chess team',
             'mission_statement': 'The mission statement of the test team',
+            'location': 'Aldwych'
         }
 
     def test_create_club_url(self):
