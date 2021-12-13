@@ -15,7 +15,20 @@
       </a>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="club-dropdown">
         {% for club in clubs %}
-        <li><a class="dropdown-item" href="#"">{{club.club_name}}</a></li>
+          <form action = "{% url 'group_check' user.id %}" method = "post">
+            {% csrf_token %}
+            <input type="hidden" name="club_name" value="{{ club.club_name }}">
+            <style>
+              .btn:hover {
+                color: lightgrey;
+              }
+            </style>
+            <input type = "submit" value = "{{club.club_name}}" class="btn" style=".btn-primary:hover">
+            <!-- <li><button class="dropdown-item" type="button">{{club.club_name}}</button></li> -->
+          </form>
+
+
+          <!-- <li><a class="dropdown-item" href="{% url 'group_check' user.id%}">{{club.club_name}}</a></li> -->
         {%endfor%}
       </ul>
     </li>
