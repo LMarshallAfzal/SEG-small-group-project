@@ -56,6 +56,21 @@
               </div>
             </div>
           </td>
+          <td>
+            <div class="card" style="width: 40rem;">
+              <div class="card-header text-center">
+                <h5 class="card-title">Club Management</h5>
+              </div>
+              <div class="card-body">
+                <p class="card-text">Manage the specifics of this club</p>
+                <form action="{% url 'delete club' %}" method="post">
+                  {% csrf_token %}
+                  {% include 'partials/bootstrap_form.html' with form=form %}
+                  <input type = "submit" value = "Delete club" class = "btn btn-primary" name="delete club">
+                </form>
+              </div>
+            </div>
+          </td>
         </tr>
       </table>
     </div>

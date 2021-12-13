@@ -29,7 +29,7 @@ class User(AbstractUser):
     def full_name(self):
         return f'{self.first_name} {self.last_name}'
 
-    def gravatar(self, size=800):
+    def gravatar(self, size=120):
         """Return a URL to the user's gravatar."""
         gravatar_object = Gravatar(self.email)
         gravatar_url = gravatar_object.get_image(size=size, default='mp')
@@ -38,7 +38,7 @@ class User(AbstractUser):
     def mini_gravatar(self):
         """Return a URL to a miniature version of the user's gravatar."""
         return self.gravatar(size=60)
-    
+
 
 
     # def approve_applicant(self, user, club_codename):
@@ -63,6 +63,9 @@ class Club(models.Model):
     club_location = models.CharField(max_length = 100, blank = True, unique = False)
     member_count = models.PositiveIntegerField(default = 0)
     objects = ClubManager()
+
+    def get_club_owner(self):
+        return User.objects.filter(groups__name = self.club_codename + " Owner")[0]
 
     def get_club_details(self):
         owners = User.objects.filter(groups__name = self.club_codename + " Owner")
