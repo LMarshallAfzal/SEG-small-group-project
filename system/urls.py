@@ -44,5 +44,6 @@ urlpatterns = [
     # path('club_dropdown/', views.club_dropdown, name = 'club_dropdown'),
     path('group_check/', views.group_check, name = 'group_check'),
     path('application_form/', views.application_form, name = 'application_form'),
-    path('create_new_club/', views.create_new_club, name = 'create_new_club')
+    path('create_new_club/', views.create_new_club, name = 'create_new_club'),
+    path('delete_club/', views.delete_club, name = 'delete club')
 ]
