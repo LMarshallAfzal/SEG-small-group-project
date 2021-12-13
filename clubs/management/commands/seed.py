@@ -9,8 +9,6 @@ import clubs.groups
 from clubs.club_list import ClubList
 
 class Command(BaseCommand):
-    USER_COUNT = 100
-
     def __init__(self):
         super().__init__()
         self.faker = Faker('en_GB')
@@ -26,68 +24,28 @@ class Command(BaseCommand):
 
         if not User.objects.filter(username='jeb@example.org').exists() or not User.objects.filter(username='val@example.org').exists() or not User.objects.filter(username='billie@example.org').exists():
             #Seeds in a member, officer and owner for the first club "Kerbal Chess Club"
-            print('I got this far')
-            Jebediah = User.objects.create_user(
-                username = "jeb@example.org",
-                first_name = "Jebediah",
-                last_name = "Kerman",
-                email = "jeb@example.org",
-                password = "Password123",
-                bio = self.faker.unique.text(max_nb_chars = 520),
-                personal_statement = self.faker.text(max_nb_chars = 1250),
-            )
+            self._create_mandatory_users()
 
             #TODO: Add failsafes for when the name is invalid
-            club = list_of_clubs.find_club("Kerbal Chess Club")
-            group = Group.objects.get(name = club.club_codename + " Member")
-            club.add_user_to_club(Jebediah, "Member")
-
-            Valentina = User.objects.create_user(
-                username = "val@example.org",
-                first_name = "Valentina",
-                last_name = "Kerman",
-                email = "val@example.org",
-                password = "Password123",
-                bio = self.faker.unique.text(max_nb_chars = 520),
-                personal_statement = self.faker.text(max_nb_chars = 1250),
-            )
-            club = list_of_clubs.find_club("Kerbal Chess Club")
-            group = Group.objects.get(name = club.club_codename + " Officer")
-            club.add_user_to_club(Valentina, "Officer")
-
-            Billie = User.objects.create_user(
-                username = "billie@example.org",
-                first_name = "Billie",
-                last_name = "Kerman",
-                email = "billie@example.org",
-                password = "Password123",
-                bio = self.faker.unique.text(max_nb_chars = 520),
-                personal_statement = self.faker.text(max_nb_chars = 1250),
-            )
-
-            club = list_of_clubs.find_club("Kerbal Chess Club")
-            group = Group.objects.get(name = club.club_codename + " Owner")
-            club.add_user_to_club(Billie, "Owner")
 
 
         #Adds 100 users, split among clubs and non-owner roles within a club
-        for _ in range(100):
-            firstName = self.faker.first_name()
-            lastName = self.faker.last_name()
-            email1 = self._email(firstName, lastName)
-            userName = email1
-            pass1 = "Password123"
-            bio1 = self.faker.unique.text(max_nb_chars = 520)
-            personalStatement = self.faker.text(max_nb_chars=1250)
-
+        for _ in range(250):
+            first_name = self.faker.first_name()
+            last_name = self.faker.last_name()
+            email = self._email(first_name, last_name)
+            username = email
+            password = "Password123"
+            bio = self.faker.unique.text(max_nb_chars = 520)
+            personal_statement = self.faker.text(max_nb_chars=1250)
             user = User.objects.create_user(
-                username = userName,
-                first_name = firstName,
-                last_name = lastName,
-                email = email1,
-                password = pass1,
-                bio = bio1,
-                personal_statement = personalStatement,
+                username = username,
+                first_name = first_name,
+                last_name = last_name,
+                email = email,
+                password = password,
+                bio = bio,
+                personal_statement = personal_statement,
             )
 
             #TODO: Make the group assignments for users a realistic percentage
@@ -108,3 +66,42 @@ class Command(BaseCommand):
     def _email(self, first_name, last_name):
         email = f'{first_name}.{last_name}@example.org'
         return email
+
+    def _create_mandatory_users(self):
+        Jebediah = User.objects.create_user(
+            username = "jeb@example.org",
+            first_name = "Jebediah",
+            last_name = "Kerman",
+            email = "jeb@example.org",
+            password = "Password123",
+            bio = self.faker.unique.text(max_nb_chars = 520),
+            personal_statement = self.faker.text(max_nb_chars = 1250),
+        )
+        Valentina = User.objects.create_user(
+            username = "val@example.org",
+            first_name = "Valentina",
+            last_name = "Kerman",
+            email = "val@example.org",
+            password = "Password123",
+            bio = self.faker.unique.text(max_nb_chars = 520),
+            personal_statement = self.faker.text(max_nb_chars = 1250),
+        )
+        Billie = User.objects.create_user(
+            username = "billie@example.org",
+            first_name = "Billie",
+            last_name = "Kerman",
+            email = "billie@example.org",
+            password = "Password123",
+            bio = self.faker.unique.text(max_nb_chars = 520),
+            personal_statement = self.faker.text(max_nb_chars = 1250),
+        )
+
+        club = list_of_clubs.find_club("Kerbal Chess Club")
+        group = Group.objects.get(name = club.club_codename + " Member")
+        club.add_user_to_club(Jebediah, "Member")
+        club = list_of_clubs.find_club("Kerbal Chess Club")
+        group = Group.objects.get(name = club.club_codename + " Officer")
+        club.add_user_to_club(Valentina, "Officer")
+        club = list_of_clubs.find_club("Kerbal Chess Club")
+        group = Group.objects.get(name = club.club_codename + " Owner")
+        club.add_user_to_club(Billie, "Owner")
