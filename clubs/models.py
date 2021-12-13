@@ -6,9 +6,9 @@ from django.contrib.auth.models import Group
 import clubs.helpers as h
 
 class User(AbstractUser):
-    BEGINNER = 'beginner'
-    INTERMEDIATE = 'intermediate'
-    ADVANCED = 'advanced'
+    BEGINNER = 'Beginner'
+    INTERMEDIATE = 'Intermediate'
+    ADVANCED = 'Advanced'
     #Note: AbstractUser contains a required username field by default,
     #therefore every User must have a username.
     #No username field specification = uses default implementation.
