@@ -20,7 +20,7 @@
             </td>
             <td>{{ user.full_name }}</td>
             <td>
-              <form action = "{% url 'show_user' user.id %}" method = "post">
+              <form action = "{% url 'show_user' user.id %}" method = "get">
                 {% csrf_token %}
                 <input type = "hidden" name = "next" value = "{{ next }}">
                 {% include 'partials/bootstrap_form.html' with form=form %}

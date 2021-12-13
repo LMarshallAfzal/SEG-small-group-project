@@ -9,6 +9,9 @@ class User(AbstractUser):
     BEGINNER = 'Beginner'
     INTERMEDIATE = 'Intermediate'
     ADVANCED = 'Advanced'
+    #Note: AbstractUser contains a required username field by default,
+    #therefore every User must have a username.
+    #No username field specification = uses default implementation.
     first_name = models.CharField(max_length = 50, blank = False)
     last_name = models.CharField(max_length = 50, blank = False)
     email = models.EmailField(unique = True, blank = False)
@@ -29,7 +32,7 @@ class User(AbstractUser):
     def full_name(self):
         return f'{self.first_name} {self.last_name}'
 
-    def gravatar(self, size=800):
+    def gravatar(self, size=120):
         """Return a URL to the user's gravatar."""
         gravatar_object = Gravatar(self.email)
         gravatar_url = gravatar_object.get_image(size=size, default='mp')
@@ -39,12 +42,15 @@ class User(AbstractUser):
         """Return a URL to a miniature version of the user's gravatar."""
         return self.gravatar(size=60)
 
+
+
     # def approve_applicant(self, user, club_codename):
     #     """Change the group from applicant to member"""
     #     member = Group.objects.get(name = club_codename + " Member")
     #     member.user_set.add(user)
     #     applicant_group = Group.objects.get(name = club_codename + " Applicant")
     #     applicant_group.user_set.remove(user)
+
 
 
 class ClubManager(models.Manager):
@@ -57,13 +63,33 @@ class Club(models.Model):
     club_name = models.CharField(max_length = 50, blank = False, unique = True)
     club_codename = models.CharField(max_length = 50, blank = False, unique = True)
     mission_statement = models.CharField(max_length = 150, blank = True, unique = False)
-    club_location = models.CharField(max_length = 50, blank = True, unique = False)
+    club_location = models.CharField(max_length = 100, blank = True, unique = False)
     member_count = models.PositiveIntegerField(default = 0)
     objects = ClubManager()
 
+    def get_club_owner(self):
+        if len(User.objects.filter(groups__name = self.club_codename + " Owner")) > 0:
+            return User.objects.filter(groups__name = self.club_codename + " Owner")[0]
+        return None
+
     def get_club_details(self):
-        owner = User.objects.filter(groups__name = self.club_codename + " Owner")[0] #There should only be one owner
-        return [self.club_name, self.club_location, self.mission_statement, (owner.first_name + owner.last_name), owner.bio, owner.gravatar()]
+        club_details = {
+            "name": self.club_name,
+            "location": self.club_location,
+            "mission_statement": self.mission_statement,
+            "owner_name": None, #"Default" values for owner_keys to try and prevent potential key errors/bugs
+            "owner_bio": None,
+            "owner_gravitar": None
+        }
+        owners = User.objects.filter(groups__name = self.club_codename + " Owner")
+        if owners.count() > 0:
+            owner = owners[0] #There should only be one owner
+            club_details.update({
+                "owner_name": (owner.first_name + " " +owner.last_name),
+                "owner_bio": owner.bio,
+                "owner_gravitar": owner.gravatar()
+            })
+        return club_details
 
     def create_groups_and_permissions_for_club(self):
         from .groups import ChessClubGroups
@@ -81,7 +107,7 @@ class Club(models.Model):
         else:
             return None #If the user is not part of the club this will be returned
 
-    #Includes failsafe to switch the role of the user in the club if they werw already in the club
+    #Includes failsafe to switch the role of the user in the club if they were already in the club
     def add_user_to_club(self, user, initial_role):
         if self.get_user_role_in_club(user) == None:
             user.groups.add(Group.objects.get(name = self.club_codename + " " + initial_role))
