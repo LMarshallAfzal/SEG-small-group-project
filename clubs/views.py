@@ -24,6 +24,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .club_list import ClubList
 from django.core.paginator import Paginator
 from django.conf import settings
+from django.urls import reverse
 
 class LoginProhibitedMixin:
 
@@ -193,17 +194,12 @@ class ApplicantListView(OfficerMainListView):
         users = qs.filter(groups__name__in=[club.getClubApplicantGroup()])
         return render(self.request, 'officer_promote_applicants.html', {'users':users})
  
-   
-
-
 
 class ShowUserView(DetailView):
     model = User
     template_name = 'show_user.html'
     pk_url_kwarg = "user_id"
    
-    
-
    
 
 class ShowOfficerView(DetailView):
@@ -212,6 +208,44 @@ class ShowOfficerView(DetailView):
     pk_url_kwarg = "user_id"
    
 
+class SignUpView(View):
+    def get(self,request):
+        return self.render()
+
+    def post(self,request):
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+                """Redirect to profile page since signups are for applicants"""
+                user = form.save()
+                login(request, user)
+                return redirect('profile')
+
+    def render(self):
+        form = SignUpForm()
+        return render(self.request,'sign_up.html', {'form': form})
+
+
+
+class ProfileView(View):
+    def get(self,request):
+        return self.render()
+
+    def post(self,request):
+        current_user = request.user
+        form = UserForm(request.POST)
+        if form.is_valid():
+            current_user.username = form.cleaned_data.get('email')
+            messages.add_message(request, messages.SUCCESS, "Profile updated!")
+            form.save()
+           
+        return redirect('profile')
+
+
+
+    def render(self):
+        current_user = self.request.user
+        form = UserForm(instance=current_user)
+        return render(self.request,'profile.html', {'form': form})
 
 
 def show_user(request, user_id):
