@@ -1,12 +1,22 @@
 <div class="collapse navbar-collapse" id="navbarSupportedContent">
   <ul class="navbar-nav me-auto mb-2 mb-lg-0">
     <li class="nav-item">
-
       <a class="nav-link" href="{% url 'club_selection' %}">Clubs</a>
       {% if perms.clubs.accessPermission %}
         <a class="nav-link" href="{% url 'club_selection' %}">Clubs</a>
       {% endif %}
 
+    </li>
+    <!-- a dropdown menu that user can select the clubs on through navbar -->
+    <li class="nav-item dropdown">
+      <a class="nav-link" href="#" id="club--dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <span class="bi-arrow-down-circle-fill"></span>
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="club-dropdown">
+        {% for club in clubs %}
+        <li><a class="dropdown-item" href="#">{{club.club_name}}</a></li>
+        {%endfor%}
+      </ul>
     </li>
   </ul>
   <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
