@@ -100,6 +100,7 @@ class ApplicationForm(forms.ModelForm):
         fields = ['first_name', 'last_name', 'email', 'bio', 'experience_level', 'personal_statement']
         widgets = { 'bio': forms.Textarea(), 'personal_statement': forms.Textarea()  }
 
+
 class CreateClubForm(forms.ModelForm):
     class Meta:
         model = Club
