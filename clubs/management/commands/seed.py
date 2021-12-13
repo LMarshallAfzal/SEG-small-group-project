@@ -68,6 +68,18 @@ class Command(BaseCommand):
         club.add_user_to_club(Valentina, "Owner")
 
 
+        #Creates a bucket of roles to choose from such that random.choice will choose approximately that percentage of each role
+        applicant_percentage = 10
+        member_percentage = 80
+        officer_percentage = 10
+        bucket = []
+        for i in range(applicant_percentage + member_percentage + officer_percentage):
+            if i < applicant_percentage:
+                bucket.append("Applicant")
+            elif i < applicant_percentage + member_percentage:
+                bucket.append("Member")
+            else:
+                bucket.append("Officer")
         #Adds 100 users, split among clubs and non-owner roles within a club
         for _ in range(100):
             firstName = self.faker.unique.first_name()
@@ -88,9 +100,9 @@ class Command(BaseCommand):
                 personal_statement = personalStatement,
             )
 
-            #TODO: Make the group assignments for users a realistic percentage
+
             club = random.choice(list_of_clubs.club_list)
-            role = random.choice(['Applicant', 'Member','Officer'])
+            role = random.choice(bucket)
             club.add_user_to_club(user, role)
 
         #Switches the role of a random user in each of the 3 extra clubs to owner
