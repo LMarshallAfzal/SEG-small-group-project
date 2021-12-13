@@ -65,7 +65,9 @@ class Club(models.Model):
     objects = ClubManager()
 
     def get_club_owner(self):
-        return User.objects.filter(groups__name = self.club_codename + " Owner")[0]
+        if len(User.objects.filter(groups__name = self.club_codename + " Owner")) > 0:
+            return User.objects.filter(groups__name = self.club_codename + " Owner")[0]
+        return None
 
     def get_club_details(self):
         club_details = {
