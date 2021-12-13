@@ -61,4 +61,4 @@ def convert_to_codename(name):
             club_codename += "_"
         else:
             club_codename += character
-
+    return club_codename

@@ -29,7 +29,7 @@ class User(AbstractUser):
     def full_name(self):
         return f'{self.first_name} {self.last_name}'
 
-    def gravatar(self, size=800):
+    def gravatar(self, size=120):
         """Return a URL to the user's gravatar."""
         gravatar_object = Gravatar(self.email)
         gravatar_url = gravatar_object.get_image(size=size, default='mp')
@@ -38,7 +38,7 @@ class User(AbstractUser):
     def mini_gravatar(self):
         """Return a URL to a miniature version of the user's gravatar."""
         return self.gravatar(size=60)
-    
+
 
 
     # def approve_applicant(self, user, club_codename):
@@ -60,13 +60,20 @@ class Club(models.Model):
     club_name = models.CharField(max_length = 50, blank = False, unique = True)
     club_codename = models.CharField(max_length = 50, blank = False, unique = True)
     mission_statement = models.CharField(max_length = 150, blank = True, unique = False)
-    club_location = models.CharField(max_length = 50, blank = True, unique = False)
+    club_location = models.CharField(max_length = 100, blank = True, unique = False)
     member_count = models.PositiveIntegerField(default = 0)
     objects = ClubManager()
 
+    def get_club_owner(self):
+        return User.objects.filter(groups__name = self.club_codename + " Owner")[0]
+
     def get_club_details(self):
-        owner = User.objects.filter(groups__name = self.club_codename + " Owner")[0] #There should only be one owner
-        return [self.club_name, self.club_location, self.mission_statement, (owner.first_name + owner.last_name), owner.bio, owner.gravatar()]
+        owners = User.objects.filter(groups__name = self.club_codename + " Owner")
+        if owners.count() > 0:
+            owner = owners[0] #There should only be one owner
+            return [self.club_name, self.club_location, self.mission_statement, (owner.first_name + owner.last_name), owner.bio, owner.gravatar()]
+        else:
+            return [self.club_name, self.club_location, self.mission_statement, None, None, None] #If there is no owner somehow this prevents a crash
 
     def create_groups_and_permissions_for_club(self):
         from .groups import ChessClubGroups
@@ -127,3 +134,9 @@ class Club(models.Model):
 
     def getClubOwnerGroup(self):
         return Group.objects.get(name = self.club_codename + " Owner")
+
+    def remove_user_from_group(self):
+        pass
+
+    def add_user_to_group(self):
+        pass
