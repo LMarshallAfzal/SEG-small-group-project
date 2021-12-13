@@ -29,13 +29,11 @@ class LogInFormTestCase(TestCase):
         form = LogInForm(data = self.form_input)
         self.assertFalse(form.is_valid())
 
-<<<<<<< HEAD:clubs/tests/views/test_log_in_view.py
     def test_form_accepts_incorrect_email(self):
         self.form_input['email'] = 'example.com'
-=======
+
     def test_form_rejects_incorrect_email(self):
         self.form_input['email'] = 'ja'
->>>>>>> 63505a1f4aee82cc90ff1d9f2e729f3dbe71f45f:clubs/tests/test_log_in_form.py
         form = LogInForm(data = self.form_input)
         self.assertFalse(form.is_valid())
 
