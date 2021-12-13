@@ -407,9 +407,10 @@ class ClubModelTestCase(TestCase):
     """Tests for get_club_groups method and for getting individual groups"""
     def test_get_club_groups_retrives_correct_groups(self):
         club_groups = self.club.getGroupsForClub()
-        expected_groups = ["Applicant", "Member", "Officer", "owner"]
+        self.assertEqual(len(club_groups), 4)
+        expected_groups = ["Applicant", "Member", "Officer", "Owner"]
         for i in range(len(expected_groups)):
-            expected_group = Group.objects.get(name = self.club.club_codename+ " " + expected_groups[i])
+            expected_group = Group.objects.get(name = self.club.club_codename + " " + expected_groups[i])
             self.assertEqual(club_groups[i], expected_group)
 
     def test_get_club_applicant_group_gets_correct_group(self):
