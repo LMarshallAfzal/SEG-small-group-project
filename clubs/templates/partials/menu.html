@@ -2,9 +2,6 @@
   <ul class="navbar-nav me-auto mb-2 mb-lg-0">
     <li class="nav-item">
       <a class="nav-link" href="{% url 'club_selection' %}">Clubs</a>
-      {% if perms.clubs.accessPermission %}
-        <a class="nav-link" href="{% url 'club_selection' %}">Clubs</a>
-      {% endif %}
 
     </li>
     <!-- a dropdown menu that user can select the clubs on through navbar -->
@@ -33,10 +30,3 @@
     </li>
   </ul>
 </div>
-
-<script type="text/javascript" src= "./js/jquery.min.js"></script>
-<script type="text/javascript" src= "./js/jquery.cookie.js"></script>
-<script>
-    var param = $.cookie("clubName");
-    var accessPermission = 'can_access_member_list_' + param;
-</script>
