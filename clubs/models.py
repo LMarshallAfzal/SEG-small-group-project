@@ -67,19 +67,22 @@ class Club(models.Model):
     #TODO: Convert to dictionary to ensure consistent ordering
     def get_club_details(self):
         club_details = {
-            name: self.club_name,
-            location: self.club_location,
-            mission_statement: self.mission_statement
+            "name": self.club_name,
+            "location": self.club_location,
+            "mission_statement": self.mission_statement,
+            "owner_name": None, #"Default" values for owner_keys to try and prevent potential key errors/bugs
+            "owner_bio": None,
+            "owner_gravitar": None
         }
         owners = User.objects.filter(groups__name = self.club_codename + " Owner")
         if owners.count() > 0:
             owner = owners[0] #There should only be one owner
             club_details.update({
-                owner_name = (owner.first_name + " " +owner.last_name),
-                owner_bio = owner.bio,
-                owner.gravatar()
+                "owner_name": (owner.first_name + " " +owner.last_name),
+                "owner_bio": owner.bio,
+                "owner_gravitar": owner.gravatar()
             })
-            return club_details #If there is no owner, the dictionary keys related to owner will not exist. Use this fact to check if the club has an owner to prevent potential crashes.
+        return club_details
 
     def create_groups_and_permissions_for_club(self):
         from .groups import ChessClubGroups
@@ -140,9 +143,3 @@ class Club(models.Model):
 
     def getClubOwnerGroup(self):
         return Group.objects.get(name = self.club_codename + " Owner")
-
-    def remove_user_from_group(self):
-        pass
-
-    def add_user_to_group(self):
-        pass

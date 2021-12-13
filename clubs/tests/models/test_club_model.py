@@ -351,10 +351,20 @@ class ClubModelTestCase(TestCase):
         self.assertTrue(user.groups.filter(name = self.club.club_codename + " Member").exists())
 
     def test_switching_a_user_to_the_same_non_member_role_does_not_change_user_groups(self):
-        pass
+        user = self._create_new_user()
+        self.club.add_user_to_club(user, "Applicant")
+        self.club.switch_user_role_in_club(user, "Applicant")
+        self.assertTrue(user.groups.filter(name = self.club.club_codename + " Applicant").exists())
+        self.assertFalse(user.groups.filter(name = self.club.club_codename + " Member").exists())
+        self.assertFalse(user.groups.filter(name = self.club.club_codename + " Officer").exists())
+        self.assertFalse(user.groups.filter(name = self.club.club_codename + " Owner").exists())
 
     def test_switching_a_user_to_the_same_member_role_does_not_affect_member_count(self):
-        pass
+        user = self._create_new_user()
+        self.club.add_user_to_club(user, "Member")
+        member_count = self.club.member_count
+        self.club.switch_user_role_in_club(user, "Member")
+        self.assertTrue(member_count, self.club.member_count)
 
     def test_attempting_to_switch_user_roles_in_a_club_they_are_not_a_part_off_does_not_add_them_to_the_club(self):
         user = self._create_new_user()
@@ -371,34 +381,81 @@ class ClubModelTestCase(TestCase):
         self.assertFalse(user.groups.filter(name = self.club.club_codename + " Applicant").exists())
 
     def test_removing_a_user_from_the_club_does_not_affect_unrelated_groups(self):
-        pass
+        user = self._create_new_user()
+        self.club.add_user_to_club(user, "Applicant")
+        member_count = Group.objects.get(name = self.club.club_codename + " Member").user_set.all().count()
+        officer_count = Group.objects.get(name = self.club.club_codename + " Officer").user_set.all().count()
+        owner_count = Group.objects.get(name = self.club.club_codename + " Owner").user_set.all().count()
+        self.club.remove_user_from_club(user)
+        self.assertEqual(member_count, Group.objects.get(name = self.club.club_codename + " Member").user_set.all().count())
+        self.assertEqual(officer_count, Group.objects.get(name = self.club.club_codename + " Officer").user_set.all().count())
+        self.assertEqual(owner_count, Group.objects.get(name = self.club.club_codename + " Owner").user_set.all().count())
 
     def test_attempting_to_remove_a_user_from_a_club_they_are_not_a_part_of_does_affect_club_groups(self):
-        pass
+        user = self._create_new_user()
+        applicant_count = Group.objects.get(name = self.club.club_codename + " Applicant").user_set.all().count()
+        member_count = Group.objects.get(name = self.club.club_codename + " Member").user_set.all().count()
+        officer_count = Group.objects.get(name = self.club.club_codename + " Officer").user_set.all().count()
+        owner_count = Group.objects.get(name = self.club.club_codename + " Owner").user_set.all().count()
+        self.club.remove_user_from_club(user)
+        self.assertEqual(applicant_count, Group.objects.get(name = self.club.club_codename + " Applicant").user_set.all().count())
+        self.assertEqual(member_count, Group.objects.get(name = self.club.club_codename + " Member").user_set.all().count())
+        self.assertEqual(officer_count, Group.objects.get(name = self.club.club_codename + " Officer").user_set.all().count())
+        self.assertEqual(owner_count, Group.objects.get(name = self.club.club_codename + " Owner").user_set.all().count())
 
 
     """Tests for get_club_groups method and for getting individual groups"""
     def test_get_club_groups_retrives_correct_groups(self):
-        pass
+        club_groups = self.club.getGroupsForClub()
+        expected_groups = ["Applicant", "Member", "Officer", "owner"]
+        for i in range(len(expected_groups)):
+            expected_group = Group.objects.get(name = self.club.club_codename+ " " + expected_groups[i])
+            self.assertEqual(club_groups[i], expected_group)
 
     def test_get_club_applicant_group_gets_correct_group(self):
-        pass
+        applicant_group = self.club.getClubApplicantGroup()
+        self.assertEqual(applicant_group, Group.objects.get(name = self.club.club_codename + " Applicant"))
 
     def test_get_club_member_group_gets_correct_group(self):
-        pass
+        member_group = self.club.getClubMemberGroup()
+        self.assertEqual(member_group, Group.objects.get(name = self.club.club_codename + " Member"))
 
     def test_get_club_officer_group_gets_correct_group(self):
-        pass
+        officer_group = self.club.getClubOfficerGroup()
+        self.assertEqual(officer_group, Group.objects.get(name = self.club.club_codename + " Officer"))
 
     def test_get_club_owner_group_gets_correct_group(self):
-        pass
+        owner_group = self.club.getClubOwnerGroup()
+        self.assertEqual(owner_group, Group.objects.get(name = self.club.club_codename + " Owner"))
+
 
     """Tests for get_club_details() method"""
     def test_get_club_details_gets_full_set_of_correct_details(self):
-        pass
+        owner = self._create_new_user()
+        self.club.add_user_to_club(owner, "Owner")
+        club_details = self.club.get_club_details()
+        expected_details = {
+            "name": self.club.club_name,
+            "location": self.club.club_location,
+            "mission_statement": self.club.mission_statement,
+            "owner_name": (owner.first_name + " " + owner.last_name),
+            "owner_bio": owner.bio,
+            "owner_gravitar": owner.gravatar()
+        }
+        self.assertEqual(club_details, expected_details)
 
-    def test_get_club_details_without_a_club_owner_returns_None_for_owner_related_fields(self):
-        pass
+    def test_get_club_details_without_a_club_owner_returns_None_for_owner_related_keys(self):
+        club_details = self.club.get_club_details()
+        expected_details = {
+            "name": self.club.club_name,
+            "location": self.club.club_location,
+            "mission_statement": self.club.mission_statement,
+            "owner_name": None,
+            "owner_bio": None,
+            "owner_gravitar": None
+        }
+        self.assertEqual(club_details, expected_details)
+
 
     def _assert_club_is_valid(self):
         try:
