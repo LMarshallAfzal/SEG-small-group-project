@@ -6,9 +6,12 @@ from django.contrib.auth.models import Group
 import clubs.helpers as h
 
 class User(AbstractUser):
-    BEGINNER = 'Beginner'
-    INTERMEDIATE = 'Intermediate'
-    ADVANCED = 'Advanced'
+    BEGINNER = 'beginner'
+    INTERMEDIATE = 'intermediate'
+    ADVANCED = 'advanced'
+    #Note: AbstractUser contains a required username field by default,
+    #therefore every User must have a username.
+    #No username field specification = uses default implementation.
     first_name = models.CharField(max_length = 50, blank = False)
     last_name = models.CharField(max_length = 50, blank = False)
     email = models.EmailField(unique = True, blank = False)
@@ -65,15 +68,28 @@ class Club(models.Model):
     objects = ClubManager()
 
     def get_club_owner(self):
-        return User.objects.filter(groups__name = self.club_codename + " Owner")[0]
+        if len(User.objects.filter(groups__name = self.club_codename + " Owner")) > 0:
+            return User.objects.filter(groups__name = self.club_codename + " Owner")[0]
+        return None
 
     def get_club_details(self):
+        club_details = {
+            "name": self.club_name,
+            "location": self.club_location,
+            "mission_statement": self.mission_statement,
+            "owner_name": None, #"Default" values for owner_keys to try and prevent potential key errors/bugs
+            "owner_bio": None,
+            "owner_gravitar": None
+        }
         owners = User.objects.filter(groups__name = self.club_codename + " Owner")
         if owners.count() > 0:
             owner = owners[0] #There should only be one owner
-            return [self.club_name, self.club_location, self.mission_statement, (owner.first_name + owner.last_name), owner.bio, owner.gravatar()]
-        else:
-            return [self.club_name, self.club_location, self.mission_statement, None, None, None] #If there is no owner somehow this prevents a crash
+            club_details.update({
+                "owner_name": (owner.first_name + " " +owner.last_name),
+                "owner_bio": owner.bio,
+                "owner_gravitar": owner.gravatar()
+            })
+        return club_details
 
     def create_groups_and_permissions_for_club(self):
         from .groups import ChessClubGroups
@@ -91,7 +107,7 @@ class Club(models.Model):
         else:
             return None #If the user is not part of the club this will be returned
 
-    #Includes failsafe to switch the role of the user in the club if they werw already in the club
+    #Includes failsafe to switch the role of the user in the club if they were already in the club
     def add_user_to_club(self, user, initial_role):
         if self.get_user_role_in_club(user) == None:
             user.groups.add(Group.objects.get(name = self.club_codename + " " + initial_role))
@@ -134,9 +150,3 @@ class Club(models.Model):
 
     def getClubOwnerGroup(self):
         return Group.objects.get(name = self.club_codename + " Owner")
-
-    def remove_user_from_group(self):
-        pass
-
-    def add_user_to_group(self):
-        pass
