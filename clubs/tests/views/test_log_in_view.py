@@ -31,6 +31,9 @@ class LogInFormTestCase(TestCase):
 
     def test_form_accepts_incorrect_email(self):
         self.form_input['email'] = 'example.com'
+
+    def test_form_rejects_incorrect_email(self):
+        self.form_input['email'] = 'ja'
         form = LogInForm(data = self.form_input)
         self.assertFalse(form.is_valid())
 

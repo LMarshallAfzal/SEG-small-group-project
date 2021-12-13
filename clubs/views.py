@@ -26,6 +26,11 @@ from .club_list import ClubList
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.urls import reverse
+from .models import User
+from django.shortcuts import render, redirect
+from .forms import LogInForm, SignUpForm
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
 
 class LoginProhibitedMixin:
 
@@ -86,6 +91,11 @@ class LogInView(View):
         user = form.get_user()
         if user is not None:
                 """Redirect to club selection page, with option to create new club"""
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            password = form.cleaned_data.get('password')
+            user = authenticate(email = email, password = password)
+            if user is not None:
                 login(request, user)
                 return redirect('club_selection')
 
