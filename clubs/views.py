@@ -232,15 +232,12 @@ class ProfileView(View):
 
     def post(self,request):
         current_user = request.user
-        form = UserForm(request.POST)
+        form = UserForm(instance=current_user, data=request.POST)
         if form.is_valid():
             current_user.username = form.cleaned_data.get('email')
             messages.add_message(request, messages.SUCCESS, "Profile updated!")
             form.save()
-           
-        return redirect('profile')
-
-
+            return redirect('profile')#depends on the user type
 
     def render(self):
         current_user = self.request.user
