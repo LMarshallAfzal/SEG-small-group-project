@@ -20,11 +20,18 @@
             <input type="hidden" name="club_name" value="{{ club.club_name }}">
             <style>
               .btn:hover {
-                color: lightgrey;
+                background-color: lightgrey;
+              }
+              .btn-group.special {
+                display: flex;
+              }
+              .special .btn {
+                flex: 1;
               }
             </style>
-            <input type = "submit" value = "{{club.club_name}}" class="btn" style=".btn-primary:hover">
-            <!-- <li><button class="dropdown-item" type="button">{{club.club_name}}</button></li> -->
+            <div class="btn-group special" role="group">
+              <input type = "submit" value = "{{club.club_name}}" class="btn col-xs-11 text-left" style=".btn-primary:hover; text-align:left; padding-left:6px">
+            </div>
           </form>
 
 
