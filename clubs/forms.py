@@ -44,30 +44,50 @@ class UserForm(forms.ModelForm):
     #         password = self.cleaned_data.get('new_password'),
     #     )
     #     return user
-
 class PasswordForm(forms.Form):
     """Form enabling users to change their password."""
 
     password = forms.CharField(label='Current password', widget=forms.PasswordInput())
     new_password = forms.CharField(
-        label='Password',
-        widget=forms.PasswordInput(),
-        validators=[RegexValidator(
-            regex=r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$',
-            message='Password must contain an uppercase character, a lowercase '
-                    'character and a number'
-            )]
-    )
+            label='Password',
+            widget=forms.PasswordInput(),
+            validators=[RegexValidator(
+                regex=r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$',
+                message='Password must contain an uppercase character, a lowercase '
+                        'character and a number'
+                )]
+        )
     password_confirmation = forms.CharField(label='Password confirmation', widget=forms.PasswordInput())
+
+    def __init__(self, user=None, **kwargs):
+        """Construct new form instance with a user instance."""
+        super().__init__(**kwargs)
+        self.user = user
 
     def clean(self):
         """Clean the data and generate messages for any errors."""
 
         super().clean()
+        password = self.cleaned_data.get('password')
+        if self.user is not None:
+            user = authenticate(username=self.user.username, password=password)
+        else:
+            user = None
+        if user is None:
+            self.add_error('password', "Password is invalid")
         new_password = self.cleaned_data.get('new_password')
         password_confirmation = self.cleaned_data.get('password_confirmation')
         if new_password != password_confirmation:
             self.add_error('password_confirmation', 'Confirmation does not match password.')
+
+    def save(self):
+        """Save the user's new password."""
+
+        new_password = self.cleaned_data['new_password']
+        if self.user is not None:
+            self.user.set_password(new_password)
+            self.user.save()
+        return self.user
 
 class SignUpForm(forms.ModelForm):
     class Meta:
