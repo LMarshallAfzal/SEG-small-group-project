@@ -503,6 +503,8 @@ def demote_officer(request, user_id):
     club.switch_user_role_in_club(user, "Member")
     return redirect('officer_list')
 
+    
+
 def club_selection(request):
     list_of_clubs = ClubList()
     clubs = list_of_clubs.club_list
