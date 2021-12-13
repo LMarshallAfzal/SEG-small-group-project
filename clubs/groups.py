@@ -82,4 +82,4 @@ class ChessClubGroups:
             content_type = user_content_type,
         )
         #become_owner_permission = Permission.objects.get(codename = 'can_become_owner')
-        self.officer_group.permissions.add(self.become_owner_permission)
+        self.officer_group.permissions.add(self.become_owner_permission)   
