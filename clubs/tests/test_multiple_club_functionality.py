@@ -268,7 +268,6 @@ class ClubListTestCase(TestCase):
         first_club = self._create_and_find_club()
         second_club = self._create_and_find_second_club()
         first_club.add_user_to_club(user, "Applicant")
-        second_club.add_user_to_club(user, "Applicant")
         user_clubs = self.list_of_clubs.get_user_clubs(user)
         self.assertEqual(len(user_clubs), 1)
         self.assertFalse(second_club in user_clubs)
