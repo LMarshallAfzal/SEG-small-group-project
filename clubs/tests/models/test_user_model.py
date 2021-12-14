@@ -16,6 +16,7 @@ class UserModelTestCase(TestCase):
         personal_statement = 'I like to play chess!',
         )
 
+    """Tests for the first_name field"""
     def test_first_name_must_not_be_blank(self):
         self.user.first_name = ''
         self._assert_user_is_invalid()
@@ -33,6 +34,8 @@ class UserModelTestCase(TestCase):
         self.user.first_name = 'x' *51
         self._assert_user_is_invalid()
 
+
+    """Tests for the last_name field"""
     def test_last_name_must_not_be_blank(self):
         self.user.last_name = ''
         self._assert_user_is_invalid()
@@ -50,6 +53,8 @@ class UserModelTestCase(TestCase):
         self.user.last_name = 'x' *51
         self._assert_user_is_invalid()
 
+
+    """Tests for the email field"""
     def test_email_must_not_be_blank(self):
         self.user.email = ''
         self._assert_user_is_invalid()
@@ -83,8 +88,9 @@ class UserModelTestCase(TestCase):
     # def test_email_is_not_case_sensitive(self):
     #     second_user = self._create_second_user()
     #     second_user.email = 'JARREDBOWEN@example.org'
-    #     self.assertEqual(self.user.email, second_user.email)
+    #     self.assertEqual(self.user.email, second_user.email) Change to assert form is valid?
 
+    """Tests for the bio field"""
     def test_bio_may_be_blank(self):
         self.user.bio = ''
         self._assert_user_is_valid()
@@ -102,6 +108,8 @@ class UserModelTestCase(TestCase):
         self.user.bio = second_user.bio
         self._assert_user_is_valid()
 
+
+        """Tests for the experience_level field"""
     def test_experience_level_must_be_one_of_the_choices(self):
         self.user.experience_level = 'Beginner' or 'Intermediate' or 'Advanced'
         self._assert_user_is_valid()
@@ -118,6 +126,8 @@ class UserModelTestCase(TestCase):
         self.user.experience_level = 'x' * 13
         self._assert_user_is_invalid()
 
+
+    """Tests for the personal_statement field"""
     def test_personal_statement_can_be_blank(self):
         self.user.personal_statement = ''
         self._assert_user_is_valid()
