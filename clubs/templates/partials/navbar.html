@@ -2,18 +2,15 @@
   <div class="container">
     <a class="navbar-brand" href="{% url 'home' %}">
       <i class="fas fa-chess"></i>&nbsp;Chess web app
-
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     {% if user.is_authenticated %}
+      {% include 'partials/clubs.html' %}
+      {% include 'partials/club_selection_dropdown.html' %}
       {% include 'partials/menu.html' %}
-<<<<<<< HEAD
-      {% include 'club_dropdown.html' %}
-=======
-      {% comment %} {% include 'partials/club_dropdown.html' %} {% endcomment %}
->>>>>>> db7baefe0b8bed5164be4bb8b8c399a46bbd8e21
+      <!-- {% include 'club_dropdown.html' %} -->
     {% endif %}
   </div>
 </nav>
