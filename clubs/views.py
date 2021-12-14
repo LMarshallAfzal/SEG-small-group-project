@@ -15,7 +15,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseForbidden, Http404
 from .models import User
 from django.shortcuts import redirect, render
-# from .helpers import login_prohibited,owner_only ,officer_only, member_only
+from .helpers import login_prohibited,owner_only ,officer_only, member_only
 from django.db.models import Count
 from django.views import View
 from django.views.generic import ListView
