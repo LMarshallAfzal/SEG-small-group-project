@@ -4,6 +4,7 @@ from django.test import TestCase
 from django.urls import reverse
 from clubs.forms import LogInForm
 from clubs.models import User
+from clubs.views import show_user_officer
 from ..helpers import LogInTester
 from django.contrib.auth.models import Group
 from clubs.groups import Group
@@ -72,6 +73,12 @@ class OfficerViewTestCase(TestCase):
         # response = self.client.post(self.url, self.user.id)
         # self.assertEqual(response.status_code, 200)
         # self.assertTemplateUsed(response, 'officer_promote_applicants.html')
+
+    #finish this test
+    def test_view_user_profiles(self):
+        response = self.client.get(self.url)
+        redirect_url = reverse(show_user_officer,2)
+        self.assertRedirects(response,redirect_url, status_code=302, target_status_code=200)
 
 
 
