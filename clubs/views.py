@@ -399,8 +399,17 @@ def log_out(request):
     logout(request)
     return redirect('home')
 
-def home(request):
-    return render(request, 'home.html')
+class HomeView(LoginProhibitedMixin,View):
+    template_name = 'home.html'
+
+    def get(self,request):
+        return self.render()
+
+    def post(self,request):
+        return self.render()
+
+    def render(self):
+        return render(self.request, 'home.html')
 
 # def show_current_user_profile(request):
 #     list_of_clubs = ClubList()
