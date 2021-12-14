@@ -22,7 +22,7 @@ class ChessClubGroups:
             name = 'Can access a basic list of members and some details for club ' + self.chess_club_name,
             content_type = user_content_type,
         )
-        #member_list_permission = Permission.objects.get(codename = 'can_access_member_list')
+
         self.member_group.permissions.add(self.member_list_permission)
         self.officer_group.permissions.add(self.member_list_permission)
         self.owner_group.permissions.add(self.member_list_permission)
@@ -32,7 +32,6 @@ class ChessClubGroups:
             name = 'Can access list of members with all information for club ' + self.chess_club_name,
             content_type = user_content_type,
         )
-        #full_member_list_permission = Permission.objects.get(codename = 'can_access_full_member_list')
         self.officer_group.permissions.add(self.full_member_list_permission)
         self.owner_group.permissions.add(self.full_member_list_permission)
 
@@ -41,7 +40,6 @@ class ChessClubGroups:
             name = 'Can allow an applicant to become a member for club ' + self.chess_club_name,
             content_type = user_content_type,
         )
-        #applications_permission = Permission.objects.get(codename = 'can_accept_applications')
         self.officer_group.permissions.add(self.applications_permission)
 
         self.remove_member_permission = Permission.objects.create(
@@ -49,7 +47,6 @@ class ChessClubGroups:
             name = 'Can remove a member from the club for club ' + self.chess_club_name,
             content_type = user_content_type,
         )
-        #remove_member_permission = Permission.objects.get(codename = 'can_remove_member')
         self.officer_group.permissions.add(self.remove_member_permission)
 
         self.promote_permission = Permission.objects.create(
@@ -57,7 +54,6 @@ class ChessClubGroups:
             name = 'Can promote a member to an officer for club ' + self.chess_club_name,
             content_type = user_content_type,
         )
-        #promote_permission = Permission.objects.get(codename = 'can_promote_member')
         self.owner_group.permissions.add(self.promote_permission)
 
         self.demote_permission = Permission.objects.create(
@@ -65,7 +61,6 @@ class ChessClubGroups:
             name = 'Can demote an officer to a member for club ' + self.chess_club_name,
             content_type = user_content_type,
         )
-        #demote_permission = Permission.objects.get(codename = 'can_demote_officer')
         self.owner_group.permissions.add(self.demote_permission)
 
         self.ownership_permission = Permission.objects.create(
@@ -73,7 +68,6 @@ class ChessClubGroups:
             name = 'Can transfer owner status to an officer for club ' + self.chess_club_name,
             content_type = user_content_type,
         )
-        #ownership_permission = Permission.objects.get(codename = 'can_transfer_ownership')
         self.owner_group.permissions.add(self.ownership_permission)
 
         self.become_owner_permission = Permission.objects.create(
@@ -81,5 +75,4 @@ class ChessClubGroups:
             name = 'Can receive ownership of club for club ' + self.chess_club_name,
             content_type = user_content_type,
         )
-        #become_owner_permission = Permission.objects.get(codename = 'can_become_owner')
         self.officer_group.permissions.add(self.become_owner_permission)   
