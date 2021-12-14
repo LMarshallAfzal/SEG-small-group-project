@@ -6,7 +6,7 @@
         </a>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="club-dropdown">
           {% for club in clubs %}
-            <form action = "{% url 'group_check' %}" method = "post">
+            <form action = "{% url 'group_check' user.id %}" method = "post">
               {% csrf_token %}
               <input type="hidden" name='club_name' value="{{ club.club_name }}">
               <style>
