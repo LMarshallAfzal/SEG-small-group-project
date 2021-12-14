@@ -3,9 +3,9 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from clubs.models import User
 
-#The club name is passed in to be used as a way of separating groups and permissions for each club
 class ChessClubGroups:
 
+    #The club name is passed in to be used as a way of separating groups and permissions for each club
     def __init__(self, chess_club_name):
         self.chess_club_name = chess_club_name
 
@@ -75,4 +75,4 @@ class ChessClubGroups:
             name = 'Can receive ownership of club for club ' + self.chess_club_name,
             content_type = user_content_type,
         )
-        self.officer_group.permissions.add(self.become_owner_permission)   
+        self.officer_group.permissions.add(self.become_owner_permission)
