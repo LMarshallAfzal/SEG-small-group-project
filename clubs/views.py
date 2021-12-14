@@ -110,7 +110,7 @@ class MemberListView(LoginRequiredMixin,MemberOnlyMixin,ListView):
     model = User
     template_name = 'member_list.html'
     context_object_name = 'users'
-    paginate_by = settings.USERS_PER_PAGE
+    #paginate_by = settings.USERS_PER_PAGE
 
     def get_queryset(self):
           qs = super().get_queryset()
@@ -119,6 +119,30 @@ class MemberListView(LoginRequiredMixin,MemberOnlyMixin,ListView):
           club = list_of_clubs.find_club(name_of_club)
           return qs.filter(groups__name__in=[club.getClubApplicantGroup(),club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()])
 
+    def get(self,request,*args, **kwargs):
+        # list_of_clubs = ClubList()
+        # name_of_club = self.request.session.get('club_name')
+        # club = list_of_clubs.find_club(name_of_club)
+        # queryset = User.objects.filter(groups__name=club.getClubMemberGroup())
+        # users = queryset
+        return self.render()
+
+    def post(self,request,*args, **kwargs):
+        # list_of_clubs = ClubList()
+        # name_of_club = self.request.session.get('club_name')
+        # club = list_of_clubs.find_club(name_of_club)
+        # queryset = User.objects.filter(groups__name=club.getClubMemberGroup())
+        # users = queryset
+        return self.render()
+
+    def render(self):
+        qs = super().get_queryset()
+        list_of_clubs = ClubList()
+        name_of_club = self.request.session.get('club_name')
+        club = list_of_clubs.find_club(name_of_club)
+        clubs = list_of_clubs.club_list
+        users = qs.filter(groups__name__in=[club.getClubMemberGroup()])
+        return render(self.request, 'member_list.html', {'users':users, 'clubs':clubs})
 
 
 
@@ -163,8 +187,9 @@ class OfficerMainListView(OfficerOnlyMixin,MemberListView):
         list_of_clubs = ClubList()
         name_of_club = self.request.session.get('club_name')
         club = list_of_clubs.find_club(name_of_club)
+        clubs = list_of_clubs.club_list
         users = qs.filter(groups__name__in=[club.getClubMemberGroup()])
-        return render(self.request, 'officer_main.html', {'users':users})
+        return render(self.request, 'officer_main.html', {'users':users, 'clubs':clubs})
 
 
 # class OwnerMemberListView(OfficerMainListView):
@@ -216,9 +241,10 @@ class OwnerMemberListView(OwnerOnlyMixin,MemberListView):
         qs = super().get_queryset()
         list_of_clubs = ClubList()
         name_of_club = self.request.session.get('club_name')
+        clubs = list_of_clubs.club_list
         club = list_of_clubs.find_club(name_of_club)
         users = qs.filter(groups__name__in=[club.getClubMemberGroup()])
-        return render(self.request, 'owner_member_list.html', {'users':users})
+        return render(self.request, 'owner_member_list.html', {'users':users, 'clubs':clubs})
 
 class OfficerListView(OwnerMemberListView):
 
@@ -229,8 +255,9 @@ class OfficerListView(OwnerMemberListView):
         list_of_clubs = ClubList()
         name_of_club = self.request.session.get('club_name')
         club = list_of_clubs.find_club(name_of_club)
+        clubs = list_of_clubs.club_list
         users = qs.filter(groups__name__in=[club.getClubOfficerGroup()])
-        return render(self.request, 'officer_list.html', {'users':users})
+        return render(self.request, 'officer_list.html', {'users':users, 'clubs':clubs})
 
 
 class ApplicantListView(OfficerMainListView):
@@ -241,8 +268,9 @@ class ApplicantListView(OfficerMainListView):
         list_of_clubs = ClubList()
         name_of_club = self.request.session.get('club_name')
         club = list_of_clubs.find_club(name_of_club)
+        clubs = list_of_clubs.club_list
         users = qs.filter(groups__name__in=[club.getClubApplicantGroup()])
-        return render(self.request, 'officer_promote_applicants.html', {'users':users})
+        return render(self.request, 'officer_promote_applicants.html', {'users':users, 'clubs': clubs})
 
 
 class ShowUserView(LoginRequiredMixin,DetailView):
@@ -284,11 +312,12 @@ class OwnerView(OwnerMemberListView):
         list_of_clubs = ClubList()
         name_of_club = self.request.session.get('club_name')
         club = list_of_clubs.find_club(name_of_club)
+        clubs = list_of_clubs.club_list
         users = User.objects.all()
         number_of_applicants = User.objects.filter(groups__name = club.getClubApplicantGroup()).count()
         number_of_members = User.objects.filter(groups__name__in = [ club.getClubOwnerGroup(), club.getClubMemberGroup()]).count()
         number_of_officers = User.objects.filter(groups__name = club.getClubOfficerGroup()).count()
-        return render(self.request, 'owner.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers})
+        return render(self.request, 'owner.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers, 'clubs': clubs})
 
 class OfficerView(OfficerMainListView):
 
@@ -298,11 +327,12 @@ class OfficerView(OfficerMainListView):
         list_of_clubs = ClubList()
         name_of_club = self.request.session.get('club_name')
         club = list_of_clubs.find_club(name_of_club)
+        clubs = list_of_clubs.club_list
         users = User.objects.all()
         number_of_applicants = User.objects.filter(groups__name = club.getClubApplicantGroup()).count()
         number_of_members = User.objects.filter(groups__name__in = [ club.getClubOwnerGroup(), club.getClubMemberGroup()]).count()
         number_of_officers = User.objects.filter(groups__name = club.getClubOfficerGroup()).count()
-        return render(self.request, 'officer.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers})
+        return render(self.request, 'officer.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers, 'clubs' : clubs})
 
 
 
