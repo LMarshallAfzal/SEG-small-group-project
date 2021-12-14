@@ -77,7 +77,7 @@ class Command(BaseCommand):
                 bucket.append("Member")
             else:
                 bucket.append("Officer")
-        #Adds 100 users, split among clubs and non-owner roles within a club
+        #Adds 250 users, split among clubs and non-owner roles within a club
         for _ in range(250):
             first_name = self.faker.first_name()
             last_name = self.faker.last_name()

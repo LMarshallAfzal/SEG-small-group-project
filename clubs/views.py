@@ -50,7 +50,7 @@ class MemberOnlyMixin:
         list_of_clubs = ClubList()
         name_of_club = self.request.session.get('club_name')
         club = list_of_clubs.find_club(name_of_club)
-        if not (current_user.groups.filter(name = club.getClubMemberGroup()).exists()):
+        if not (current_user.groups.filter(name = club.getClubMemberGroup()).exists() or current_user.groups.filter(name = club.getClubOfficerGroup()).exists() or current_user.groups.filter(name = club.getClubOwnerGroup()).exists()):
             return redirect('profile')
         return super().dispatch(*args, **kwargs)
 
@@ -63,7 +63,7 @@ class OfficerOnlyMixin:
         list_of_clubs = ClubList()
         name_of_club = self.request.session.get('club_name')
         club = list_of_clubs.find_club(name_of_club)
-        if not (current_user.groups.filter(name = club.getClubOfficerGroup()).exists()):
+        if not (current_user.groups.filter(name = club.getClubOfficerGroup()).exists() or current_user.groups.filter(name = club.getClubOwnerGroup()).exists()):
             return redirect('profile')
         return super().dispatch(*args, **kwargs)
 
