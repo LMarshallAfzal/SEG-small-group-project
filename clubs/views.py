@@ -81,23 +81,21 @@ class OwnerOnlyMixin:
 
 class LogInView(LoginProhibitedMixin,View):
     """Log-in handling view"""
+
+    http_method_names = ['get', 'post']
+    redirect_when_logged_in_url = 'profile'
+
     def get(self,request):
-        self.next = request.GET.get('next') or 'officer'
+        self.next = request.GET.get('next') or ''
         return self.render()
 
     def post(self,request):
         form = LogInForm(request.POST)
-        self.next = request.POST.get('next') or 'officer'
+        self.next = request.POST.get('next') or settings.REDIRECT_URL_WHEN_LOGGED_IN
         user = form.get_user()
         if user is not None:
-                """Redirect to club selection page, with option to create new club"""
-        if form.is_valid():
-            email = form.cleaned_data.get('email')
-            password = form.cleaned_data.get('password')
-            user = authenticate(email = email, password = password)
-            if user is not None:
-                login(request, user)
-                return redirect('club_selection')
+            login(request, user)
+            return redirect('club_selection')
 
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
         return self.render()
@@ -120,12 +118,12 @@ class MemberListView(LoginRequiredMixin,MemberOnlyMixin,ListView):
           club = list_of_clubs.find_club(name_of_club)
           return qs.filter(groups__name__in=[club.getClubApplicantGroup(),club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()])
 
-          
+
 
 
 class OfficerMainListView(OfficerOnlyMixin,MemberListView):
     template_name = 'officer_main.html'
-  
+
 
     def get_context_data(self, *args, **kwargs):
         """Generate content to be displayed in the template."""
@@ -173,7 +171,7 @@ class OfficerMainListView(OfficerOnlyMixin,MemberListView):
 #     template_name = 'owner_member_list.html'
 #     # paginate_by = settings.USERS_PER_PAGE
 
-    
+
 
 
 class OwnerMemberListView(OwnerOnlyMixin,MemberListView):
