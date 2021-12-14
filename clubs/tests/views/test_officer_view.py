@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.urls import reverse
 from clubs.forms import LogInForm
 from clubs.models import User
-from helpers import LogInTester
+# from helpers import LogInTester
 from django.contrib.auth.models import Group
 from clubs.groups import Group
 from clubs.club_list import ClubList

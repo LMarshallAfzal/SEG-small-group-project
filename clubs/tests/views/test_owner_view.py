@@ -49,7 +49,7 @@ class UserFormTestCase(TestCase):
 
     def test_get_owner_view(self):
         self.client.login(email=self.user.email, password='Password123')
-        
+        self.client.go
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'owner.html')
