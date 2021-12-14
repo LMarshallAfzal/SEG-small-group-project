@@ -32,9 +32,9 @@ class LogInViewTestCase(TestCase, LogInTester):
     def test_get_log_in_redirects_when_logged_in(self):
         self.client.login(email=self.user.username, password="Password123")
         response = self.client.get(self.url, follow=True)
-        redirect_url = reverse('profile')
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'profile.html')
+        redirect_url = reverse('club_selection')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'club_selection.html')
 
     def test_get_log_in_with_redirect(self):
         destination_url = reverse('member_list')

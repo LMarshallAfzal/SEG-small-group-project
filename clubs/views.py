@@ -15,7 +15,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseForbidden, Http404
 from .models import User
 from django.shortcuts import redirect, render
-from .helpers import login_prohibited,owner_only ,officer_only, member_only
+    # from .helpers import login_prohibited,owner_only ,officer_only, member_only
 from django.db.models import Count
 from django.views import View
 from django.views.generic import ListView
@@ -333,7 +333,7 @@ class OfficerView(OfficerMainListView):
 
 
 
-class ProfileView(View):
+class ProfileView(LoginRequiredMixin,View):
     def get(self,request):
         return self.render()
 
@@ -595,26 +595,26 @@ def reject(request, user_id):
     user.delete()
 
 
-def owner(request):
-    list_of_clubs = ClubList()
-    clubs = list_of_clubs.club_list
-    name_of_club = request.session.get('club_name')
-    club = list_of_clubs.find_club(name_of_club)
-    users = User.objects.all()
-    number_of_applicants = User.objects.filter(groups__name = club.getClubApplicantGroup()).count()
-    number_of_members = User.objects.filter(groups__name__in = [ club.getClubOwnerGroup(), club.getClubMemberGroup()]).count()
-    number_of_officers = User.objects.filter(groups__name = club.getClubOfficerGroup()).count()
-    return render(request, 'owner.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers, 'clubs':clubs})
+# def owner(request):
+#     list_of_clubs = ClubList()
+#     clubs = list_of_clubs.club_list
+#     name_of_club = request.session.get('club_name')
+#     club = list_of_clubs.find_club(name_of_club)
+#     users = User.objects.all()
+#     number_of_applicants = User.objects.filter(groups__name = club.getClubApplicantGroup()).count()
+#     number_of_members = User.objects.filter(groups__name__in = [ club.getClubOwnerGroup(), club.getClubMemberGroup()]).count()
+#     number_of_officers = User.objects.filter(groups__name = club.getClubOfficerGroup()).count()
+#     return render(request, 'owner.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers, 'clubs':clubs})
 
 
-def officer_list(request):
-    list_of_clubs = ClubList()
-    clubs = list_of_clubs.club_list
-    name_of_club = request.session.get('club_name')
-    club = list_of_clubs.find_club(name_of_club)
-    users = User.objects.filter(groups__name = club.getClubOfficerGroup())
-    groups = Group.objects.all()
-    return render(request, 'officer_list.html', {'users': users, 'clubs':clubs})
+# def officer_list(request):
+#     list_of_clubs = ClubList()
+#     clubs = list_of_clubs.club_list
+#     name_of_club = request.session.get('club_name')
+#     club = list_of_clubs.find_club(name_of_club)
+#     users = User.objects.filter(groups__name = club.getClubOfficerGroup())
+#     groups = Group.objects.all()
+#     return render(request, 'officer_list.html', {'users': users, 'clubs':clubs})
 
 
 # def owner_member_list(request):
