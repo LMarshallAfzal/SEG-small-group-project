@@ -263,9 +263,9 @@ def log_out(request):
 def home(request):
     return render(request, 'home.html')
 
-def show_current_user_profile(request):
-    current_user = request.user
-    return render(request, 'show_current_user_profile.html', {'user': current_user})
+# def show_current_user_profile(request):
+#     current_user = request.user
+#     return render(request, 'show_current_user_profile.html', {'user': current_user})
 
 
 def sign_up(request):
@@ -333,42 +333,42 @@ def password(request):
     form = PasswordForm()
     return render(request, 'password.html', {'form': form})
 
-def member_list(request):
-    # list_of_clubs = ClubList()
-    # name_of_club = request.session.get('club_name')
-    # club = list_of_clubs.find_club(name_of_club)
-    # current_user = request.user
-    # if current_user.groups.filter(groups__name = club.getClubOfficerGroup()):
-    #     users = User.objects.all()
-    #     number_of_applicants = User.objects.filter(groups__name = club.getClubApplicantGroup()).count()
-    #     number_of_members = User.objects.filter(groups__name__in = [club.getClubOwnerGroup(),club.getClubMemberGroup(), club.getClubOfficerGroup()]).count()
-    #     return render(request, 'officer.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members})
+# def member_list(request):
+#     # list_of_clubs = ClubList()
+#     # name_of_club = request.session.get('club_name')
+#     # club = list_of_clubs.find_club(name_of_club)
+#     # current_user = request.user
+#     # if current_user.groups.filter(groups__name = club.getClubOfficerGroup()):
+#     #     users = User.objects.all()
+#     #     number_of_applicants = User.objects.filter(groups__name = club.getClubApplicantGroup()).count()
+#     #     number_of_members = User.objects.filter(groups__name__in = [club.getClubOwnerGroup(),club.getClubMemberGroup(), club.getClubOfficerGroup()]).count()
+#     #     return render(request, 'officer.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members})
 
-    #     """View for member"""
-    # elif current_user.groups.filter(name = club.getClubMemberGroup()):
-    #     users = User.objects.all()
-    #     return render(request, 'member_list.html', {'users': users})
+#     #     """View for member"""
+#     # elif current_user.groups.filter(name = club.getClubMemberGroup()):
+#     #     users = User.objects.all()
+#     #     return render(request, 'member_list.html', {'users': users})
 
-    #     """View for owner"""
-    # elif current_user.groups.filter(name = club.getClubOwnerGroup()):
-    #     users = User.objects.all()
-    #     number_of_applicants = User.objects.filter(groups__name =  club.getClubApplicantGroup()).count()
-    #     number_of_members = User.objects.filter(groups__name__in = [club.getClubOwnerGroup(),club.getClubMemberGroup()]).count()
-    #     number_of_officers = User.objects.filter(groups__name = club.getClubOfficerGroup()).count()
-    #     return render(request, 'owner.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers})
-    #     return redirect('owner')
+#     #     """View for owner"""
+#     # elif current_user.groups.filter(name = club.getClubOwnerGroup()):
+#     #     users = User.objects.all()
+#     #     number_of_applicants = User.objects.filter(groups__name =  club.getClubApplicantGroup()).count()
+#     #     number_of_members = User.objects.filter(groups__name__in = [club.getClubOwnerGroup(),club.getClubMemberGroup()]).count()
+#     #     number_of_officers = User.objects.filter(groups__name = club.getClubOfficerGroup()).count()
+#     #     return render(request, 'owner.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers})
+#     #     return redirect('owner')
 
-    list_of_clubs = ClubList()
-    name_of_club = request.session.get('club_name')
-    club = list_of_clubs.find_club(name_of_club)
-    users = User.objects.filter(groups__name__in=[club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()])
-    return render(request, 'member_list.html', {'users': users})
+#     list_of_clubs = ClubList()
+#     name_of_club = request.session.get('club_name')
+#     club = list_of_clubs.find_club(name_of_club)
+#     users = User.objects.filter(groups__name__in=[club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()])
+#     return render(request, 'member_list.html', {'users': users})
 
 
-def show_user(request, user_id):
-    User = get_user_model()
-    user = User.objects.get(id = user_id)
-    return render(request, 'show_user.html', {'user' : user})
+# def show_user(request, user_id):
+#     User = get_user_model()
+#     user = User.objects.get(id = user_id)
+#     return render(request, 'show_user.html', {'user' : user})
 
 
 def officer(request):
@@ -381,16 +381,16 @@ def officer(request):
     return render(request, 'officer.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members})
 
 
-def officer_main(request):
-    list_of_clubs = ClubList()
-    name_of_club = request.session.get('club_name')
-    club = list_of_clubs.find_club(name_of_club)
-    users = User.objects.filter(groups__name__in=[club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()])
-    paginator = Paginator(users, 10)
-    groups = Group.objects.all()
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return render(request, 'officer_main.html', {'users': users, 'page_obj': page_obj})
+# def officer_main(request):
+#     list_of_clubs = ClubList()
+#     name_of_club = request.session.get('club_name')
+#     club = list_of_clubs.find_club(name_of_club)
+#     users = User.objects.filter(groups__name__in=[club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()])
+#     paginator = Paginator(users, 10)
+#     groups = Group.objects.all()
+#     page_number = request.GET.get('page')
+#     page_obj = paginator.get_page(page_number)
+#     return render(request, 'officer_main.html', {'users': users, 'page_obj': page_obj})
 
 
 def officer_promote_applicants(request):
@@ -437,25 +437,25 @@ def owner(request):
     return render(request, 'owner.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers})
 
 
-def officer_list(request):
-    list_of_clubs = ClubList()
-    name_of_club = request.session.get('club_name')
-    club = list_of_clubs.find_club(name_of_club)
-    users = User.objects.filter(groups__name = club.getClubOfficerGroup())
-    groups = Group.objects.all()
-    return render(request, 'officer_list.html', {'users': users})
+# def officer_list(request):
+#     list_of_clubs = ClubList()
+#     name_of_club = request.session.get('club_name')
+#     club = list_of_clubs.find_club(name_of_club)
+#     users = User.objects.filter(groups__name = club.getClubOfficerGroup())
+#     groups = Group.objects.all()
+#     return render(request, 'officer_list.html', {'users': users})
 
 
-def owner_member_list(request):
-    list_of_clubs = ClubList()
-    name_of_club = request.session.get('club_name')
-    club = list_of_clubs.find_club(name_of_club)
-    users = User.objects.filter(groups__name = club.getClubMemberGroup())
-    paginator = Paginator(users, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    groups = Group.objects.all()
-    return render(request, 'owner_member_list.html', {'users': users, 'page_obj': page_obj})
+# def owner_member_list(request):
+#     list_of_clubs = ClubList()
+#     name_of_club = request.session.get('club_name')
+#     club = list_of_clubs.find_club(name_of_club)
+#     users = User.objects.filter(groups__name = club.getClubMemberGroup())
+#     paginator = Paginator(users, 10)
+#     page_number = request.GET.get('page')
+#     page_obj = paginator.get_page(page_number)
+#     groups = Group.objects.all()
+#     return render(request, 'owner_member_list.html', {'users': users, 'page_obj': page_obj})
 
 
 def transfer_ownership(request, user_id):
