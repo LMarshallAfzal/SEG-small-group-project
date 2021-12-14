@@ -1,7 +1,7 @@
 """Test of the officer view"""
 from django.test import TestCase
 from django.urls import reverse
-from clubs.models import User
+from clubs.models import User, Club
 from django.contrib.auth.models import Group
 from clubs.club_list import ClubList
 
@@ -19,7 +19,11 @@ class UserFormTestCase(TestCase):
     def setUp(self):
         list_of_clubs = ClubList()
         list_of_clubs.create_new_club("Cambridge Chessinators", "Cambridge > Oxford", "Cambridge")
+        for club in list_of_clubs.club_list:
+            print(club.club_name)
         self.club = list_of_clubs.find_club("Cambridge Chessinators")
+
+        
         self.user = User.objects.get(email = "johndoe@example.org")
         self.url = reverse('owner')
         self.officer_user = User.objects.get(email = 'janedoe@example.org')
@@ -27,16 +31,16 @@ class UserFormTestCase(TestCase):
         self.applicant_user = User.objects.get(email = 'peterpickles@example.org')
         
         self.owner = Group.objects.get(name = self.club.getClubOwnerGroup())
-        self.owner.user_set.add(self.user)
+        self.club.add_user_to_club(self.user, "Owner")
 
         self.officer = Group.objects.get(name = self.club.getClubOfficerGroup())       
-        self.officer.user_set.add(self.officer_user)
+        self.club.add_user_to_club(self.officer_user, "Officer")
 
         self.member = Group.objects.get(name = self.club.getClubMemberGroup())
-        self.member.user_set.add(self.member_user)
+        self.club.add_user_to_club(self.member_user, "Member")
 
-        applicant = Group.objects.get(name = self.club.getClubApplicantGroup())
-        applicant.user_set.add(self.applicant_user)
+        self.applicant = Group.objects.get(name = self.club.getClubApplicantGroup())
+        self.club.add_user_to_club(self.applicant_user,"Applicant")
 
 
 
@@ -45,6 +49,7 @@ class UserFormTestCase(TestCase):
 
     def test_get_owner_view(self):
         self.client.login(email=self.user.email, password='Password123')
+        
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'owner.html')
