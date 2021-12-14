@@ -80,7 +80,7 @@ class OwnerOnlyMixin:
         return super().dispatch(*args, **kwargs)
 
 
-class LogInView(View):
+class LogInView(LoginProhibitedMixin,View):
     """Log-in handling view"""
     def get(self,request):
         self.next = request.GET.get('next') or 'officer'
@@ -270,7 +270,7 @@ class ApplicantListView(OfficerMainListView):
         return render(self.request, 'officer_promote_applicants.html', {'users':users, 'clubs': clubs})
 
 
-class ShowUserView(LoginRequiredMixin,DetailView):
+class ShowUserView(DetailView):
     model = User
     template_name = 'show_user.html'
     pk_url_kwarg = "user_id"
@@ -285,21 +285,35 @@ class ShowOfficerView(OfficerOnlyMixin,DetailView):
     clubs = list_of_clubs.club_list
 
 
-class SignUpView(View):
-    def get(self,request):
-        return self.render()
+class SignUpView(LoginProhibitedMixin,FormView):
 
-    def post(self,request):
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-                """Redirect to profile page since signups are for applicants"""
-                user = form.save()
-                login(request, user)
-        return redirect('club_selection')
+    form_class = SignUpForm
+    template_name = "sign_up.html"
+    
+    def form_valid(self, form):
+        self.object = form.save()
+        login(self.request,self.object)
+        return super().form_valid(form)
 
-    def render(self):
-        form = SignUpForm()
-        return render(self.request,'sign_up.html', {'form': form})
+    def get_success_url(self):
+        return reverse('club_selection')
+
+    # def get(self,request):
+    #     return self.render()
+
+    # def post(self,request):
+    #     form = SignUpForm(request.POST)
+    #     if form.is_valid():
+    #             """Redirect to profile page since signups are for applicants"""
+    #             user = form.save()
+    #             login(request, user)
+    #             return redirect('club_selection')
+        
+    #     return redirect('sign_up')
+
+    # def render(self):
+    #     form = SignUpForm()
+    #     return render(self.request,'sign_up.html', {'form': form})
 
 class OwnerView(OwnerMemberListView):
 
@@ -352,16 +366,16 @@ class ProfileView(LoginRequiredMixin,View):
         return render(self.request,'profile.html', {'form': form})
 
 
-def show_user(request, user_id):
-    User = get_user_model()
-    user = User.objects.get(id = user_id)
-    return render(request, 'show_user.html', {'user' : user, 'clubs':clubs})
+# def show_user(request, user_id):
+#     User = get_user_model()
+#     user = User.objects.get(id = user_id)
+#     return render(request, 'show_user.html', {'user' : user, 'clubs':clubs})
 
 
-def show_user_officer(request, user_id):
-    User = get_user_model()
-    user = User.objects.get(id = user_id)
-    return render(request, 'show_user_officer.html', {'user' : user, 'clubs':clubs})
+# def show_user_officer(request, user_id):
+#     User = get_user_model()
+#     user = User.objects.get(id = user_id)
+#     return render(request, 'show_user_officer.html', {'user' : user, 'clubs':clubs})
 
 def show_current_user_profile(request):
     current_user = request.user
