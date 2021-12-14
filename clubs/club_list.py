@@ -48,9 +48,10 @@ class ClubList:
             all_groups.append(club.getGroupsForClub())
         return all_groups
 
+    #Gets the clubs the inputted user is a part of
     def get_user_clubs(self, user):
         user_clubs = []
-        for club in club_list:
+        for club in self.club_list:
             if club.get_user_role_in_club(user) != None:
                 user_clubs.append(club)
         return user_clubs
