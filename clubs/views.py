@@ -200,7 +200,7 @@ class OfficerMainListView(OfficerOnlyMixin,MemberListView):
 class OwnerMemberListView(OwnerOnlyMixin,MemberListView):
     template_name = 'owner_member_list.html'
     context_object_name = 'users'
-    paginate_by = settings.USERS_PER_PAGE
+#    paginate_by = settings.USERS_PER_PAGE
 
     def get_context_data(self, *args, **kwargs):
         """Generate content to be displayed in the template."""
