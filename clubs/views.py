@@ -295,7 +295,7 @@ class SignUpView(View):
                 """Redirect to profile page since signups are for applicants"""
                 user = form.save()
                 login(request, user)
-                return redirect('profile')
+        return redirect('club_selection')
 
     def render(self):
         form = SignUpForm()
@@ -344,12 +344,12 @@ class ProfileView(LoginRequiredMixin,View):
             current_user.username = form.cleaned_data.get('email')
             messages.add_message(request, messages.SUCCESS, "Profile updated!")
             form.save()
-            return redirect('profile')#depends on the user type
+        return redirect('club_selection')#depends on the user type
 
     def render(self):
         current_user = self.request.user
         form = UserForm(instance=current_user)
-        return render(self.request,'profile.html', {'form': form})
+        return render(self.request,'club_selection.html', {'form': form})
 
 
 def show_user(request, user_id):

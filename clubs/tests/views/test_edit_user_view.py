@@ -5,8 +5,9 @@ from django.urls import reverse
 from clubs.forms import UserForm
 from clubs.models import User
 from clubs.tests.helpers import reverse_with_next
+from clubs.tests.helpers import LogInTester
 
-class ProfileViewTest(TestCase):
+class ProfileViewTest(TestCase, LogInTester):
     """Test suite for the profile view."""
 
     fixtures = [
@@ -62,9 +63,12 @@ class ProfileViewTest(TestCase):
 
     def test_unsuccessful_profile_update_due_to_duplicate_username(self):
         self.client.login(username=self.user.username, password='Password123')
+        self.assertTrue(self._is_logged_in)
         self.form_input['email'] = 'janedoe@example.org'
         before_count = User.objects.count()
-        response = self.client.post(self.url, self.form_input)
+        
+        response_url = reverse('profile')
+        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         after_count = User.objects.count()
         self.assertEqual(after_count, before_count)
         self.assertEqual(response.status_code, 200)
