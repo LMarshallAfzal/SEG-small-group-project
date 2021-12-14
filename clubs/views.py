@@ -5,6 +5,7 @@ from django.http.response import HttpResponse
 from django.shortcuts import render
 from .forms import LogInForm, SignUpForm, UserForm, PasswordForm, ApplicationForm, CreateClubForm
 from django.template import RequestContext
+#from django.core.context_processors import csrf
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
@@ -255,6 +256,8 @@ class ShowOfficerView(OfficerOnlyMixin,DetailView):
     model = User
     template_name = 'show_user_officer.html'
     pk_url_kwarg = "user_id"
+    list_of_clubs = ClubList()
+    clubs = list_of_clubs.club_list
 
 
 class SignUpView(View):
@@ -325,21 +328,22 @@ class ProfileView(View):
 def show_user(request, user_id):
     User = get_user_model()
     user = User.objects.get(id = user_id)
-    return render(request, 'show_user.html', {'user' : user})
+    return render(request, 'show_user.html', {'user' : user, 'clubs':clubs})
 
 
 def show_user_officer(request, user_id):
     User = get_user_model()
     user = User.objects.get(id = user_id)
-    return render(request, 'show_user_officer.html', {'user' : user})
+    return render(request, 'show_user_officer.html', {'user' : user, 'clubs':clubs})
 
 def show_current_user_profile(request):
     current_user = request.user
-    return render(request, 'show_current_user_profile.html', {'user': current_user})
+    return render(request, 'show_current_user_profile.html', {'user': current_user, 'clubs':clubs})
 
 
 def group_check(request):
     list_of_clubs = ClubList()
+    clubs = list_of_clubs.club_list
     request.session['club_name'] = request.POST.get('club_name')
     name_of_club = request.session.get('club_name')
     club = list_of_clubs.find_club(name_of_club)
@@ -372,8 +376,10 @@ def home(request):
     return render(request, 'home.html')
 
 def show_current_user_profile(request):
+    list_of_clubs = ClubList()
+    clubs = list_of_clubs.club_list
     current_user = request.user
-    return render(request, 'show_current_user_profile.html', {'user': current_user})
+    return render(request, 'show_current_user_profile.html', {'user': current_user, 'clubs':clubs})
 
 
 def sign_up(request):
@@ -393,6 +399,8 @@ def sign_up(request):
 
 
 def profile(request):
+    list_of_clubs = ClubList()
+    clubs = list_of_clubs.club_list
     current_user = request.user
     if request.method == 'POST':
         form = UserForm(instance=current_user, data=request.POST)
@@ -403,11 +411,12 @@ def profile(request):
             return redirect('profile')#depends on the user type
     else:
         form = UserForm(instance=current_user)
-    return render(request, 'profile.html', {'form': form})
+    return render(request, 'profile.html', {'form': form, 'clubs':clubs})
 
 
 def application_form(request):
     list_of_clubs = ClubList()
+    clubs = list_of_clubs.club_list
     name_of_club = request.session.get('club_name')
     club = list_of_clubs.find_club(name_of_club)
     current_user = request.user
@@ -422,7 +431,7 @@ def application_form(request):
             return redirect('profile')
     else:
         form = ApplicationForm(instance=current_user)
-    return render(request, 'application_form.html', {'form': form})
+    return render(request, 'application_form.html', {'form': form, 'clubs':clubs})
 
 class PasswordView(LoginRequiredMixin, FormView):
     """View that handles password change requests."""
@@ -476,30 +485,35 @@ def member_list(request):
     #     return redirect('owner')
 
     list_of_clubs = ClubList()
+    clubs = list_of_clubs.club_list
     name_of_club = request.session.get('club_name')
     club = list_of_clubs.find_club(name_of_club)
     users = User.objects.filter(groups__name__in=[club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()])
-    return render(request, 'member_list.html', {'users': users})
+    return render(request, 'member_list.html', {'users': users, 'clubs':clubs})
 
 
 def show_user(request, user_id):
+    list_of_clubs = ClubList()
+    clubs = list_of_clubs.club_list
     User = get_user_model()
     user = User.objects.get(id = user_id)
-    return render(request, 'show_user.html', {'user' : user})
+    return render(request, 'show_user.html', {'user' : user, 'clubs':clubs})
 
 
 def officer(request):
     list_of_clubs = ClubList()
+    clubs = list_of_clubs.club_list
     name_of_club = request.session.get('club_name')
     club = list_of_clubs.find_club(name_of_club)
     users = User.objects.all()
     number_of_applicants = User.objects.filter(groups__name = club.getClubApplicantGroup()).count()
     number_of_members = User.objects.filter(groups__name__in = [club.getClubOwnerGroup(),club.getClubMemberGroup(),club.getClubOfficerGroup()]).count()
-    return render(request, 'officer.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members})
+    return render(request, 'officer.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'clubs':clubs})
 
 
 def officer_main(request):
     list_of_clubs = ClubList()
+    clubs = list_of_clubs.club_list
     name_of_club = request.session.get('club_name')
     club = list_of_clubs.find_club(name_of_club)
     users = User.objects.filter(groups__name__in=[club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()])
@@ -507,18 +521,19 @@ def officer_main(request):
     groups = Group.objects.all()
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'officer_main.html', {'users': users, 'page_obj': page_obj})
+    return render(request, 'officer_main.html', {'users': users, 'page_obj': page_obj, 'clubs':clubs})
 
 
 def officer_promote_applicants(request):
     list_of_clubs = ClubList()
+    clubs = list_of_clubs.club_list
     name_of_club = request.session.get('club_name')
     club = list_of_clubs.find_club(name_of_club)
     users = User.objects.filter(groups__name = club.getClubApplicantGroup())
     paginator = Paginator(users, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'officer_promote_applicants.html', {'users': users, 'page_obj': page_obj})
+    return render(request, 'officer_promote_applicants.html', {'users': users, 'page_obj': page_obj, 'clubs':clubs})
 
 def reject_accept_handler(request, user_id):
     if request.POST:
@@ -531,6 +546,7 @@ def reject_accept_handler(request, user_id):
 
 def accept(request, user_id):
     list_of_clubs = ClubList()
+    clubs = list_of_clubs.club_list
     name_of_club = request.session.get('club_name')
     club = list_of_clubs.find_club(name_of_club)
     User = get_user_model()
@@ -545,26 +561,29 @@ def reject(request, user_id):
 
 def owner(request):
     list_of_clubs = ClubList()
+    clubs = list_of_clubs.club_list
     name_of_club = request.session.get('club_name')
     club = list_of_clubs.find_club(name_of_club)
     users = User.objects.all()
     number_of_applicants = User.objects.filter(groups__name = club.getClubApplicantGroup()).count()
     number_of_members = User.objects.filter(groups__name__in = [ club.getClubOwnerGroup(), club.getClubMemberGroup()]).count()
     number_of_officers = User.objects.filter(groups__name = club.getClubOfficerGroup()).count()
-    return render(request, 'owner.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers})
+    return render(request, 'owner.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers, 'clubs':clubs})
 
 
 def officer_list(request):
     list_of_clubs = ClubList()
+    clubs = list_of_clubs.club_list
     name_of_club = request.session.get('club_name')
     club = list_of_clubs.find_club(name_of_club)
     users = User.objects.filter(groups__name = club.getClubOfficerGroup())
     groups = Group.objects.all()
-    return render(request, 'officer_list.html', {'users': users})
+    return render(request, 'officer_list.html', {'users': users, 'clubs':clubs})
 
 
 def owner_member_list(request):
     list_of_clubs = ClubList()
+    clubs = list_of_clubs.club_list
     name_of_club = request.session.get('club_name')
     club = list_of_clubs.find_club(name_of_club)
     users = User.objects.filter(groups__name = club.getClubMemberGroup())
@@ -572,7 +591,7 @@ def owner_member_list(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     groups = Group.objects.all()
-    return render(request, 'owner_member_list.html', {'users': users, 'page_obj': page_obj})
+    return render(request, 'owner_member_list.html', {'users': users, 'page_obj': page_obj, 'clubs':clubs})
 
 
 def transfer_ownership(request, user_id):
@@ -644,6 +663,7 @@ def club_selection(request):
 
 def create_new_club(request):
     list_of_clubs = ClubList()
+    clubs = list_of_clubs.club_list
     user = request.user
     if request.method == 'POST':
         form = CreateClubForm(data = request.POST)
@@ -675,6 +695,6 @@ def delete_club(request):
         list_of_clubs.delete_club(name_of_club)
         messages.add_message(request, messages.SUCCESS, "You have deleted a chess club!")
         return redirect('club_selection')
-    else:
-        form = CreateClubForm()
-    return render(request, 'new_club_form.html', {'form': form})
+    # else:
+    #     form = CreateClubForm()
+    # return render(request, 'new_club_form.html', {'form': form})
