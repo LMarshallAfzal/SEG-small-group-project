@@ -80,23 +80,20 @@ class OwnerOnlyMixin:
         return super().dispatch(*args, **kwargs)
 
 
-class LogInView(LoginProhibitedMixin,View):
+class LogInView(View):
     """Log-in handling view"""
-
-    http_method_names = ['get', 'post']
-    redirect_when_logged_in_url = 'club_selection'
-
     def get(self,request):
-        self.next = request.GET.get('next') or ''
+        self.next = request.GET.get('next') or 'officer'
         return self.render()
 
     def post(self,request):
         form = LogInForm(request.POST)
-        self.next = request.POST.get('next') or settings.REDIRECT_URL_WHEN_LOGGED_IN
+        self.next = request.POST.get('next') or 'officer'
         user = form.get_user()
         if user is not None:
-            login(request, user)
-            return redirect('club_selection')
+                """Redirect to club selection page, with option to create new club"""
+                login(request, user)
+                return redirect('club_selection')
 
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
         return self.render()
