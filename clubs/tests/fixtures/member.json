@@ -6,6 +6,7 @@
         "first_name": "Petra",
         "last_name": "Pickles",
         "username": "petrapickles@example.org",
+        "email": "petrapickles@example.org",
         "bio": "Petra Pickles from example.org",
         "experience_level": "Advanced", 
         "personal_statement": "I am a chess god",
