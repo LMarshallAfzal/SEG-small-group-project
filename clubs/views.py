@@ -82,22 +82,20 @@ class OwnerOnlyMixin:
 class LogInView(View):
     """Log-in handling view"""
     def get(self,request):
-        self.next = request.GET.get('next') or 'officer'
+        self.next = request.GET.get('next') or ''
         return self.render()
 
     def post(self,request):
         form = LogInForm(request.POST)
         self.next = request.POST.get('next') or 'officer'
         user = form.get_user()
+        # if form.is_valid():
+        #     email = form.cleaned_data.get('email')
+        #     password = form.cleaned_data.get('password')
+        #     user = authenticate(email = email, password = password)
         if user is not None:
-                """Redirect to club selection page, with option to create new club"""
-        if form.is_valid():
-            email = form.cleaned_data.get('email')
-            password = form.cleaned_data.get('password')
-            user = authenticate(email = email, password = password)
-            if user is not None:
-                login(request, user)
-                return redirect('club_selection')
+            login(request, user)
+            return redirect('club_selection')
 
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
         return self.render()

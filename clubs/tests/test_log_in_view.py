@@ -9,18 +9,11 @@ from .helpers import LogInTester
 class LogInViewTestCase(TestCase, LogInTester):
     """Tests of the log in view."""
 
+    fixtures = ['clubs/tests/fixtures/default_user.json']
+
     def setUp(self):
         self.url = reverse('log_in')
-        self.user = User.objects.create_user(
-            "@JohnDoe",
-            first_name = 'John',
-            last_name = 'Doe',
-            email = 'johndoe@example.org',
-            bio = 'Hello, I am John Doe.',
-            personal_statement = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-            password = 'Password123',
-            is_active = True,
-        )
+        self.user = User.objects.get(username='johndoe@example.org')
 
     def test_log_in_url(self):
         self.assertEqual(self.url, '/log_in/')
@@ -30,6 +23,7 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'log_in.html')
         form = response.context['form']
+        next = response.context['next']
         self.assertTrue(isinstance(form, LogInForm))
         self.assertFalse(form.is_bound)
         messages_list = list(response.context['messages'])
@@ -49,12 +43,12 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.assertEqual(messages_list[0].level, messages.ERROR)
 
     def test_successful_log_in(self):
-        form_input = {'email': 'johndoe@example.com', 'password': 'Password123'}
-        response = self.client.post(self.url, form_input, follow = True)
+        response_url = reverse('profile')
+        form_input = {'email': 'johndoe@example.com', 'password': 'Password123', 'next': response_url}
+        response = self.client.post(self.url, form_input, follow=True)
         self.assertTrue(self._is_logged_in())
-        response_url = reverse('feed')
         self.assertRedirects(response, response_url, status_code = 302, target_status_code = 200)
-        self.assertTemplateUsed(response, 'feed.html')
+        self.assertTemplateUsed(response, 'profile.html')
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
         #user = User.objects.get(username = '@janedoe')
