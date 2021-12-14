@@ -295,7 +295,7 @@ class SignUpView(View):
                 """Redirect to profile page since signups are for applicants"""
                 user = form.save()
                 login(request, user)
-                return redirect('profile')
+        return redirect('profile')
 
     def render(self):
         form = SignUpForm()
