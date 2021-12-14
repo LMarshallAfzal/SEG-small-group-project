@@ -1,14 +1,14 @@
 <div class="collapse navbar-collapse" id="navbarSupportedContent">
   <ul class="navbar-nav me-auto mb-2 mb-lg-0">
     <li class="nav-item dropdown">
-        <a class="nav-link" href="/" id="club--dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <a class="nav-link" href="#" id="club--dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
           Current Clubs  <span class="bi-arrow-down-circle-fill"></span>
         </a>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="club-dropdown">
           {% for club in clubs %}
             <form action = "{% url 'group_check' %}" method = "post">
               {% csrf_token %}
-              <input type="hidden" name="club_name" value="{{ club.club_name }}">
+              <input type="hidden" name='club_name' value="{{ club.club_name }}">
               <style>
                 .btn:hover {
                   background-color: lightgrey;

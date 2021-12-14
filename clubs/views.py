@@ -653,7 +653,7 @@ def club_selection(request):
     for owner in owners:
         print(owner)
     clubs_and_owners = zip(clubs, owners)
-    return render(request, 'club_selection.html', {'clubs_and_owners' : clubs_and_owners})
+    return render(request, 'club_selection.html', {'clubs_and_owners' : clubs_and_owners, 'clubs':clubs})
 
 # def club_dropdown(request):
 #     list_of_clubs = ClubList()
