@@ -21,7 +21,7 @@ class ProfileViewTest(TestCase, LogInTester):
         self.url = reverse('profile')
         self.form_input = {
             'first_name': 'John2',
-            'last_name': 'Doe2',    
+            'last_name': 'Doe2',
             'email': 'johndoe2@example.org',
             'bio': 'My bio',
             'personal_statement':'I enjoy chess',
@@ -66,7 +66,11 @@ class ProfileViewTest(TestCase, LogInTester):
         self.assertTrue(self._is_logged_in)
         self.form_input['email'] = 'janedoe@example.org'
         before_count = User.objects.count()
+<<<<<<< HEAD
         response = self.client.post(self.url, self.form_input,follow=True)
+=======
+
+>>>>>>> b48bf90af0aa813ee0550c2d38e7f5702a906407
         response_url = reverse('profile')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         after_count = User.objects.count()
@@ -90,9 +94,9 @@ class ProfileViewTest(TestCase, LogInTester):
         response = self.client.post(self.url, self.form_input, follow=True)
         after_count = User.objects.count()
         self.assertEqual(after_count, before_count)
-        response_url = reverse('profile')
+        response_url = reverse('club_selection')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'profile.html')
+        self.assertTemplateUsed(response, 'club_selection.html')
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
