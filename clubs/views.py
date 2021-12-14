@@ -79,20 +79,20 @@ class OwnerOnlyMixin:
         return super().dispatch(*args, **kwargs)
 
 
-class LogInView(View):
+class LogInView(LoginProhibitedMixin, View):
     """Log-in handling view"""
+
+    http_method_names = ['get', 'post']
+    redirect_when_logged_in_url = 'profile'
+
     def get(self,request):
         self.next = request.GET.get('next') or ''
         return self.render()
 
     def post(self,request):
         form = LogInForm(request.POST)
-        self.next = request.POST.get('next') or 'officer'
+        self.next = request.POST.get('next') or settings.REDIRECT_URL_WHEN_LOGGED_IN
         user = form.get_user()
-        # if form.is_valid():
-        #     email = form.cleaned_data.get('email')
-        #     password = form.cleaned_data.get('password')
-        #     user = authenticate(email = email, password = password)
         if user is not None:
             login(request, user)
             return redirect('club_selection')
