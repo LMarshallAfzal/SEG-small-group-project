@@ -43,7 +43,7 @@ class ProfileViewTest(TestCase, LogInTester):
 
     def test_unsuccesful_profile_update(self):
         self.client.login(username=self.user.username, password='Password123')
-        self.form_input['email'] = 'johndoe@@example.org'
+        self.form_input['email'] = 'janedoeexample.org'
         before_count = User.objects.count()
         response = self.client.post(self.url, self.form_input,follow=True)
         after_count = User.objects.count()
@@ -66,7 +66,7 @@ class ProfileViewTest(TestCase, LogInTester):
         self.assertTrue(self._is_logged_in)
         self.form_input['email'] = 'janedoe@example.org'
         before_count = User.objects.count()
-        
+        response = self.client.post(self.url, self.form_input,follow=True)
         response_url = reverse('profile')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         after_count = User.objects.count()
