@@ -30,6 +30,8 @@ class SignUpFormTestCase(TestCase):
         email_field = form.fields['email']
         self.assertTrue(isinstance(email_field, forms.EmailField))
         self.assertIn('bio', form.fields)
+        self.assertIn('experience_level', form.fields)
+        self.assertIn('personal_statement', form.fields)
         self.assertIn('new_password', form.fields)
         new_password_widget = form.fields['new_password'].widget
         self.assertTrue(isinstance(new_password_widget, forms.PasswordInput))
