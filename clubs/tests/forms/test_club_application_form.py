@@ -19,3 +19,12 @@ class ClubApplicationFormTestCase(TestCase):
     def test_sign_up_form_accepts_valid_input(self):
         form = ApplicationForm(data = self.form_input)
         self.assertTrue(form.is_valid())
+
+    def test_form_has_necessary_fields(self):
+        form = ApplicationForm()
+        self.assertIn('first_name', form.fields)
+        self.assertIn('last_name', form.fields)
+        self.assertIn('email', form.fields)
+        email_field = form.fields['email']
+        self.assertTrue(isinstance(email_field, forms.EmailField))
+        self.assertIn('bio', form.fields)
