@@ -19,8 +19,8 @@ class UserFormTestCase(TestCase):
     def setUp(self):
         list_of_clubs = ClubList()
         self.club = list_of_clubs.create_new_club("Cambridge Chessinators", "Cambridge > Oxford", "Cambridge")
-        for club in list_of_clubs.club_list:
-            print(club.club_name)
+        # for club in list_of_clubs.club_list:
+        #     print(club.club_name)
 
 
         self.user = User.objects.get(email = "johndoe@example.org")
@@ -48,7 +48,7 @@ class UserFormTestCase(TestCase):
 
     def test_get_owner_view(self):
         self.client.login(email=self.user.email, password='Password123')
-        self.client.go
+        #self.client.go
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'owner.html')
@@ -107,10 +107,10 @@ class UserFormTestCase(TestCase):
         self.assertFalse(self.applicant_user.groups.filter(name= self.club.getClubOwnerGroup).exists())
         self.assertFalse(self.applicant_user.groups.filter(name = self.club.getClubOfficerGroup()).exists())
         self.assertFalse(self.applicant_user.groups.filter(name = self.club.getClubMemberGroup()).exists())
-        response = self.client.get(self.url)
-        response_url = reverse('owner_member_list')
-        self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
-        self.assertTemplateUsed(response,'owner_member_list.html')
+        # response = self.client.get(self.url)
+        # response_url = reverse('owner_member_list')
+        # self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
+        # self.assertTemplateUsed(response,'owner_member_list.html')
 
 
     def test_officer_can_be_promoted(self):
@@ -119,18 +119,39 @@ class UserFormTestCase(TestCase):
         self.owner.user_set.add(self.officer_user)
         self.assertTrue(self.user.groups.filter(name=self.club.getClubOwnerGroup()).exists())
 
+    def test_officer_can_be_demoted(self):
+        pass
 
-    # def test_owner_change(self):
-    #     response = self.client.post(self.url,self.other_user.id,follow=True)
-    #     response_url = reverse('log_in')
-    #     self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
-    #     self.assertTemplateUsed('log_in.html')
-    #     owners = self.owner.user_set.getAll.toList
-    #     current_owner = owners[0]
-    #     self.owner.user_set.add(self.other_user)
-    #     self.owner.user_set.remove(current_owner)
-    #     owner_count = len((self.owner.user_set.all()).toList)
-    #     self.assertEqual(owner_count,1)
-    #     owners = self.owner.user_set.getAll.toList
-    #     current_owner = owners[0]
-    #     self.assertEqual(owners[0],self.other_user)
+    def test_transfer_ownership_to_officer(self):
+        # response = self.client.post(self.url,self.other_user.id,follow=True)
+        # response_url = reverse('log_in')
+        # self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
+        # self.assertTemplateUsed('log_in.html')
+        # owners = self.owner.user_set.getAll.toList
+        # current_owner = owners[0]
+        before_count = User.objects.filter(groups__name=self.club.getClubOwnerGroup()).count()
+        self.assertTrue(self.user.groups.filter(name=self.club.getClubOwnerGroup()).exists())
+        self.assertTrue(self.officer_user.groups.filter(name=self.club.getClubOfficerGroup()).exists())
+        self.club.switch_user_role_in_club(self.user, "Officer")
+        self.club.switch_user_role_in_club(self.officer_user, "Owner")
+        after_count = User.objects.filter(groups__name=self.club.getClubOwnerGroup()).count()
+        self.assertEqual(before_count, after_count)
+        self.assertFalse(self.user.groups.filter(name=self.club.getClubOwnerGroup()).exists())
+        self.assertFalse(self.officer_user.groups.filter(name=self.club.getClubOfficerGroup()).exists())
+        self.assertTrue(self.officer_user.groups.filter(name=self.club.getClubOwnerGroup()).exists())
+        self.assertTrue(self.user.groups.filter(name=self.club.getClubOfficerGroup()).exists())
+
+    def test_owner_can_accept_applicants(self):
+        pass
+
+    def test_owner_can_reject_applicants(self):
+        pass
+
+    def test_owner_can_promote_members(self):
+        pass
+
+    def test_owner_can_view_profile_of_members(self):
+        pass
+
+    def test_owner_can_view_profile_of_officers(self):
+        pass    
