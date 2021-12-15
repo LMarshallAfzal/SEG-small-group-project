@@ -362,6 +362,11 @@ class ProfileView(LoginRequiredMixin,View):
 #     User = get_user_model()
 #     user = User.objects.get(id = user_id)
 #     return render(request, 'show_user_officer.html', {'user' : user, 'clubs':clubs})
+
+# def show_user_officer(request, user_id):
+#     User = get_user_model()
+#     user = User.objects.get(id = user_id)
+#     return render(request, 'show_user_officer.html', {'user' : user, 'clubs':clubs})
 @login_required
 def show_current_user_profile(request):
     list_of_clubs = ClubList()
