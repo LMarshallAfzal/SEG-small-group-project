@@ -60,14 +60,15 @@ $ python3 manage.py test
 **To do this on MacOS (Firefox): Visit https://github.com/mozilla/geckodriver/releases and download the appropriate webdriver for your macOS version (settings -> about chrome) then extract the file and move 'chromedriver' to '/usr/local/bin' [using finder, click on the "go" menu then "go to folder" and paste the path]**
 
 **To do this on Linux (Chrome) : Visit https://chromedriver.chromium.org/downloads and download the appropriate webdriver for your chrome version (settings -> about chrome) then extract the file. Enter these commands in to your ubuntu terminal:
-sudo mv chromedriver /usr/bin/chromedriver 
-sudo chown root:root /usr/bin/chromedriver 
-sudo chmod +x /usr/bin/chromedriver**
+
+1. sudo mv chromedriver /usr/bin/chromedriver 
+2. sudo chown root:root /usr/bin/chromedriver 
+3. sudo chmod +x /usr/bin/chromedriver**
 
 **To do this on Linux (Firefox) : Visit https://github.com/mozilla/geckodriver/releases and download the appropriate webdriver for your chrome version (settings -> about chrome) then extract the file. Enter these commands in to your ubuntu terminal:
-sudo mv chromedriver /usr/bin/geckodriver 
-sudo chown root:root /usr/bin/geckodriver 
-sudo chmod +x /usr/bin/geckodriver**
+1. sudo mv chromedriver /usr/bin/geckodriver 
+2. sudo chown root:root /usr/bin/geckodriver 
+3. sudo chmod +x /usr/bin/geckodriver **
 
 
 
