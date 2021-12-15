@@ -56,11 +56,11 @@ class Command(BaseCommand):
             )
 
         group = Group.objects.get(name = kerbal_club.club_codename + " Member")
-        club.add_user_to_club(Jebediah, "Member")
+        kerbal_club.add_user_to_club(Jebediah, "Member")
         group = Group.objects.get(name = kerbal_club.club_codename + " Officer")
-        club.add_user_to_club(Valentina, "Officer")
+        kerbal_club.add_user_to_club(Valentina, "Officer")
         group = Group.objects.get(name = kerbal_club.club_codename + " Owner")
-        club.add_user_to_club(Billie, "Owner")
+        kerbal_club.add_user_to_club(Billie, "Owner")
 
         #Creates a bucket of roles to choose from such that random.choice will choose approximately that percentage of each role
         applicant_percentage = 10
@@ -74,8 +74,9 @@ class Command(BaseCommand):
                 bucket.append("Member")
             else:
                 bucket.append("Officer")
-        #Adds 250 users, split among clubs and non-owner roles within a club
-        for _ in range(250):
+        #Adds 100 users, split among clubs and non-owner roles within a club
+        #The more users that are seeded, the more likely it is that a unique integrity constraint error is thrown.
+        for _ in range(100):
             first_name = self.faker.first_name()
             last_name = self.faker.last_name()
             email = self._email(first_name, last_name)
