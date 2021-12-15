@@ -15,7 +15,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseForbidden, Http404
 from .models import User
 from django.shortcuts import redirect, render
-#from .helpers import login_prohibited
+    # from .helpers import login_prohibited,owner_only ,officer_only, member_only
 from django.db.models import Count
 from django.views import View
 from django.views.generic import ListView
@@ -56,6 +56,7 @@ class LoginProhibitedMixin:
 
 
 class MemberOnlyMixin:
+
     def dispatch(self, *args, **kwargs):
         current_user = self.request.user
         club, list_of_clubs = getClubAndListOfClubsWithObjectParameter(self)
@@ -66,6 +67,7 @@ class MemberOnlyMixin:
 
 
 class OfficerOnlyMixin:
+
     def dispatch(self, *args, **kwargs):
         current_user = self.request.user
         club, list_of_clubs = getClubAndListOfClubsWithObjectParameter(self)
@@ -73,7 +75,9 @@ class OfficerOnlyMixin:
             return redirect('profile')
         return super().dispatch(*args, **kwargs)
 
+
 class OwnerOnlyMixin:
+
     def dispatch(self, *args, **kwargs):
         current_user = self.request.user
         club, list_of_clubs = getClubAndListOfClubsWithObjectParameter(self)
@@ -102,7 +106,8 @@ class LogInView(LoginProhibitedMixin,View):
 
     def render(self):
         form = LogInForm()
-        return render(self.request, 'log_in.html', {'formlog_in/?next=/application_form/': form, 'next' : self.next})
+        return render(self.request, 'log_in.html', {'form': form, 'next' : self.next})
+
 
 class MemberListView(LoginRequiredMixin,MemberOnlyMixin,ListView):
     model = User
@@ -232,7 +237,6 @@ class OwnerMemberListView(OwnerOnlyMixin,MemberListView):
         users = qs.filter(groups__name__in=[club.getClubMemberGroup()])
         return render(self.request, 'owner_member_list.html', {'users':users, 'clubs':clubs})
 
-
 class OfficerListView(OwnerMemberListView):
 
     template_name = 'officer_list.html'
@@ -301,7 +305,6 @@ class SignUpView(LoginProhibitedMixin,FormView):
     #     form = SignUpForm()
     #     return render(self.request,'sign_up.html', {'form': form})
 
-
 class OwnerView(OwnerMemberListView):
 
     template_name = 'owner.html'
@@ -315,7 +318,6 @@ class OwnerView(OwnerMemberListView):
         number_of_officers = User.objects.filter(groups__name = club.getClubOfficerGroup()).count()
         return render(self.request, 'owner.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers, 'clubs': clubs})
 
-
 class OfficerView(OfficerMainListView):
 
     template_name = 'officer.html'
@@ -328,6 +330,7 @@ class OfficerView(OfficerMainListView):
         number_of_members = User.objects.filter(groups__name__in = [ club.getClubOwnerGroup(), club.getClubMemberGroup()]).count()
         number_of_officers = User.objects.filter(groups__name = club.getClubOfficerGroup()).count()
         return render(self.request, 'officer.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers, 'clubs' : clubs})
+
 
 
 class ProfileView(LoginRequiredMixin,View):
@@ -359,7 +362,6 @@ class ProfileView(LoginRequiredMixin,View):
 #     User = get_user_model()
 #     user = User.objects.get(id = user_id)
 #     return render(request, 'show_user_officer.html', {'user' : user, 'clubs':clubs})
-
 @login_required
 def show_current_user_profile(request):
     list_of_clubs = ClubList()
@@ -466,7 +468,6 @@ def application_form(request):
     else:
         form = ApplicationForm(instance=current_user)
     return render(request, 'application_form.html', {'form': form, 'clubs':clubs})
-
 
 class PasswordView(LoginRequiredMixin, FormView):
     """View that handles password change requests."""
@@ -576,7 +577,6 @@ def accept(request, user_id):
     user = User.objects.get(id = user_id)
     club.switch_user_role_in_club(user, "Member")
 
-
 def reject(request, user_id):
     User = get_user_model()
     user = User.objects.get(id = user_id)
@@ -635,7 +635,6 @@ def promote_member(request, user_id):
 
 #Duplicate function to promote_member?
 
-
 def promoteOfficer(request,user_id):
     club, list_of_clubs = getClubAndListOfClubs(request)
     user = get_user_model()
@@ -645,7 +644,6 @@ def promoteOfficer(request,user_id):
     member = Group.objects.get(name = club.getClubMemberGroup())
     member.user_set.remove(user)
     return redirect('owner_member_list')
-
 
 def demote_officer(request, user_id):
     club, list_of_clubs = getClubAndListOfClubs(request)
@@ -696,7 +694,6 @@ def create_new_club(request):
     else:
         form = CreateClubForm()
     return render(request, 'new_club_form.html', {'form': form})
-
 
 def delete_club(request):
     list_of_clubs = ClubList()
