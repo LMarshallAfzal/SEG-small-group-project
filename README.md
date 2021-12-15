@@ -52,7 +52,7 @@ $ python3 manage.py test
 <br/>
 **To do this on Windows (Chrome): Visit https://chromedriver.chromium.org/downloads and download the appropriate webdriver for your chrome version (settings -> about chrome), then extract it. Then open your command prompt, and type "setx PATH  '%PATH% {the path to the directory where your chromedriver.exe resides}' "**
 <br/>
-**To do this on Windows (Firefox): Visit https://github.com/mozilla/geckodriver/releases and download the appropriate webdriver for your Windows machine, then extract it. Then open your command prompt, and type "setx PATH  '%PATH% {the path to the directory where your geckodriver.exe resides}' "**
+**To do this on Windows (Firefox): Visit https://github.com/mozilla/geckodriver/releases and download the appropriate webdriver for your Windows machine, then extract it. Then open your command prompt, and type "setx PATH  '%PATH% {the path to the directory where your geckodriver.exe resides}' "**<br/>
 
 <br/>
 **To do this on MacOS (Chrome): Visit https://chromedriver.chromium.org/downloads and download the appropriate webdriver for your chrome version (settings -> about chrome) then extract the file and move 'chromedriver' to '/usr/local/bin' [using finder, click on the "go" menu then "go to folder" and paste the path]**
