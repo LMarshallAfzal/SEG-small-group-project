@@ -50,7 +50,7 @@ $ python3 manage.py test
 <br/>
 **Selenium is installed through the requirements, you will need to download and setup the webdriver for selenium**
 <br/>
-**To do this on Windows (Chrome): Visit https://chromedriver.chromium.org/downloads and download the appropriate webdriver for your chrome version (settings -> about chrome), then extract it. Then open your command prompt, and type "setx PATH  '%PATH% {the path to the directory where your chromedriver.exe resides}' "** 
+**To do this on Windows (Chrome): Visit https://chromedriver.chromium.org/downloads and download the appropriate webdriver for your chrome version (settings -> about chrome), then extract it. Then open your command prompt, and type "setx PATH  '%PATH% {the path to the directory where your chromedriver.exe resides}' "**
 <br/>
 **To do this on Windows (Firefox): Visit https://github.com/mozilla/geckodriver/releases and download the appropriate webdriver for your Windows machine, then extract it. Then open your command prompt, and type "setx PATH  '%PATH% {the path to the directory where your geckodriver.exe resides}' "**
 
@@ -59,16 +59,16 @@ $ python3 manage.py test
 <br/>
 **To do this on MacOS (Firefox): Visit https://github.com/mozilla/geckodriver/releases and download the appropriate webdriver for your macOS machine  then extract the file and move 'geckodriver' to '/usr/local/bin' [using finder, click on the "go" menu then "go to folder" and paste the path]**
 <br/>
-**To do this on Linux (Chrome) : Visit https://chromedriver.chromium.org/downloads and download the appropriate webdriver for your chrome version (settings -> about chrome) then extract the file. Enter these commands in to your ubuntu terminal: **
+**To do this on Linux (Chrome) : Visit https://chromedriver.chromium.org/downloads and download the appropriate webdriver for your chrome version (settings -> about chrome) then extract the file. Enter these commands in to your ubuntu terminal:**
 <br/>
-**1. sudo mv chromedriver /usr/bin/chromedriver ** <br/>
-**2. sudo chown root:root /usr/bin/chromedriver ** <br/>
-**3. sudo chmod +x /usr/bin/chromedriver **<br/>
+**1. sudo mv chromedriver /usr/bin/chromedriver** <br/>
+**2. sudo chown root:root /usr/bin/chromedriver** <br/>
+**3. sudo chmod +x /usr/bin/chromedriver**<br/>
 <br/>
-**To do this on Linux (Firefox) : Visit https://github.com/mozilla/geckodriver/releases and download the appropriate webdriver for your Linux machine then extract the file. Enter these commands in to your ubuntu terminal: **<br/>
-**1. sudo mv chromedriver /usr/bin/geckodriver **<br/>
-**2. sudo chown root:root /usr/bin/geckodriver **<br/>
-**3. sudo chmod +x /usr/bin/geckodriver ** <br/>
+**To do this on Linux (Firefox) : Visit https://github.com/mozilla/geckodriver/releases and download the appropriate webdriver for your Linux machine then extract the file. Enter these commands in to your ubuntu terminal:**<br/>
+**1. sudo mv geckodriver /usr/bin/geckodriver**<br/>
+**2. sudo chown root:root /usr/bin/geckodriver**<br/>
+**3. sudo chmod +x /usr/bin/geckodriver** <br/>
 <br/>
 
 
