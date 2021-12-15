@@ -15,7 +15,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseForbidden, Http404
 from .models import User
 from django.shortcuts import redirect, render
-# from .helpers import login_prohibited,owner_only ,officer_only, member_only
+    # from .helpers import login_prohibited,owner_only ,officer_only, member_only
 from django.db.models import Count
 from django.views import View
 from django.views.generic import ListView
@@ -37,7 +37,7 @@ class LoginProhibitedMixin:
 
     def dispatch(self, *args, **kwargs):
         if self.request.user.is_authenticated:
-            return redirect('profile')
+            return redirect('club_selection')
 
         return super().dispatch(*args, **kwargs)
 
@@ -80,7 +80,7 @@ class OwnerOnlyMixin:
         return super().dispatch(*args, **kwargs)
 
 
-class LogInView(View):
+class LogInView(LoginProhibitedMixin,View):
     """Log-in handling view"""
     def get(self,request):
         self.next = request.GET.get('next') or 'officer'
@@ -130,7 +130,7 @@ class MemberListView(LoginRequiredMixin,MemberOnlyMixin,ListView):
         # club = list_of_clubs.find_club(name_of_club)
         # queryset = User.objects.filter(groups__name=club.getClubMemberGroup())
         # users = queryset
-        return self.render()
+        return self.redirect('club_selection')
 
     def render(self):
         qs = super().get_queryset()
@@ -200,7 +200,7 @@ class OfficerMainListView(OfficerOnlyMixin,MemberListView):
 class OwnerMemberListView(OwnerOnlyMixin,MemberListView):
     template_name = 'owner_member_list.html'
     context_object_name = 'users'
-    paginate_by = settings.USERS_PER_PAGE
+    # paginate_by = settings.USERS_PER_PAGE
 
     def get_context_data(self, *args, **kwargs):
         """Generate content to be displayed in the template."""
@@ -270,7 +270,7 @@ class ApplicantListView(OfficerMainListView):
         return render(self.request, 'officer_promote_applicants.html', {'users':users, 'clubs': clubs})
 
 
-class ShowUserView(LoginRequiredMixin,DetailView):
+class ShowUserView(DetailView):
     model = User
     template_name = 'show_user.html'
     pk_url_kwarg = "user_id"
@@ -285,21 +285,35 @@ class ShowOfficerView(OfficerOnlyMixin,DetailView):
     clubs = list_of_clubs.club_list
 
 
-class SignUpView(View):
-    def get(self,request):
-        return self.render()
+class SignUpView(LoginProhibitedMixin,FormView):
 
-    def post(self,request):
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-                """Redirect to profile page since signups are for applicants"""
-                user = form.save()
-                login(request, user)
-                return redirect('profile')
+    form_class = SignUpForm
+    template_name = "sign_up.html"
+    
+    def form_valid(self, form):
+        self.object = form.save()
+        login(self.request,self.object)
+        return super().form_valid(form)
 
-    def render(self):
-        form = SignUpForm()
-        return render(self.request,'sign_up.html', {'form': form})
+    def get_success_url(self):
+        return reverse('club_selection')
+
+    # def get(self,request):
+    #     return self.render()
+
+    # def post(self,request):
+    #     form = SignUpForm(request.POST)
+    #     if form.is_valid():
+    #             """Redirect to profile page since signups are for applicants"""
+    #             user = form.save()
+    #             login(request, user)
+    #             return redirect('club_selection')
+        
+    #     return redirect('sign_up')
+
+    # def render(self):
+    #     form = SignUpForm()
+    #     return render(self.request,'sign_up.html', {'form': form})
 
 class OwnerView(OwnerMemberListView):
 
@@ -333,7 +347,7 @@ class OfficerView(OfficerMainListView):
 
 
 
-class ProfileView(View):
+class ProfileView(LoginRequiredMixin,View):
     def get(self,request):
         return self.render()
 
@@ -344,7 +358,7 @@ class ProfileView(View):
             current_user.username = form.cleaned_data.get('email')
             messages.add_message(request, messages.SUCCESS, "Profile updated!")
             form.save()
-            return redirect('profile')#depends on the user type
+        return redirect('profile')#depends on the user type
 
     def render(self):
         current_user = self.request.user
@@ -352,16 +366,16 @@ class ProfileView(View):
         return render(self.request,'profile.html', {'form': form})
 
 
-def show_user(request, user_id):
-    User = get_user_model()
-    user = User.objects.get(id = user_id)
-    return render(request, 'show_user.html', {'user' : user, 'clubs':clubs})
+# def show_user(request, user_id):
+#     User = get_user_model()
+#     user = User.objects.get(id = user_id)
+#     return render(request, 'show_user.html', {'user' : user, 'clubs':clubs})
 
 
-def show_user_officer(request, user_id):
-    User = get_user_model()
-    user = User.objects.get(id = user_id)
-    return render(request, 'show_user_officer.html', {'user' : user, 'clubs':clubs})
+# def show_user_officer(request, user_id):
+#     User = get_user_model()
+#     user = User.objects.get(id = user_id)
+#     return render(request, 'show_user_officer.html', {'user' : user, 'clubs':clubs})
 
 def show_current_user_profile(request):
     current_user = request.user
@@ -399,8 +413,17 @@ def log_out(request):
     logout(request)
     return redirect('home')
 
-def home(request):
-    return render(request, 'home.html')
+class HomeView(LoginProhibitedMixin,View):
+    template_name = 'home.html'
+
+    def get(self,request):
+        return self.render()
+
+    def post(self,request):
+        return self.render()
+
+    def render(self):
+        return render(self.request, 'home.html')
 
 # def show_current_user_profile(request):
 #     list_of_clubs = ClubList()
@@ -586,26 +609,26 @@ def reject(request, user_id):
     user.delete()
 
 
-def owner(request):
-    list_of_clubs = ClubList()
-    clubs = list_of_clubs.club_list
-    name_of_club = request.session.get('club_name')
-    club = list_of_clubs.find_club(name_of_club)
-    users = User.objects.all()
-    number_of_applicants = User.objects.filter(groups__name = club.getClubApplicantGroup()).count()
-    number_of_members = User.objects.filter(groups__name__in = [ club.getClubOwnerGroup(), club.getClubMemberGroup()]).count()
-    number_of_officers = User.objects.filter(groups__name = club.getClubOfficerGroup()).count()
-    return render(request, 'owner.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers, 'clubs':clubs})
+# def owner(request):
+#     list_of_clubs = ClubList()
+#     clubs = list_of_clubs.club_list
+#     name_of_club = request.session.get('club_name')
+#     club = list_of_clubs.find_club(name_of_club)
+#     users = User.objects.all()
+#     number_of_applicants = User.objects.filter(groups__name = club.getClubApplicantGroup()).count()
+#     number_of_members = User.objects.filter(groups__name__in = [ club.getClubOwnerGroup(), club.getClubMemberGroup()]).count()
+#     number_of_officers = User.objects.filter(groups__name = club.getClubOfficerGroup()).count()
+#     return render(request, 'owner.html', {'users': users, 'number_of_applicants': number_of_applicants, 'number_of_members': number_of_members, 'number_of_officers': number_of_officers, 'clubs':clubs})
 
 
-def officer_list(request):
-    list_of_clubs = ClubList()
-    clubs = list_of_clubs.club_list
-    name_of_club = request.session.get('club_name')
-    club = list_of_clubs.find_club(name_of_club)
-    users = User.objects.filter(groups__name = club.getClubOfficerGroup())
-    groups = Group.objects.all()
-    return render(request, 'officer_list.html', {'users': users, 'clubs':clubs})
+# def officer_list(request):
+#     list_of_clubs = ClubList()
+#     clubs = list_of_clubs.club_list
+#     name_of_club = request.session.get('club_name')
+#     club = list_of_clubs.find_club(name_of_club)
+#     users = User.objects.filter(groups__name = club.getClubOfficerGroup())
+#     groups = Group.objects.all()
+#     return render(request, 'officer_list.html', {'users': users, 'clubs':clubs})
 
 
 # def owner_member_list(request):

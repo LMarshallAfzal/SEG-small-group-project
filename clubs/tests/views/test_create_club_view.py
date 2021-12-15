@@ -24,3 +24,10 @@ class CreateClubViewTestCase(TestCase):
         form = response.context['form']
         self.assertTrue(isinstance(form, CreateClubForm))
         self.assertFalse(form.is_bound)
+
+    def test_new_club_redirect(self):
+        response = self.client.get(self.url)
+        redirect_url = reverse('club_selection')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed('club_selection.html')
+    
