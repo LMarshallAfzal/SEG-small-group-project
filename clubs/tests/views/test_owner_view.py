@@ -120,7 +120,10 @@ class UserFormTestCase(TestCase):
         self.assertTrue(self.user.groups.filter(name=self.club.getClubOwnerGroup()).exists())
 
     def test_officer_can_be_demoted(self):
-        pass
+        self.client.login(email=self.officer_user.email, password='Password123')
+        self.assertTrue(self.officer_user.groups.filter(name=self.club.getClubOfficerGroup()).exists())
+        self.club.switch_user_role_in_club(self.officer_user, "Member")
+        self.assertTrue(self.officer_user.groups.filter(name = self.club.getClubMemberGroup()).exists())
 
     def test_transfer_ownership_to_officer(self):
         # response = self.client.post(self.url,self.other_user.id,follow=True)
@@ -154,4 +157,4 @@ class UserFormTestCase(TestCase):
         pass
 
     def test_owner_can_view_profile_of_officers(self):
-        pass    
+        pass
