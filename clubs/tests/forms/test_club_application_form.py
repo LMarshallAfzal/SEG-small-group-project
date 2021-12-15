@@ -7,21 +7,18 @@ from clubs.club_list import ClubList
 
 class ClubApplicationFormTestCase(TestCase):
     """Tests for the club application form"""
+
+    fixtures = ['clubs/tests/fixtures/default_user.json']
+
     def setUp(self):
-        self.list_of_clubs = ClubList()
-        self.list_of_clubs.create_new_club(
-            name = "The Buzzards",
-            mission_statement = "Scavenging wastelander tribe of bandits",
-            location = "The sunken city"
-        )
-        self.club = list_of_clubs.find_club("The Buzzards")
+        #Form input based on user fixture
         self.form_input = {
-            "first_name": 'Jack',
-            "last_name": 'Henwood',
-            "email": 'jackhenwood@example.org',
-            "bio": 'My bio',
+            "first_name": 'John',
+            "last_name": 'Doe',
+            "email": 'johndoe@example.org',
+            "bio": 'John Doe from example.org',
             "experience_level": 'Beginner',
-            "personal_statement": 'My personal statement!'
+            "personal_statement": 'I love chess'
         }
 
     def test_sign_up_form_accepts_valid_input(self):
@@ -44,18 +41,17 @@ class ClubApplicationFormTestCase(TestCase):
         form = ApplicationForm(data = self.form_input)
         self.assertFalse(form.is_valid())
 
-    # def test_form_saves_correctly(self):
-    #     form = ApplicationForm(data = self.form_input)
-    #     before_role = Club.
-    #     form.save()
-    #     after_count = User.objects.count()
-    #     self.assertEqual(after_count, before_count + 1)
-    #     user = User.objects.get(first_name = 'Jack')
-    #     self.assertEqual(user.first_name, 'Jack')
-    #     self.assertEqual(user.last_name, 'Henwood')
-    #     self.assertEqual(user.username, 'jackhenwood@example.org')
-    #     self.assertEqual(user.bio, 'My bio')
-    #     self.assertEqual(user.experience_level, 'Beginner')
-    #     self.assertEqual(user.personal_statement, 'My personal statement!')
-    #     is_password_correct = check_password('Password123', user.password)
-    #     self.assertTrue(is_password_correct)
+    def test_form_saves_correctly(self):
+        list_of_clubs = ClubList()
+        club = self.list_of_clubs.create_new_club(
+            name = "The Buzzards",
+            mission_statement = "Scavenging wastelander tribe of bandits",
+            location = "The sunken city"
+            )
+        user = User.objects.get(username = "johndoe@example.org")
+        form = ApplicationForm(data = self.form_input)
+        before_role = self.club.get_user_role_in_club(user)
+        self.assertEqual(before_role, None)
+        form.save()
+        after_role = self.club.get_user_role_in_club(user)
+        self.assertEqual(after_role, "Applicant")
