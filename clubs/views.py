@@ -289,7 +289,7 @@ class SignUpView(LoginProhibitedMixin,FormView):
 
     form_class = SignUpForm
     template_name = "sign_up.html"
-    
+
     def form_valid(self, form):
         self.object = form.save()
         login(self.request,self.object)
@@ -308,7 +308,7 @@ class SignUpView(LoginProhibitedMixin,FormView):
     #             user = form.save()
     #             login(request, user)
     #             return redirect('club_selection')
-        
+
     #     return redirect('sign_up')
 
     # def render(self):
@@ -378,6 +378,8 @@ class ProfileView(LoginRequiredMixin,View):
 #     return render(request, 'show_user_officer.html', {'user' : user, 'clubs':clubs})
 
 def show_current_user_profile(request):
+    list_of_clubs = ClubList()
+    clubs = list_of_clubs.club_list
     current_user = request.user
     return render(request, 'show_current_user_profile.html', {'user': current_user, 'clubs':clubs})
 
