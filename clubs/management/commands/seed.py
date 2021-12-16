@@ -55,12 +55,12 @@ class Command(BaseCommand):
                 personal_statement = self.faker.text(max_nb_chars = 1250),
             )
 
-        group = Group.objects.get(name = kerbal_club.club_codename + " Member")
-        kerbal_club.add_user_to_club(Jebediah, "Member")
-        group = Group.objects.get(name = kerbal_club.club_codename + " Officer")
-        kerbal_club.add_user_to_club(Valentina, "Officer")
-        group = Group.objects.get(name = kerbal_club.club_codename + " Owner")
-        kerbal_club.add_user_to_club(Billie, "Owner")
+            group = Group.objects.get(name = kerbal_club.club_codename + " Member")
+            kerbal_club.add_user_to_club(Jebediah, "Member")
+            group = Group.objects.get(name = kerbal_club.club_codename + " Officer")
+            kerbal_club.add_user_to_club(Valentina, "Officer")
+            group = Group.objects.get(name = kerbal_club.club_codename + " Owner")
+            kerbal_club.add_user_to_club(Billie, "Owner")
 
         #Creates a bucket of roles to choose from such that random.choice will choose approximately that percentage of each role
         applicant_percentage = 10
