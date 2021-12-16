@@ -289,7 +289,7 @@ class SignUpView(LoginProhibitedMixin,FormView):
 
     form_class = SignUpForm
     template_name = "sign_up.html"
-    
+
     def form_valid(self, form):
         self.object = form.save()
         login(self.request,self.object)
@@ -308,7 +308,7 @@ class SignUpView(LoginProhibitedMixin,FormView):
     #             user = form.save()
     #             login(request, user)
     #             return redirect('club_selection')
-        
+
     #     return redirect('sign_up')
 
     # def render(self):
@@ -380,6 +380,7 @@ class ProfileView(LoginRequiredMixin,View):
 def show_current_user_profile(request):
     current_user = request.user
     return render(request, 'show_current_user_profile.html', {'user': current_user, 'clubs':clubs})
+
 
 
 def group_check(request):
@@ -666,7 +667,9 @@ def promote_member(request, user_id):
     club = list_of_clubs.find_club(name_of_club)
     user = get_user_model()
     user = User.objects.get(id = user_id)
+    print(User.objects.filter(groups__name = club.getClubMemberGroup()).count())
     club.switch_user_role_in_club(user, "Officer")
+    print(User.objects.filter(groups__name = club.getClubMemberGroup()).count())
     return redirect('owner_member_list')
 
 #Duplicate function to promote_member?

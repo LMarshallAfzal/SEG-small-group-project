@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 import os
+import sys
 from pathlib import Path
 from django.contrib.messages import constants as message_constants
 
@@ -79,12 +80,28 @@ WSGI_APPLICATION = 'system.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    },
+    # 'test': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db_test.sqlite3',
+    #     'TEST': {
+    #         'MIRROR': 'default',
+    #     },
+    # }
 }
+
+# if 'test' in sys.argv:
+#     DATABASES['default'] = DATABASES['test'];
+# if 'testseed' in sys.argv:
+#     DATABASES['default'] = DATABASES['test'];
+# if 'testunseed' in sys.argv:
+#     DATABASES['default'] = DATABASES['test'];
 
 
 # Password validation
