@@ -1,25 +1,46 @@
-{% extends 'base.html' %}
-{% block body %}
-<div id="cover-image">
-  <div class = "container vh-100">
-    <div class = "row h-100">
-      <div class = "col-12 my-auto">
-        <div class = "card cover-card offset-sm-2 offset-md-4 offset-lg-7">
-          <h1 class="cover-heading">Chess web app</h1>
-          <p class="cover-text">Under construction</p>
-          <p>
-            <a href = '{% url 'sign_up' %}' class = "btn btn-lg btn-secondary">
-              Sign up
-            </a>
-          </p>
-          <p>
-            <a href = '{% url 'log_in' %}' class = "btn btn-lg btn-secondary" name = "login">
-              Log in
-            </a>
-          </p>
-        </div>
-      </div>
-    </div>
+{%{% extends 'base_content.html' %}%}
+  </head>
+  <body>
+
+  <style>
+    .carousel-item {
+      height: 15rem;
+      background: #fff;
+      colour:white;
+      position:relative;
+    
+    .container {
+        position: absolute;
+        bottom:0;
+        left:0;
+        right:0;
+      }
+    }
+  </style>
+
+  <div id = "myCarousel" class = "carousel-slide" data-bs-ride = "carousel">
+    <ol>
+        <li data-target = "myCarousel" data-slide-to = "0" class = "active"></li>
+        <li data-target = "myCarousel" data-slide-to = "1"></li>
+    </ol>
+    <div class = "myCarousel-inner">
+        <div class = "carousel-item active">
+            <div class = "container">
+                <h1 class="cover-heading">Chess web app</h1>
+                <p Please login or sign up to use></p>
+                <p><a href = '{% url 'log_in' %}' class = "btn btn-lg btn-secondary" name = "login">Log in </a> </p>
+             </div>
+          </div>
+
+        <div class = "carousel-item ">
+            <div class = "container">
+                <h1 class="cover-heading">Chess web app</h1>
+                <p class="cover-text">Please login or sign up to use</p>
+                <p><a href = '{% url 'sign_up' %}' class = "btn btn-lg btn-secondary" name = "signup">Sign Up</a> </p>
+             </div>
+         </div>
+     </div>
   </div>
-</div>
-{% endblock %}
+
+  </body>
+</html>
