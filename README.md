@@ -76,6 +76,10 @@ $ python3 manage.py test
 **selenium opens up a browser window and runs through the website using automation, this is used to test many parts of our website where we couldn't use response or redirect assertions.**
 <br/>
 **Please open the owner view and officer view tests and comment out the appropriate browser**
+<br/>
+**For selenium to work correctly, please run the command:
+    python3 manage.py runserver
+  before running the tests**
 
 ## Sources
 The packages used by this application are specified in `requirements.txt`
