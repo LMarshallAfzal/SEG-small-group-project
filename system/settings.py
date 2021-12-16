@@ -152,3 +152,8 @@ MESSAGE_TAGS = {
 # Page lengths
 USERS_PER_PAGE = 10
 POSTS_PER_PAGE = 20
+
+# Activate django_heroku
+if '/app' in os.environ['HOME']:
+    import django_heroku
+    django_heroku.settings(locals())
