@@ -42,7 +42,7 @@
                   <input type="hidden" name="club_name" value="{{ club.club_name }}">
                   <input type = "hidden" name = "next" value = "{{ next }}">
                   {% include 'partials/bootstrap_form.html' with form=form %}
-                  <input type = "submit" value = "Enter {{ club.club_name }}" class="btn btn-primary">
+                  <input type = "submit" value = "Enter {{ club.club_name }}" class="btn btn-primary" name = "enter_club">
                 </form>
               </div>
               <!-- <script type="text/javascript" src= "./js/jquery.min.js"></script>
