@@ -1,46 +1,32 @@
-{%{% extends 'base_content.html' %}%}
-  </head>
-  <body>
-
-  <style>
-    .carousel-item {
-      height: 15rem;
-      background: #fff;
-      colour:white;
-      position:relative;
-    
-    .container {
-        position: absolute;
-        bottom:0;
-        left:0;
-        right:0;
-      }
-    }
-  </style>
-
-  <div id = "myCarousel" class = "carousel-slide" data-bs-ride = "carousel">
-    <ol>
-        <li data-target = "myCarousel" data-slide-to = "0" class = "active"></li>
-        <li data-target = "myCarousel" data-slide-to = "1"></li>
-    </ol>
-    <div class = "myCarousel-inner">
-        <div class = "carousel-item active">
-            <div class = "container">
-                <h1 class="cover-heading">Chess web app</h1>
-                <p Please login or sign up to use></p>
-                <p><a href = '{% url 'log_in' %}' class = "btn btn-lg btn-secondary" name = "login">Log in </a> </p>
-             </div>
+{% extends 'base_content.html' %}
+  {% block body%}
+  
+      <div class = "col-10 my-auto">
+          <h1> Chess web app</h1>
+          <div class = "btn-toolbar">
+            <a href = '{% url 'sign_up' %}' class = "btn btn-lg btn-secondary" name = "signup"> Sign up</a> &nbsp;
+            <a href = '{% url 'log_in' %}' class = "btn btn-lg btn-secondary" name = "login">Log in</a>
           </div>
+      </div>
 
-        <div class = "carousel-item ">
-            <div class = "container">
-                <h1 class="cover-heading">Chess web app</h1>
-                <p class="cover-text">Please login or sign up to use</p>
-                <p><a href = '{% url 'sign_up' %}' class = "btn btn-lg btn-secondary" name = "signup">Sign Up</a> </p>
-             </div>
-         </div>
-     </div>
+  <div id="myCarousel" class="carousel slide" data-bs-interval = 100 data-bs-ride="carousel">
+    <div class="carousel-inner" >
+      <div class="carousel-item active">
+        <img class="d-block w-100" src="/static/images/chess-board.jpg" alt="First slide">
+      </div>
+      <div class="carousel-item">
+        <img class="d-block w-100" src="/static/images/chess-cover.jpg" alt="Second slide">
+      </div>
+      <div class="carousel-item">
+        <img class="d-block w-100" src="/static/images/hogwarts-chess-club.png" alt="Third slide">
+      </div>
+      <div class="carousel-item">
+        <img class="d-block w-100" src="/static/images/spectre-chess.jpg" alt="Fourth slide">
+      </div>
+      <div class="carousel-item">
+        <img class="d-block w-100" src="/static/images/starwars-chess.jpg" alt="Fifth slide">
+      </div>
+    </div>
   </div>
-
-  </body>
-</html>
+  
+  {% endblock %}
