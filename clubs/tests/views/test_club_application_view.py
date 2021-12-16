@@ -25,6 +25,22 @@ def ClubApplicationViewTestCase(TestCase):
             "personal_statement": 'I love chess'
         }
 
-
     """The fields should be filled in automatically when a user enters this form,
-       as they would be logged in already, how to do this?"""
+       as they would be logged in already, how and in what file to test this?"""
+
+    def test_application_form_url(self):
+        self.assertEqual(self.url,'/application_form/')
+
+    def test_get_sign_up(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'application_form.html')
+        form = response.context['form']
+        self.assertTrue(isinstance(form, ApplicationForm))
+        self.assertFalse(form.is_bound)
+
+    def test_unsuccesful_sign_up(self):
+        self.form_input['email'] = 'BAD_EMAIL@@example'
+
+    def test_succesful_sign_up(self):
+        pass
