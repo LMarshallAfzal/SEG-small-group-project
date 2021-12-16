@@ -20,6 +20,7 @@ class ProfileViewTest(TestCase, LogInTester):
         self.other_user = User.objects.get(username='janedoe@example.org')
         self.url = reverse('profile')
         self.form_input = {
+            'username':'johndoe2@example.org',
             'first_name': 'John2',
             'last_name': 'Doe2',
             'email': 'johndoe2@example.org',

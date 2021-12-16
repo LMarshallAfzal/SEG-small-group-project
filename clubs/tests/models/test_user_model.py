@@ -7,7 +7,7 @@ class UserModelTestCase(TestCase):
     """Unit tests of the User model"""
     def setUp(self):
         self.user = User.objects.create_user(
-        '@jarredbowen',
+        'jarredbowen@example.org',
         first_name = 'Jarred',
         last_name = 'Bowen',
         email = 'jarredbowen@example.org',
@@ -54,6 +54,35 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_invalid()
 
 
+    """Tests for the username field"""
+    def test_username_must_not_be_blank(self):
+        self.user.username = ''
+        self._assert_user_is_invalid()
+
+    def test_username_must_equal_to_email(self):
+        self.user.username = self.user.email
+        self._assert_user_is_valid()
+
+    def test_username_must_be_unique(self):
+        User.objects.create_user(
+        'sbdoe@example.org',
+        first_name = 'sb',
+        last_name = 'Doe',
+        email = 'sbdoe@example.org',
+        bio = 'I am ben',
+        experience_level = 'Advanced',
+        personal_statement = 'I am a winner!'
+
+        )
+        self.user.username = 'sbdoe@example.org'
+        self._assert_user_is_invalid()
+
+    def test_email_is_not_case_sensitive(self):
+        second_user = self._create_second_user()
+        second_user.email = 'JARREDBOWEN@example.org'
+        self.client.login(email = second_user.email, password = 'Password123') #Change to assert form is valid?
+
+
     """Tests for the email field"""
     def test_email_must_not_be_blank(self):
         self.user.email = ''
@@ -73,7 +102,7 @@ class UserModelTestCase(TestCase):
 
     def test_email_must_be_unique(self):
         User.objects.create_user(
-        '@Bendoe',
+        'bendoe@example.org',
         first_name = 'Ben',
         last_name = 'Doe',
         email = 'bendoe@example.org',
@@ -150,7 +179,7 @@ class UserModelTestCase(TestCase):
 
     def _create_second_user(self):
         user = User.objects.create_user(
-        '@jaredbowen',
+        'jaredbowen@example.org',
         first_name = 'Jarred',
         last_name = 'Bowen',
         email = 'jaredbowen@example.org',
