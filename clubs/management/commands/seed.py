@@ -17,10 +17,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         #Seeds in clubs
         list_of_clubs = ClubList()
-        list_of_clubs.create_new_club("Kerbal Chess Club", self.faker.unique.text(max_nb_chars = 150), "Buckingham Palace")
-        list_of_clubs.create_new_club("KCL Chess Society", self.faker.unique.text(max_nb_chars = 150), "Windsor Castle")
-        list_of_clubs.create_new_club("UCL Terrible Chess Team", self.faker.unique.text(max_nb_chars = 150), "Drachenburg")
-        list_of_clubs.create_new_club("Elite Cambridge Chess Team", self.faker.unique.text(max_nb_chars = 150), "Neuschwarnstein")
+        kerbal_club = list_of_clubs.create_new_club("Kerbal Chess Club", self.faker.unique.text(max_nb_chars = 150), "Buckingham Palace")
+        kcl_club = list_of_clubs.create_new_club("KCL Chess Society", self.faker.unique.text(max_nb_chars = 150), "Windsor Castle")
+        ucl_club = list_of_clubs.create_new_club("UCL Terrible Chess Team", self.faker.unique.text(max_nb_chars = 150), "Drachenburg")
+        cambridge_club = list_of_clubs.create_new_club("Elite Cambridge Chess Team", self.faker.unique.text(max_nb_chars = 150), "Neuschwarnstein")
 
         if not User.objects.filter(username='jeb@example.org').exists() or not User.objects.filter(username='val@example.org').exists() or not User.objects.filter(username='billie@example.org').exists():
             #Seeds in a member, officer and owner for the first club "Kerbal Chess Club"
@@ -55,15 +55,9 @@ class Command(BaseCommand):
                 personal_statement = self.faker.text(max_nb_chars = 1250),
             )
 
-            club = list_of_clubs.find_club("Kerbal Chess Club")
-            group = Group.objects.get(name = club.club_codename + " Member")
-            club.add_user_to_club(Jebediah, "Member")
-            club = list_of_clubs.find_club("Kerbal Chess Club")
-            group = Group.objects.get(name = club.club_codename + " Officer")
-            club.add_user_to_club(Valentina, "Officer")
-            club = list_of_clubs.find_club("Kerbal Chess Club")
-            group = Group.objects.get(name = club.club_codename + " Owner")
-            club.add_user_to_club(Billie, "Owner")
+            kerbal_club.add_user_to_club(Jebediah, "Member")
+            kerbal_club.add_user_to_club(Valentina, "Officer")
+            kerbal_club.add_user_to_club(Billie, "Owner")
 
         #Creates a bucket of roles to choose from such that random.choice will choose approximately that percentage of each role
         applicant_percentage = 10
