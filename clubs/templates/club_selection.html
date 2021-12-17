@@ -27,33 +27,6 @@
       </div>
       {% for club, owner in clubs_and_owners %}
         <tr>
-<<<<<<< HEAD
-          <td>
-            <div class="card">
-              <div class="card-header text-center">
-                <h5 class="card-title">{{ club.club_name }}</h5>
-              </div>
-              <img src="{{ owner.mini_gravatar }}"  alt="Gravatar of {{ owner.first_name }}" class="rounded-circle" width="100">
-              <div class="card-body">
-                <p class="card-text">{{ owner.full_name }}</p>
-                <p class="card-text">{{ club.mission_statement }}</p>
-                 {# alt="Gravatar of {{ c.get_club_owner.first_name }}" class="rounded-circle" ></p> #}
-                <form action = "{% url 'group_check' %}" method = "post">
-                  {% csrf_token %}
-                  <input type="hidden" name="club_name" value="{{ club.club_name }}">
-                  <input type = "hidden" name = "next" value = "{{ next }}">
-                  {% include 'partials/bootstrap_form.html' with form=form %}
-                  <input type = "submit" value = "Enter {{ club.club_name }}" class="btn btn-primary">
-                </form>
-              </div>
-              <!-- <script type="text/javascript" src= "./js/jquery.min.js"></script>
-              <script type="text/javascript" src= "./js/jquery.cookie.js"></script>
-              <script>
-                  $.cookie("clubName","{{ c.club_name }}")
-              </script> -->
-            </div>
-          </td>
-=======
           <div class="card">
             <div class="card-header text-center">
               <h4 class="card-title">{{ club.club_name }}</h4>
@@ -79,7 +52,6 @@
             </div>
           </td>
         </div>
->>>>>>> fce3ed0d390d831d74acc70154f17ae352b63721
         </tr>
       {% endfor %}
       </table>
