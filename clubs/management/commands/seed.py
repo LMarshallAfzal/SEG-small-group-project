@@ -55,15 +55,15 @@ class Command(BaseCommand):
                 personal_statement = self.faker.text(max_nb_chars = 1250),
             )
 
-        club = list_of_clubs.find_club("Kerbal Chess Club")
-        group = Group.objects.get(name = club.club_codename + " Member")
-        club.add_user_to_club(Jebediah, "Member")
-        club = list_of_clubs.find_club("Kerbal Chess Club")
-        group = Group.objects.get(name = club.club_codename + " Officer")
-        club.add_user_to_club(Valentina, "Officer")
-        club = list_of_clubs.find_club("Kerbal Chess Club")
-        group = Group.objects.get(name = club.club_codename + " Owner")
-        club.add_user_to_club(Billie, "Owner")
+            club = list_of_clubs.find_club("Kerbal Chess Club")
+            group = Group.objects.get(name = club.club_codename + " Member")
+            club.add_user_to_club(Jebediah, "Member")
+            club = list_of_clubs.find_club("Kerbal Chess Club")
+            group = Group.objects.get(name = club.club_codename + " Officer")
+            club.add_user_to_club(Valentina, "Officer")
+            club = list_of_clubs.find_club("Kerbal Chess Club")
+            group = Group.objects.get(name = club.club_codename + " Owner")
+            club.add_user_to_club(Billie, "Owner")
 
         #Creates a bucket of roles to choose from such that random.choice will choose approximately that percentage of each role
         applicant_percentage = 10
@@ -111,5 +111,5 @@ class Command(BaseCommand):
         print('User seeding complete')
 
     def _email(self, first_name, last_name):
-        email = f'{first_name}.{last_name}@example.org'
+        email = f'{first_name}.{last_name}.{random.randint(100,999)}@example.org'
         return email

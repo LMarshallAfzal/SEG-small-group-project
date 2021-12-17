@@ -16,12 +16,21 @@
 }
 
 #cover-image {
+  background: url('images/chess-board.jpg') no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  background-size: cover;
+  -o-background-size: cover;
+}
+
+#cover-image2 {
   background: url('images/chess-cover.jpg') no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   background-size: cover;
   -o-background-size: cover;
 }
+
 
 .h-100 {
   min-height: 100vh;
@@ -37,7 +46,7 @@
  * Cover page
  */
 h1.cover-heading {
-  font-size: 4rem;
+  font-size: 3rem;
 }
 
 p.cover-text {
@@ -160,4 +169,11 @@ h3.profile-title {
 .post-author a:hover {
   text-decoration: underline;
   color: black;
+}
+
+.card-position {
+  top: 0;
+  left: 0;
+  z-index: 1
+  position: absolute;
 }
