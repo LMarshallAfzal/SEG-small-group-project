@@ -44,23 +44,12 @@ class UserFormTestCase(TestCase):
     def test_owner_url(self):
         self.assertEqual(self.url,'/owner/')
 
-<<<<<<< HEAD
     def test_get_owner_view(self):
         self.client.login(email=self.user.email, password='Password123')
 
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'owner.html')
-
-    # def test_redirect_when_not_owner(self):
-    #     self.client.login(username=self.officer_user.username, password='Password123')
-    #     response = self.client.get(self.url)
-    #     response_url = reverse('profile')
-    #     self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
-    #     self.assertTemplateUsed(response,'profile.html')
-
-=======
->>>>>>> fce3ed0d390d831d74acc70154f17ae352b63721
 
     def test_promote_member_to_officer(self):
         self.client.login(email=self.user.email, password='Password123')
