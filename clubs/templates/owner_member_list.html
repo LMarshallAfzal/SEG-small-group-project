@@ -31,7 +31,7 @@
               <form action="{% url 'promote_member' user.id %}" method="post">
                 {% csrf_token %}
                 {% include 'partials/bootstrap_form.html' with form=form %}
-                <td> <input type = "submit" value = "Promote to officer" class = "btn btn-primary" name="reject"></td>
+                <td> <input type = "submit" value = "Promote to officer" class = "btn btn-primary" name="promote"></td>
               </form>
             </td>
           </tr>
