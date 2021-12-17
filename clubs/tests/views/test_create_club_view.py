@@ -27,7 +27,7 @@ class CreateClubViewTestCase(TestCase):
 
     def test_new_club_redirect(self):
         response = self.client.get(self.url)
-        redirect_url = reverse('club_selection')
-        self.assertEqual(response.status_code, 200)
+        redirect_url = reverse('create_new_club')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed('club_selection.html')
     
