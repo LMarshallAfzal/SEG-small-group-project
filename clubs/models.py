@@ -54,7 +54,6 @@ class User(AbstractUser):
 
 
 class ClubManager(models.Manager):
-    #Allows a club to be created with groups automatically and means fields such as the codename used for the groups do not need to be inputted.
     def create_club(self, name, mission_statement, location):
         club = self.create(club_name = name, club_codename = h.convert_to_codename(name), mission_statement = mission_statement, club_location = location)
         club.create_groups_and_permissions_for_club()

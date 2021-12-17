@@ -9,7 +9,7 @@ class ChessClubGroups:
     def __init__(self, chess_club_name):
         self.chess_club_name = chess_club_name
 
-        #Creates groups for club - names are formatted as follows: club_codename + space character + role name
+        #Creates groups for club: names are club_codename + space + role name
         self.applicant_group, created = Group.objects.get_or_create(name = self.chess_club_name + ' Applicant')
         self.member_group, created = Group.objects.get_or_create(name = self.chess_club_name + ' Member')
         self.officer_group, created = Group.objects.get_or_create(name = self.chess_club_name + ' Officer')
