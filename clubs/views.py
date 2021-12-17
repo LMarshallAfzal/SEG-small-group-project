@@ -289,7 +289,7 @@ class SignUpView(LoginProhibitedMixin,FormView):
 
     form_class = SignUpForm
     template_name = "sign_up.html"
-    
+
     def form_valid(self, form):
         self.object = form.save()
         login(self.request,self.object)
@@ -308,7 +308,7 @@ class SignUpView(LoginProhibitedMixin,FormView):
     #             user = form.save()
     #             login(request, user)
     #             return redirect('club_selection')
-        
+
     #     return redirect('sign_up')
 
     # def render(self):
@@ -698,12 +698,12 @@ def club_selection(request):
     list_of_clubs = ClubList()
     clubs = list_of_clubs.club_list
     owners = []
+    member_count_list = []
     for club in clubs:
         owners.append(club.get_club_owner())
-    for owner in owners:
-        print(owner)
-    clubs_and_owners = zip(clubs, owners)
-    return render(request, 'club_selection.html', {'clubs_and_owners' : clubs_and_owners, 'clubs':clubs})
+        member_count_list.append(User.objects.filter(groups__name__in = [club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()]).count())
+    clubs_and_owners = zip(clubs, owners, member_count_list)
+    return render(request, 'club_selection.html', {'clubs_and_owners' : clubs_and_owners, 'clubs':clubs, 'member_count_list':member_count_list})
 
 # def club_dropdown(request):
 #     list_of_clubs = ClubList()
