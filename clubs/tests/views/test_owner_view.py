@@ -90,28 +90,6 @@ class UserFormTestCase(TestCase):
         self.owner.user_set.add(self.member_user)
         self.assertFalse(self.member_user.groups.filter(name= self.club.getClubOwnerGroup).exists())
         self.assertFalse(self.member_user.groups.filter(name = self.club.getClubOfficerGroup()).exists())
-<<<<<<< HEAD
-        # response = self.client.get(self.url)
-        # response_url = reverse('owner_member_list')
-        # self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
-        # self.assertTemplateUsed(response,'owner_member_list.html')
-
-
-    def test_cannnot_promote_applicant_to_owner(self):
-        self.client.login(email=self.user.email, password='Password123')
-        self.assertFalse(self.applicant_user.groups.filter(name = self.club.getClubOfficerGroup()).exists())
-        self.assertFalse(self.applicant_user.groups.filter(name = self.club.getClubMemberGroup()).exists())
-        self.assertTrue(self.applicant_user.groups.filter(name=self.club.getClubApplicantGroup()).exists())
-        self.owner.user_set.add(self.applicant_user)
-        self.assertFalse(self.applicant_user.groups.filter(name= self.club.getClubOwnerGroup).exists())
-        self.assertFalse(self.applicant_user.groups.filter(name = self.club.getClubOfficerGroup()).exists())
-        self.assertFalse(self.applicant_user.groups.filter(name = self.club.getClubMemberGroup()).exists())
-        response = self.client.get(self.url)
-        response_url = reverse('owner_member_list')
-        self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
-        self.assertTemplateUsed(response,'owner_member_list.html')
-=======
->>>>>>> fce3ed0d390d831d74acc70154f17ae352b63721
 
 
     def test_officer_can_be_promoted(self):
