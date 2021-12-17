@@ -88,6 +88,8 @@ class UserModelTestCase(TestCase):
     def test_email_is_not_case_sensitive(self):
         second_user = self._create_second_user()
         second_user.email = 'JARREDBOWEN@example.org'
+        self.client.login(email = second_user.email, password = "Password123")
+        self.asertTrue(self._is_logged_in())
         
 
     """Tests for the bio field"""
