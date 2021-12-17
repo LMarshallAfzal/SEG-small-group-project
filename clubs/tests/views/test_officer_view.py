@@ -20,7 +20,8 @@ class OfficerViewTestCase(TestCase):
 
     def setUp(self):
         list_of_clubs = ClubList()
-        self.club = list_of_clubs.create_new_club("Cambridge Chessinators", "Cambridge > Oxford", "Cambridge")
+        list_of_clubs.create_new_club("Cambridge Chessinators", "Cambridge > Oxford", "Cambridge")
+        self.club = list_of_clubs.find_club("Cambridge Chessinators")
         self.url = reverse('officer')
         self.officer_user = User.objects.get(username = 'janedoe@example.org')
         self.user = User.objects.get(username = 'johndoe@example.org')
@@ -35,7 +36,7 @@ class OfficerViewTestCase(TestCase):
     def test_officer_url(self):
         self.assertEqual(self.url, '/officer/')
 
-
+    
     def members_cannot_visit_officer(self):
         self.officer.user_set.remove(self.user)
         self.member.user_set.add(self.user)
@@ -61,7 +62,7 @@ class OfficerViewTestCase(TestCase):
         self.club.switch_user_role_in_club(self.user, "Member")
         self.assertFalse(self.user.groups.filter(name=self.club.getClubApplicantGroup()).exists())
         self.assertTrue(self.user.groups.filter(name=self.club.getClubMemberGroup()).exists())
-
+        
     def test_applicant_can_be_rejected(self):
         before_count = User.objects.count()
         self.applicant.user_set.remove(self.user)
@@ -69,10 +70,15 @@ class OfficerViewTestCase(TestCase):
         self.user.delete()
         after_count = User.objects.count()
         self.assertEqual(after_count,before_count-1)
-
+    
 
     #finish this test
     # def test_view_user_profiles(self):
     #     response = self.client.get(self.url)
     #     redirect_url = reverse(show_user_officer,2)
     #     self.assertRedirects(response,redirect_url, status_code=302, target_status_code=200)
+
+
+
+
+      
