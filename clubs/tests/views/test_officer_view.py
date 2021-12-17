@@ -20,7 +20,8 @@ class OfficerViewTestCase(TestCase):
 
     def setUp(self):
         list_of_clubs = ClubList()
-        self.club = list_of_clubs.create_new_club("Cambridge Chessinators", "Cambridge > Oxford", "Cambridge")
+        list_of_clubs.create_new_club("Cambridge Chessinators", "Cambridge > Oxford", "Cambridge")
+        self.club = list_of_clubs.find_club("Cambridge Chessinators")
         self.url = reverse('officer')
         self.officer_user = User.objects.get(username = 'janedoe@example.org')
         self.user = User.objects.get(username = 'johndoe@example.org')
