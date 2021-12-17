@@ -25,31 +25,33 @@
           </div>
         </div>
       </div>
-      {% for club, owner, member_count_list in clubs_and_owners %}
+      {% for club, owner in clubs_and_owners %}
         <tr>
-          <div class="card">
-            <div class="card-header text-center">
-              <h4 class="card-title">{{ club.club_name }}</h4>
-              <h6 class="card-text">{{ club.mission_statement }}</h6>
-              <h6 class="card-text">{{ club.club_location }}</h6>
-            </div>
-            <div class="card-body">
-              <h6 class="card-text">Owner of {{club.club_name}}</h6>
+          <td>
+            <div class="card">
+              <div class="card-header text-center">
+                <h5 class="card-title">{{ club.club_name }}</h5>
+              </div>
               <img src="{{ owner.mini_gravatar }}"  alt="Gravatar of {{ owner.first_name }}" class="rounded-circle" width="100">
-              <p class="card-text">
-              <p class="card-text">{{ owner.full_name }}</p>
-              <p class="card-text">{{ owner.bio }}</p>
-              <h6 class="card-text">Number of members: {{ member_count_list }}</h6>
-
-              <form action = "{% url 'group_check' %}" method = "post">
-                {% csrf_token %}
-                <input type="hidden" name="club_name" value="{{ club.club_name }}">
-                <input type = "hidden" name = "next" value = "{{ next }}">
-                {% include 'partials/bootstrap_form.html' with form=form %}
-                <input type = "submit" value = "Enter {{ club.club_name }}" class="btn btn-primary" name = "enter_club">
-              </form>
+              <div class="card-body">
+                <p class="card-text">{{ owner.full_name }}</p>
+                <p class="card-text">{{ club.mission_statement }}</p>
+                 {# alt="Gravatar of {{ c.get_club_owner.first_name }}" class="rounded-circle" ></p> #}
+                <form action = "{% url 'group_check' %}" method = "post">
+                  {% csrf_token %}
+                  <input type="hidden" name="club_name" value="{{ club.club_name }}">
+                  <input type = "hidden" name = "next" value = "{{ next }}">
+                  {% include 'partials/bootstrap_form.html' with form=form %}
+                  <input type = "submit" value = "Enter {{ club.club_name }}" class="btn btn-primary">
+                </form>
+              </div>
+              <!-- <script type="text/javascript" src= "./js/jquery.min.js"></script>
+              <script type="text/javascript" src= "./js/jquery.cookie.js"></script>
+              <script>
+                  $.cookie("clubName","{{ c.club_name }}")
+              </script> -->
             </div>
-          </div>
+          </td>
         </tr>
       {% endfor %}
       </table>
