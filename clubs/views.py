@@ -518,8 +518,6 @@ def delete_club(request):
     user = request.user
     if request.method == 'POST':
         club = list_of_clubs.find_club(name_of_club)
-        for group in club.getGroupsForClub():
-            Group.objects.filter(name=group).delete()
         list_of_clubs.delete_club(name_of_club)
         messages.add_message(request, messages.SUCCESS, "You have deleted a chess club!")
         return redirect('club_selection')

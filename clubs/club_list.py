@@ -33,6 +33,10 @@ class ClubList:
         if club_to_delete == None:
             return False
         else:
+            groups_to_delete = club_to_delete.getGroupsForClub()
+            for group in groups_to_delete:
+                group.permissions.all().delete()
+                group.delete()
             self.club_list.remove(club_to_delete)
             club_to_delete.delete()
             return True
