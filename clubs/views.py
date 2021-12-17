@@ -37,7 +37,7 @@ class LoginProhibitedMixin:
 
     def dispatch(self, *args, **kwargs):
         if self.request.user.is_authenticated:
-            return redirect('profile')
+            return redirect('club_selection')
 
         return super().dispatch(*args, **kwargs)
 
@@ -130,7 +130,7 @@ class MemberListView(LoginRequiredMixin,MemberOnlyMixin,ListView):
         # club = list_of_clubs.find_club(name_of_club)
         # queryset = User.objects.filter(groups__name=club.getClubMemberGroup())
         # users = queryset
-        return self.render()
+        return self.redirect('club_selection')
 
     def render(self):
         qs = super().get_queryset()
@@ -344,12 +344,12 @@ class ProfileView(LoginRequiredMixin,View):
             current_user.username = form.cleaned_data.get('email')
             messages.add_message(request, messages.SUCCESS, "Profile updated!")
             form.save()
-        return redirect('club_selection')#depends on the user type
+        return redirect('profile')#depends on the user type
 
     def render(self):
         current_user = self.request.user
         form = UserForm(instance=current_user)
-        return render(self.request,'club_selection.html', {'form': form})
+        return render(self.request,'profile.html', {'form': form})
 
 
 def show_user(request, user_id):
