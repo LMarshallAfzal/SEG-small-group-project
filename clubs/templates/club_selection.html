@@ -25,7 +25,7 @@
           </div>
         </div>
       </div>
-      {% for club, owner, member_count_list in clubs_and_owners %}
+      {% for club, owner in clubs_and_owners %}
         <tr>
           <div class="card">
             <div class="card-header text-center">
@@ -33,14 +33,15 @@
               <h6 class="card-text">{{ club.mission_statement }}</h6>
               <h6 class="card-text">{{ club.club_location }}</h6>
             </div>
-            <div class="card-body">
-              <h6 class="card-text">Owner of {{club.club_name}}</h6>
-              <img src="{{ owner.mini_gravatar }}"  alt="Gravatar of {{ owner.first_name }}" class="rounded-circle" width="100">
-              <p class="card-text">
+          </div>
+          <div class="card-body">
+            <h6 class="card-text">Owner of {{club.club_name}}</h6>
+            <img src="{{ owner.mini_gravatar }}"  alt="Gravatar of {{ owner.first_name }}" class="rounded-circle" width="100">
+            <p class="card-text">
               <p class="card-text">{{ owner.full_name }}</p>
               <p class="card-text">{{ owner.bio }}</p>
               <h6 class="card-text">Number of members: {{ member_count_list }}</h6>
-
+              
               <form action = "{% url 'group_check' %}" method = "post">
                 {% csrf_token %}
                 <input type="hidden" name="club_name" value="{{ club.club_name }}">
@@ -49,7 +50,8 @@
                 <input type = "submit" value = "Enter {{ club.club_name }}" class="btn btn-primary" name = "enter_club">
               </form>
             </div>
-          </div>
+          </td>
+        </div>
         </tr>
       {% endfor %}
       </table>

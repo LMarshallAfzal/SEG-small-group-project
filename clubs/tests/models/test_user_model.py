@@ -88,7 +88,7 @@ class UserModelTestCase(TestCase):
     def test_email_is_not_case_sensitive(self):
         second_user = self._create_second_user()
         second_user.email = 'JARREDBOWEN@example.org'
-        self.client.login(email = second_user.email, password = 'Password123') #Change to assert form is valid?
+        self.assertEqual(self.user.email, second_user.email) #Change to assert form is valid?
 
     """Tests for the bio field"""
     def test_bio_may_be_blank(self):
@@ -139,13 +139,6 @@ class UserModelTestCase(TestCase):
     def test_personal_statement_may_not_be_1251_characters_long(self):
         self.user.personal_statement = 'x' * 1251
         self._assert_user_is_invalid()
-
-# Should I uncomment this method?
-    # def test_personal_statement_does_not_need_to_be_unique(self):
-    #     second_user = self._create_second_user()
-    #     self.user.personal_statement = second_user.personal_statement
-    #     self._assert_user_is_valid()
-
 
 
     def _create_second_user(self):

@@ -52,7 +52,7 @@ class ProfileViewTest(TestCase, LogInTester):
         self.assertTemplateUsed(response,'profile.html')
         form = response.context['form']
         self.assertTrue(isinstance(form, UserForm))
-        self.assertTrue(form.is_bound)
+        self.assertFalse(form.is_bound)
         self.user.refresh_from_db()
         self.assertEqual(self.user.username, 'johndoe@example.org')
         self.assertEqual(self.user.first_name, 'John')
