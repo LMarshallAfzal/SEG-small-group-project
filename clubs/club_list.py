@@ -2,7 +2,6 @@
 from .groups import ChessClubGroups
 from .models import Club, User
 
-
 class ClubList:
     def __init__(self):
         self.club_list = []

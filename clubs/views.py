@@ -27,7 +27,6 @@ from .club_list import ClubList
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.urls import reverse
-from .models import User
 from django.shortcuts import render, redirect
 from .forms import LogInForm, SignUpForm
 from django.contrib.auth import authenticate, login
