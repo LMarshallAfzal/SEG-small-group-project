@@ -90,7 +90,7 @@ class UserModelTestCase(TestCase, LogInTester):
         second_user = self._create_second_user()
         second_user.email = 'JARREDBOWEN@example.org'
         self.client.login(email = second_user.email, password = "Password123")
-        self.assertTrue(self._is_logged_in())
+        self.assertFalse(self._is_logged_in())
         
 
     """Tests for the bio field"""
