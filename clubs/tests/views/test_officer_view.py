@@ -36,7 +36,7 @@ class OfficerViewTestCase(TestCase):
     def test_officer_url(self):
         self.assertEqual(self.url, '/officer/')
 
-    
+
     def members_cannot_visit_officer(self):
         self.officer.user_set.remove(self.user)
         self.member.user_set.add(self.user)
@@ -55,7 +55,6 @@ class OfficerViewTestCase(TestCase):
         self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
         self.assertTemplateUsed(response,'profile.html')
 
-<<<<<<< HEAD
     def test_applicant_can_be_accepted(self):
         response = self.client.get(self.url)
         self.member.user_set.add(self.user)
@@ -63,9 +62,7 @@ class OfficerViewTestCase(TestCase):
         self.club.switch_user_role_in_club(self.user, "Member")
         self.assertFalse(self.user.groups.filter(name=self.club.getClubApplicantGroup()).exists())
         self.assertTrue(self.user.groups.filter(name=self.club.getClubMemberGroup()).exists())
-        
-=======
->>>>>>> f02286fb06efeb4dca2b68612a253146cc5ee414
+
     def test_applicant_can_be_rejected(self):
         before_count = User.objects.count()
         self.applicant.user_set.remove(self.user)
@@ -73,18 +70,8 @@ class OfficerViewTestCase(TestCase):
         self.user.delete()
         after_count = User.objects.count()
         self.assertEqual(after_count,before_count-1)
-<<<<<<< HEAD
-    
-
-    #finish this test
-    # def test_view_user_profiles(self):
-    #     response = self.client.get(self.url)
-    #     redirect_url = reverse(show_user_officer,2)
-    #     self.assertRedirects(response,redirect_url, status_code=302, target_status_code=200)
 
 
 
 
       
-=======
->>>>>>> f02286fb06efeb4dca2b68612a253146cc5ee414
