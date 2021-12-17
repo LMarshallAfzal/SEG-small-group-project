@@ -88,7 +88,8 @@ class UserModelTestCase(TestCase):
     def test_email_is_not_case_sensitive(self):
         second_user = self._create_second_user()
         second_user.email = 'JARREDBOWEN@example.org'
-        self.assertEqual(self.user.email, second_user.email) #Change to assert form is valid?
+        self.client.login(second_user.email, "Password123") #Change to assert form is valid?
+        self._is_logged_in
 
     """Tests for the bio field"""
     def test_bio_may_be_blank(self):
