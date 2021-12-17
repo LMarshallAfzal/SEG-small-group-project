@@ -19,8 +19,7 @@ class OfficerViewTestCase(TestCase):
 
     def setUp(self):
         list_of_clubs = ClubList()
-        list_of_clubs.create_new_club("Cambridge Chessinators", "Cambridge > Oxford", "Cambridge")
-        self.club = list_of_clubs.find_club("Cambridge Chessinators")
+        self.club = list_of_clubs.create_new_club("Cambridge Chessinators", "Cambridge > Oxford", "Cambridge")
         self.url = reverse('officer')
         self.user = User.objects.get(username = 'johndoe@example.org')
         self.applicant = Group.objects.get(name=self.club.getClubApplicantGroup())
@@ -33,7 +32,7 @@ class OfficerViewTestCase(TestCase):
     def test_officer_url(self):
         self.assertEqual(self.url, '/officer/')
 
-    
+
     def members_cannot_visit_officer(self):
         self.officer.user_set.remove(self.user)
         self.member.user_set.add(self.user)
@@ -61,7 +60,7 @@ class OfficerViewTestCase(TestCase):
         # self.applicant.user_set.remove(self.user)
         self.assertFalse(self.user.groups.filter(name=self.club.getClubApplicantGroup()).exists())
         self.assertTrue(self.user.groups.filter(name=self.club.getClubMemberGroup()).exists())
-        
+
     def test_applicant_can_be_rejected(self):
         before_count = User.objects.count()
         self.applicant.user_set.remove(self.user)
@@ -72,7 +71,3 @@ class OfficerViewTestCase(TestCase):
         # response = self.client.post(self.url, self.user.id)
         # self.assertEqual(response.status_code, 200)
         # self.assertTemplateUsed(response, 'officer_promote_applicants.html')
-
-
-
-      

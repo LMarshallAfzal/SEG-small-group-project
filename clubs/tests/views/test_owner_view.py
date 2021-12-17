@@ -18,22 +18,19 @@ class UserFormTestCase(TestCase):
 
     def setUp(self):
         list_of_clubs = ClubList()
-        list_of_clubs.create_new_club("Cambridge Chessinators", "Cambridge > Oxford", "Cambridge")
-        for club in list_of_clubs.club_list:
-            print(club.club_name)
-        self.club = list_of_clubs.find_club("Cambridge Chessinators")
+        self.club = list_of_clubs.create_new_club("Cambridge Chessinators", "Cambridge > Oxford", "Cambridge")
 
-        
+
         self.user = User.objects.get(email = "johndoe@example.org")
         self.url = reverse('owner')
         self.officer_user = User.objects.get(email = 'janedoe@example.org')
         self.member_user = User.objects.get(email = 'petrapickles@example.org')
         self.applicant_user = User.objects.get(email = 'peterpickles@example.org')
-        
+
         self.owner = Group.objects.get(name = self.club.getClubOwnerGroup())
         self.club.add_user_to_club(self.user, "Owner")
 
-        self.officer = Group.objects.get(name = self.club.getClubOfficerGroup())       
+        self.officer = Group.objects.get(name = self.club.getClubOfficerGroup())
         self.club.add_user_to_club(self.officer_user, "Officer")
 
         self.member = Group.objects.get(name = self.club.getClubMemberGroup())
@@ -50,7 +47,7 @@ class UserFormTestCase(TestCase):
 <<<<<<< HEAD
     def test_get_owner_view(self):
         self.client.login(email=self.user.email, password='Password123')
-        
+
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'owner.html')
