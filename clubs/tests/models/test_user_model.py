@@ -2,8 +2,9 @@
 from django.test import TestCase
 from clubs.models import User
 from django.core.exceptions import ValidationError
+from clubs.tests.helpers import LogInTester
 
-class UserModelTestCase(TestCase):
+class UserModelTestCase(TestCase, LogInTester):
     """Unit tests of the User model"""
     def setUp(self):
         self.user = User.objects.create_user(
