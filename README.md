@@ -1,4 +1,6 @@
-# Team *enter team name here* Small Group project
+# Team *Yak* Small Group project
+
+## The home page had a carosel of images that ran fine on localhost, but Heroku did not us to use these images
 
 ## Team members
 The members of the team are:
@@ -82,3 +84,9 @@ $ python3 manage.py test
 The packages used by this application are specified in `requirements.txt`
 
 *Declare are other sources here.*
+- We based our application off clucker.
+- https://chromedriver.chromium.org/downloads
+- https://www.codegrepper.com/code-examples/python/frameworks/django/navbar+item+change+by+page+in+django
+- https://www.youtube.com/watch?v=XnSQ6sRGKzI
+- https://getbootstrap.com/docs/4.0/components/carousel/
+- http://www.matrix.umcs.lublin.pl/DOC/python-django-doc/html/topics/testing/advanced.html
