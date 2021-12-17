@@ -15,7 +15,6 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
-        #Seeds in clubs
         list_of_clubs = ClubList()
         kerbal_club = list_of_clubs.create_new_club("Kerbal Chess Club", self.faker.unique.text(max_nb_chars = 150), "Buckingham Palace")
         kcl_club = list_of_clubs.create_new_club("KCL Chess Society", self.faker.unique.text(max_nb_chars = 150), "Windsor Castle")
