@@ -446,7 +446,7 @@ def transfer_ownership(request, user_id):
     club.switch_user_role_in_club(user, "Owner")
     club.switch_user_role_in_club(current_owner, "Officer")
     logout(request)
-    return  redirect('owner')
+    return redirect('profile')
 
 
 
