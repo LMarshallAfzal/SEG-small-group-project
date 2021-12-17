@@ -107,7 +107,6 @@ class MemberListView(LoginRequiredMixin,MemberOnlyMixin,ListView):
     model = User
     template_name = 'member_list.html'
     context_object_name = 'users'
-    #paginate_by = settings.USERS_PER_PAGE
 
     def get_queryset(self):
           qs = super().get_queryset()
@@ -277,12 +276,13 @@ class ShowUserView(DetailView):
 
 
 
+
 class ShowOfficerView(OfficerOnlyMixin,DetailView):
     model = User
     template_name = 'show_user_officer.html'
     pk_url_kwarg = "user_id"
-    list_of_clubs = ClubList()
-    clubs = list_of_clubs.club_list
+
+
 
 
 class SignUpView(LoginProhibitedMixin,FormView):
@@ -361,9 +361,11 @@ class ProfileView(LoginRequiredMixin,View):
         return redirect('profile')#depends on the user type
 
     def render(self):
+        list_of_clubs = ClubList()
+        clubs = list_of_clubs.club_list
         current_user = self.request.user
         form = UserForm(instance=current_user)
-        return render(self.request,'profile.html', {'form': form})
+        return render(self.request,'profile.html', {'form': form, 'clubs':clubs})
 
 
 # def show_user(request, user_id):
@@ -378,6 +380,9 @@ class ProfileView(LoginRequiredMixin,View):
 #     return render(request, 'show_user_officer.html', {'user' : user, 'clubs':clubs})
 
 def show_current_user_profile(request):
+    list_of_clubs = ClubList()
+    clubs = list_of_clubs.club_list
+    name_of_club = request.session.get('club_name')
     current_user = request.user
     return render(request, 'show_current_user_profile.html', {'user': current_user, 'clubs':clubs})
 
@@ -703,7 +708,7 @@ def club_selection(request):
         owners.append(club.get_club_owner())
         member_count_list.append(User.objects.filter(groups__name__in = [club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()]).count())
     clubs_and_owners = zip(clubs, owners, member_count_list)
-    return render(request, 'club_selection.html', {'clubs_and_owners' : clubs_and_owners, 'clubs':clubs, 'member_count_list':member_count_list})
+    return render(request, 'club_selection.html', {'clubs_and_owners' : clubs_and_owners, 'clubs':clubs})
 
 # def club_dropdown(request):
 #     list_of_clubs = ClubList()

@@ -111,5 +111,5 @@ class Command(BaseCommand):
         print('User seeding complete')
 
     def _email(self, first_name, last_name):
-        email = f'{first_name}.{last_name}@example.org'
+        email = f'{first_name}.{last_name}.{random.randint(100,999)}@example.org'
         return email

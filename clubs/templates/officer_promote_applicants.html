@@ -24,6 +24,12 @@
               <td>{{ user.email }}</td>
               <td>{{ user.experience_level }}</td>
               <td>
+                <form action = "{% url 'show_user_officer' user.id %}" method = "get">
+                  {% csrf_token %}
+                  <input type = "hidden" name = "next" value = "{{ next }}">
+                  {% include 'partials/bootstrap_form.html' with form=form %}
+                  <input type = "submit" value = "Go to profile" class="btn btn-primary">
+                </form>
                 <form action="{% url 'officer_promote_applicants' user.id %}" method = "post">
                   {% csrf_token %}
                   {% include 'partials/bootstrap_form.html' with form=form %}

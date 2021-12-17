@@ -14,7 +14,7 @@
           </h3>
           <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
             <div
-              class="accordion-body">Here you can create a new chess club
+              class="accordion-body">Here you can create a new chess club to run how you prefer
               <form action = "{% url 'create_new_club' %}" method = "post">
                 {% csrf_token %}
                 <input type = "hidden" name = "next" value = "{{ next }}">
@@ -25,8 +25,8 @@
           </div>
         </div>
       </div>
-      {% for club, owner in clubs_and_owners %}
-        <tr>
+      {% for club, owner, member_count_list in clubs_and_owners %}
+        <!-- <tr> -->
           <div class="card">
             <div class="card-header text-center">
               <h4 class="card-title">{{ club.club_name }}</h4>
@@ -41,7 +41,7 @@
               <p class="card-text">{{ owner.full_name }}</p>
               <p class="card-text">{{ owner.bio }}</p>
               <h6 class="card-text">Number of members: {{ member_count_list }}</h6>
-              
+
               <form action = "{% url 'group_check' %}" method = "post">
                 {% csrf_token %}
                 <input type="hidden" name="club_name" value="{{ club.club_name }}">
@@ -50,9 +50,9 @@
                 <input type = "submit" value = "Enter {{ club.club_name }}" class="btn btn-primary" name = "enter_club">
               </form>
             </div>
-          </td>
+          <!-- </td> -->
         </div>
-        </tr>
+        <!-- </tr> -->
       {% endfor %}
       </table>
     </div>
