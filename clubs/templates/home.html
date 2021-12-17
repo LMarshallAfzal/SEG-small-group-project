@@ -1,14 +1,5 @@
 {% extends 'base_content.html' %}
   {% block body%}
-  
-      <div class = "col-10 my-auto">
-          <h1> Chess web app</h1>
-          <div class = "btn-toolbar">
-            <a href = '{% url 'sign_up' %}' class = "btn btn-lg btn-secondary" name = "signup"> Sign up</a> &nbsp;
-            <a href = '{% url 'log_in' %}' class = "btn btn-lg btn-secondary" name = "login">Log in</a>
-          </div>
-      </div>
-
   <div id="myCarousel" class="carousel slide" data-bs-interval = 100 data-bs-ride="carousel">
     <div class="carousel-inner" >
       <div class="carousel-item active">
@@ -26,7 +17,25 @@
       <div class="carousel-item">
         <img class="d-block w-100" src="/static/images/starwars-chess.jpg" alt="Fifth slide">
       </div>
+      <div class = "row h-100">
+        <div class = "col-12 my-auto" >
+          <div class = "card cover-card offset-sm-2 offset-md-4 offset-lg-7" >
+            <h1 class="cover-heading">Chess Club Management</h1>
+            <p class="cover-text">Manage your chess club with ease</p>
+            <p>
+              <a href = '{% url 'sign_up' %}' class = "btn btn-lg btn-secondary">
+                Sign up
+              </a>
+            </p>
+            <p>
+              <a href = '{% url 'log_in' %}' class = "btn btn-lg btn-secondary">
+                Log in
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  
+
   {% endblock %}
