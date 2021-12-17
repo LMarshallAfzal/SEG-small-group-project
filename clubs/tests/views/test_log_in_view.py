@@ -30,11 +30,11 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.assertEqual(len(messages_list), 0)
 
     def test_get_log_in_redirects_when_logged_in(self):
-        self.client.login(email=self.user.username, password="Password123")
-        response = self.client.get(self.url, follow=True)
-        redirect_url = reverse('club_selection')
+        self.client.login(email=self.user.email, password="Password123")
+        self.assertTrue(self._is_logged_in)
+        response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'club_selection.html')
+        self.assertTemplateUsed(response, 'log_in.html')
 
     def test_get_log_in_with_redirect(self):
         destination_url = reverse('member_list')
@@ -104,7 +104,7 @@ class LogInViewTestCase(TestCase, LogInTester):
         form_input = { 'email': 'johndoe@example.org', 'password': 'Password123', 'next': redirect_url }
         response = self.client.post(self.url, form_input, follow=True)
         self.assertTrue(self._is_logged_in())
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'club_selection.html')
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
@@ -113,9 +113,9 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.client.login(username=self.user.username, password="Password123")
         form_input = { 'email': 'wronguser@example.org', 'password': 'WrongPassword123' }
         response = self.client.post(self.url, form_input, follow=True)
-        redirect_url = reverse('log_in')
+        redirect_url = reverse('club_selection')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'log_in.html')
+        self.assertTemplateUsed(response, 'club_selection.html')
 
     def test_post_log_in_with_incorrect_credentials_and_redirect(self):
         redirect_url = reverse('log_in')
