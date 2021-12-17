@@ -140,13 +140,6 @@ class UserModelTestCase(TestCase):
         self.user.personal_statement = 'x' * 1251
         self._assert_user_is_invalid()
 
-# Should I uncomment this method?
-    # def test_personal_statement_does_not_need_to_be_unique(self):
-    #     second_user = self._create_second_user()
-    #     self.user.personal_statement = second_user.personal_statement
-    #     self._assert_user_is_valid()
-
-
 
     def _create_second_user(self):
         user = User.objects.create_user(
