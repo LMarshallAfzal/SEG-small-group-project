@@ -18,16 +18,16 @@ class ClubList:
                 return club
         return None
 
-    #Returns the club object is created successfully, None if not
+    #Returns True if the club was created successfully, False if not
     def create_new_club(self, name, mission_statement, location):
         if self.find_club(name) == None:
             club = Club.objects.create_club(name, mission_statement, location)
             self.club_list.append(club)
-            return club
+            return True
         else:
-            #Error message using None return to keep UI elements in views.py?
-            #print("A club with that name already exists!")
-            return None
+            #Error message using False return to keep UI elements in views.py?
+            print("A club with that name already exists!")
+            return False
 
     #Returns True if the club was deleted successfully, False if not
     def delete_club(self, club_name):

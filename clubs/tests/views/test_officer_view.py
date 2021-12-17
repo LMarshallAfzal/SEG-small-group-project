@@ -20,7 +20,8 @@ class OfficerViewTestCase(TestCase):
 
     def setUp(self):
         list_of_clubs = ClubList()
-        self.club = list_of_clubs.create_new_club("Cambridge Chessinators", "Cambridge > Oxford", "Cambridge")
+        list_of_clubs.create_new_club("Cambridge Chessinators", "Cambridge > Oxford", "Cambridge")
+        self.club = list_of_clubs.find_club("Cambridge Chessinators")
         self.url = reverse('officer')
         self.officer_user = User.objects.get(username = 'janedoe@example.org')
         self.user = User.objects.get(username = 'johndoe@example.org')
@@ -53,6 +54,14 @@ class OfficerViewTestCase(TestCase):
         response_url = reverse('profile')
         self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
         self.assertTemplateUsed(response,'profile.html')
+
+    def test_applicant_can_be_accepted(self):
+        response = self.client.get(self.url)
+        self.member.user_set.add(self.user)
+        response_url = reverse('officer_promote_applicants')
+        self.club.switch_user_role_in_club(self.user, "Member")
+        self.assertFalse(self.user.groups.filter(name=self.club.getClubApplicantGroup()).exists())
+        self.assertTrue(self.user.groups.filter(name=self.club.getClubMemberGroup()).exists())
 
     def test_applicant_can_be_rejected(self):
         before_count = User.objects.count()
