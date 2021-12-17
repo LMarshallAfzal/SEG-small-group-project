@@ -73,6 +73,7 @@ class OfficerViewTestCase(TestCase):
         # self.assertEqual(response.status_code, 200)
         # self.assertTemplateUsed(response, 'officer_promote_applicants.html')
 
+<<<<<<< HEAD
     #finish this test
     def test_view_user_profiles(self):
         response = self.client.get(self.url)
@@ -80,6 +81,8 @@ class OfficerViewTestCase(TestCase):
         self.assertRedirects(response,redirect_url, status_code=302, target_status_code=200)
 
 
+=======
+>>>>>>> fce3ed0d390d831d74acc70154f17ae352b63721
 
 
       

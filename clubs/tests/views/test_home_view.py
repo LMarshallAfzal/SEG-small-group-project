@@ -25,3 +25,4 @@ class HomeViewTestCase(TestCase):
         redirect_url = reverse('club_selection')
         self.assertRedirects(response, redirect_url, status_code=302,target_status_code=200)
         self.assertTemplateUsed(response, 'club_selection.html')
+

@@ -27,6 +27,7 @@
       </div>
       {% for club, owner in clubs_and_owners %}
         <tr>
+<<<<<<< HEAD
           <td>
             <div class="card">
               <div class="card-header text-center">
@@ -52,6 +53,33 @@
               </script> -->
             </div>
           </td>
+=======
+          <div class="card">
+            <div class="card-header text-center">
+              <h4 class="card-title">{{ club.club_name }}</h4>
+              <h6 class="card-text">{{ club.mission_statement }}</h6>
+              <h6 class="card-text">{{ club.club_location }}</h6>
+            </div>
+          </div>
+          <div class="card-body">
+            <h6 class="card-text">Owner of {{club.club_name}}</h6>
+            <img src="{{ owner.mini_gravatar }}"  alt="Gravatar of {{ owner.first_name }}" class="rounded-circle" width="100">
+            <p class="card-text">
+              <p class="card-text">{{ owner.full_name }}</p>
+              <p class="card-text">{{ owner.bio }}</p>
+              <h6 class="card-text">Number of members: {{ member_count_list }}</h6>
+              
+              <form action = "{% url 'group_check' %}" method = "post">
+                {% csrf_token %}
+                <input type="hidden" name="club_name" value="{{ club.club_name }}">
+                <input type = "hidden" name = "next" value = "{{ next }}">
+                {% include 'partials/bootstrap_form.html' with form=form %}
+                <input type = "submit" value = "Enter {{ club.club_name }}" class="btn btn-primary" name = "enter_club">
+              </form>
+            </div>
+          </td>
+        </div>
+>>>>>>> fce3ed0d390d831d74acc70154f17ae352b63721
         </tr>
       {% endfor %}
       </table>

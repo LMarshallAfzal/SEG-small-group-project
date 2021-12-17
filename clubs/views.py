@@ -700,10 +700,16 @@ def club_selection(request):
     owners = []
     for club in clubs:
         owners.append(club.get_club_owner())
+<<<<<<< HEAD
     for owner in owners:
         print(owner)
     clubs_and_owners = zip(clubs, owners)
     return render(request, 'club_selection.html', {'clubs_and_owners' : clubs_and_owners, 'clubs':clubs})
+=======
+    member_count_list.append(User.objects.filter(groups__name__in = [club.getClubOwnerGroup(), club.getClubMemberGroup(), club.getClubOfficerGroup()]).count())
+    clubs_and_owners = zip(clubs, owners, member_count_list)
+    return render(request, 'club_selection.html', {'clubs_and_owners' : clubs_and_owners, 'clubs':clubs, 'member_count_list':member_count_list})
+>>>>>>> fce3ed0d390d831d74acc70154f17ae352b63721
 
 # def club_dropdown(request):
 #     list_of_clubs = ClubList()

@@ -15,7 +15,7 @@ class UserFormTestCase(TestCase):
         'clubs/tests/fixtures/applicant.json',
     ]
 
-#To do fix tests
+
     def setUp(self):
         list_of_clubs = ClubList()
         list_of_clubs.create_new_club("Cambridge Chessinators", "Cambridge > Oxford", "Cambridge")
@@ -47,6 +47,7 @@ class UserFormTestCase(TestCase):
     def test_owner_url(self):
         self.assertEqual(self.url,'/owner/')
 
+<<<<<<< HEAD
     def test_get_owner_view(self):
         self.client.login(email=self.user.email, password='Password123')
         
@@ -61,6 +62,8 @@ class UserFormTestCase(TestCase):
     #     self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
     #     self.assertTemplateUsed(response,'profile.html')
 
+=======
+>>>>>>> fce3ed0d390d831d74acc70154f17ae352b63721
 
     def test_promote_member_to_officer(self):
         self.client.login(email=self.user.email, password='Password123')
@@ -70,10 +73,6 @@ class UserFormTestCase(TestCase):
         self.member.user_set.remove(self.member_user)
         self.assertTrue(self.member_user.groups.filter(name = self.club.getClubOfficerGroup()).exists())
         self.assertFalse(self.member_user.groups.filter(name = self.club.getClubMemberGroup()).exists())
-        # response = self.client.get(self.url)
-        # response_url = reverse('owner_member_list')
-        # self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
-        # self.assertTemplateUsed(response,'owner_member_list')
 
     def test_officer_can_be_demoted(self):
         self.client.login(email=self.user.email, password='Password123')
@@ -82,10 +81,6 @@ class UserFormTestCase(TestCase):
         self.member.user_set.add(self.officer_user)
         self.assertFalse(self.officer_user.groups.filter(name = self.club.getClubOfficerGroup()).exists())
         self.assertTrue(self.officer_user.groups.filter(name =self.club.getClubMemberGroup()).exists())
-        # response = self.client.get(self.url)
-        # response_url = reverse('officer_list')
-        # self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
-        # self.assertTemplateUsed(response,'officer_list.html')
 
 
     def test_cannnot_promote_member_to_owner(self):
@@ -95,6 +90,7 @@ class UserFormTestCase(TestCase):
         self.owner.user_set.add(self.member_user)
         self.assertFalse(self.member_user.groups.filter(name= self.club.getClubOwnerGroup).exists())
         self.assertFalse(self.member_user.groups.filter(name = self.club.getClubOfficerGroup()).exists())
+<<<<<<< HEAD
         # response = self.client.get(self.url)
         # response_url = reverse('owner_member_list')
         # self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
@@ -114,6 +110,8 @@ class UserFormTestCase(TestCase):
         response_url = reverse('owner_member_list')
         self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
         self.assertTemplateUsed(response,'owner_member_list.html')
+=======
+>>>>>>> fce3ed0d390d831d74acc70154f17ae352b63721
 
 
     def test_officer_can_be_promoted(self):
@@ -121,19 +119,3 @@ class UserFormTestCase(TestCase):
         self.assertTrue(self.officer_user.groups.filter(name = self.club.getClubOfficerGroup()).exists())
         self.owner.user_set.add(self.officer_user)
         self.assertTrue(self.user.groups.filter(name=self.club.getClubOwnerGroup()).exists())
-
-
-    # def test_owner_change(self):
-    #     response = self.client.post(self.url,self.other_user.id,follow=True)
-    #     response_url = reverse('log_in')
-    #     self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
-    #     self.assertTemplateUsed('log_in.html')
-    #     owners = self.owner.user_set.getAll.toList
-    #     current_owner = owners[0]
-    #     self.owner.user_set.add(self.other_user)
-    #     self.owner.user_set.remove(current_owner)
-    #     owner_count = len((self.owner.user_set.all()).toList)
-    #     self.assertEqual(owner_count,1)
-    #     owners = self.owner.user_set.getAll.toList
-    #     current_owner = owners[0]
-    #     self.assertEqual(owners[0],self.other_user)
