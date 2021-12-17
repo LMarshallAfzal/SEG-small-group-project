@@ -55,14 +55,6 @@ class OfficerViewTestCase(TestCase):
         self.assertRedirects(response,response_url,status_code= 302, target_status_code= 200)
         self.assertTemplateUsed(response,'profile.html')
 
-    def test_applicant_can_be_accepted(self):
-        response = self.client.get(self.url)
-        self.member.user_set.add(self.user)
-        response_url = reverse('officer_promote_applicants')
-        self.club.switch_user_role_in_club(self.user, "Member")
-        self.assertFalse(self.user.groups.filter(name=self.club.getClubApplicantGroup()).exists())
-        self.assertTrue(self.user.groups.filter(name=self.club.getClubMemberGroup()).exists())
-
     def test_applicant_can_be_rejected(self):
         before_count = User.objects.count()
         self.applicant.user_set.remove(self.user)
