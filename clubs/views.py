@@ -27,7 +27,6 @@ from .club_list import ClubList
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.urls import reverse
-from .models import User
 from django.shortcuts import render, redirect
 from .forms import LogInForm, SignUpForm
 from django.contrib.auth import authenticate, login
@@ -382,6 +381,7 @@ def show_current_user_profile(request):
     return render(request, 'show_current_user_profile.html', {'user': current_user, 'clubs':clubs})
 
 
+
 def group_check(request):
     list_of_clubs = ClubList()
     clubs = list_of_clubs.club_list
@@ -666,7 +666,9 @@ def promote_member(request, user_id):
     club = list_of_clubs.find_club(name_of_club)
     user = get_user_model()
     user = User.objects.get(id = user_id)
+    print(User.objects.filter(groups__name = club.getClubMemberGroup()).count())
     club.switch_user_role_in_club(user, "Officer")
+    print(User.objects.filter(groups__name = club.getClubMemberGroup()).count())
     return redirect('owner_member_list')
 
 #Duplicate function to promote_member?

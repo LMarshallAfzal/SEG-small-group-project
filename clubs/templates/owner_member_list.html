@@ -28,12 +28,12 @@
                 {% csrf_token %}
                 <input type = "hidden" name = "next" value = "{{ next }}">
                 {% include 'partials/bootstrap_form.html' with form=form %}
-                <td><input type = "submit" value = "Go to profile" class="btn btn-primary"></td>
+                <td><input type = "submit" value = "Go to profile" class="btn btn-primary" name="go_to_profile"></td>
               </form>
               <form action="{% url 'promote_member' user.id %}" method="post">
                 {% csrf_token %}
                 {% include 'partials/bootstrap_form.html' with form=form %}
-                <td> <input type = "submit" value = "Promote to officer" class = "btn btn-primary" name="reject"></td>
+                <td> <input type = "submit" value = "Promote to officer" class = "btn btn-primary" name="promote"></td>
               </form>
             </td>
           </tr>

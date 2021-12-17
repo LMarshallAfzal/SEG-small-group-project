@@ -4,7 +4,6 @@ from django.db import IntegrityError
 from faker import Faker
 import faker.providers
 import random
-from random import randint
 from django.contrib.auth.models import Group
 import clubs.groups
 from clubs.club_list import ClubList
@@ -17,63 +16,64 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         #Seeds in clubs
+        print("Seeding...")
         list_of_clubs = ClubList()
-        list_of_clubs.create_new_club("Kerbal Chess Club", self.faker.unique.text(max_nb_chars = 150), "Buckingham Palace")
-        list_of_clubs.create_new_club("KCL Chess Society", self.faker.unique.text(max_nb_chars = 150), "Windsor Castle")
-        list_of_clubs.create_new_club("UCL Terrible Chess Team", self.faker.unique.text(max_nb_chars = 150), "Drachenburg")
-        list_of_clubs.create_new_club("Elite Cambridge Chess Team", self.faker.unique.text(max_nb_chars = 150), "Neuschwarnstein")
+        kerbal_club = list_of_clubs.create_new_club("Kerbal Chess Club", self.faker.unique.text(max_nb_chars = 150), "Buckingham Palace")
+        kcl_club = list_of_clubs.create_new_club("KCL Chess Society", self.faker.unique.text(max_nb_chars = 150), "Windsor Castle")
+        ucl_club = list_of_clubs.create_new_club("UCL Terrible Chess Team", self.faker.unique.text(max_nb_chars = 150), "Drachenburg")
+        cambridge_club = list_of_clubs.create_new_club("Elite Cambridge Chess Team", self.faker.unique.text(max_nb_chars = 150), "Neuschwarnstein")
 
-        if not User.objects.filter(username='jeb@example.org').exists() or not User.objects.filter(username='val@example.org').exists() or not User.objects.filter(username='billie@example.org').exists():
+        if not User.objects.filter(username="johndoe@example.org").exists() or not User.objects.filter(username="janedoe@example.org").exists() or not User.objects.filter(username="joandoe@example.org").exists() or not User.objects.filter(username="jamesdoe@example.org").exists():
             #Seeds in a member, officer and owner for the first club "Kerbal Chess Club"
-            Jebediah = User.objects.create_user(
-                username = "jeb@example.org",
-                first_name = "Jebediah",
-                last_name = "Kerman",
-                email = "jeb@example.org",
+            johndoe = User.objects.create_user(
+                username = "johndoe@example.org",
+                first_name = "John",
+                last_name = "Doe",
+                email = "john@johndoe.org",
                 password = "Password123",
                 experience_level = 'Beginner',
                 bio = self.faker.unique.text(max_nb_chars = 520),
                 personal_statement = self.faker.text(max_nb_chars = 1250),
             )
-            Valentina = User.objects.create_user(
-                username = "val@example.org",
-                first_name = "Valentina",
-                last_name = "Kerman",
-                email = "val@example.org",
+            janedoe = User.objects.create_user(
+                username = "janedoe@example.org",
+                first_name = "Jane",
+                last_name = "Doe",
+                email = "janedoe@example.org",
                 password = "Password123",
                 bio = self.faker.unique.text(max_nb_chars = 520),
                 experience_level = "Intermediate",
                 personal_statement = self.faker.text(max_nb_chars = 1250),
             )
-            Billie = User.objects.create_user(
-                username = "billie@example.org",
-                first_name = "Billie",
-                last_name = "Kerman",
-                email = "billie@example.org",
+            joandoe = User.objects.create_user(
+                username = "joandoe@example.org",
+                first_name = "Joan",
+                last_name = "Doe",
+                email = "joandoe@example.org",
                 password = "Password123",
                 experience_level = "Advanced",
                 bio = self.faker.unique.text(max_nb_chars = 520),
                 personal_statement = self.faker.text(max_nb_chars = 1250),
             )
+            jamesdoe = User.objects.create_user(
+                username = "jamesdoe@example.org",
+                first_name = "James",
+                last_name = "Doe",
+                email = "jamesdoe@example.org",
+                password = "Password123",
+                experience_level = "Beginner",
+                bio = self.faker.unique.text(max_nb_chars = 520),
+                personal_statement = self.faker.text(max_nb_chars = 1250),
+            )
 
-<<<<<<< HEAD
-        club = list_of_clubs.find_club("Kerbal Chess Club")
-        group = Group.objects.get(name = club.club_codename + " Member")
-        club.add_user_to_club(Jebediah, "Member")
-        club = list_of_clubs.find_club("Kerbal Chess Club")
-        group = Group.objects.get(name = club.club_codename + " Officer")
-        club.add_user_to_club(Valentina, "Officer")
-        club = list_of_clubs.find_club("Kerbal Chess Club")
-        group = Group.objects.get(name = club.club_codename + " Owner")
-        club.add_user_to_club(Billie, "Owner")
-=======
-            group = Group.objects.get(name = kerbal_club.club_codename + " Member")
-            kerbal_club.add_user_to_club(Jebediah, "Member")
-            group = Group.objects.get(name = kerbal_club.club_codename + " Officer")
-            kerbal_club.add_user_to_club(Valentina, "Officer")
-            group = Group.objects.get(name = kerbal_club.club_codename + " Owner")
-            kerbal_club.add_user_to_club(Billie, "Owner")
->>>>>>> a713253ea6b55a92c15b65ce9dd713f11ba93b0e
+        group = Group.objects.get(name = kerbal_club.club_codename + " Member")
+        kerbal_club.add_user_to_club(johndoe, "Member")
+        group = Group.objects.get(name = kerbal_club.club_codename + " Officer")
+        kerbal_club.add_user_to_club(janedoe, "Officer")
+        group = Group.objects.get(name = kerbal_club.club_codename + " Owner")
+        kerbal_club.add_user_to_club(joandoe, "Owner")
+        group = Group.objects.get(name = kerbal_club.club_codename + " Applicant")
+        kerbal_club.add_user_to_club(jamesdoe, "Applicant")
 
         #Creates a bucket of roles to choose from such that random.choice will choose approximately that percentage of each role
         applicant_percentage = 10
@@ -88,7 +88,7 @@ class Command(BaseCommand):
             else:
                 bucket.append("Officer")
         #Adds 250 users, split among clubs and non-owner roles within a club
-        for _ in range(250):
+        for _ in range(150):
             first_name = self.faker.first_name()
             last_name = self.faker.last_name()
             email = self._email(first_name, last_name)
@@ -121,7 +121,5 @@ class Command(BaseCommand):
         print('User seeding complete')
 
     def _email(self, first_name, last_name):
-        email = f'{first_name}.{last_name}.{randint(100,999)}@example.org'
+        email = f'{first_name}.{last_name}@example.org'
         return email
-
-    #def _email_duplicate(self, first_name, last_name, )
